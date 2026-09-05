@@ -35,6 +35,10 @@ uv tool install specify-cli
 | `specify init --here` | Initialise dans le répertoire courant |
 | `specify check` | Vérifie les prérequis et les agents détectés |
 | `specify integration list` | Liste les intégrations disponibles (30+ agents) |
+| `specify preset search` / `add` / `list` / `remove` | Gère les presets (voir plus bas) |
+| `specify preset resolve <template>` | **Dit quel fichier gagne** dans la pile de résolution |
+| `specify extension add <id>` | Installe une extension (ex. `agent-context`) |
+| `specify extension enable` / `disable <id>` | Active ou désactive sans désinstaller |
 
 ### Flags de `init`
 
@@ -60,6 +64,57 @@ uv tool install specify-cli
 
 **Recommandé pour la formation : `--commands`** — les prompts sont directement lisibles, ce qui
 démystifie l'outil, et les chemins réutilisent les mécanismes Copilot standards.
+
+---
+
+## Presets — la modularité de SpecKit
+
+Collections **empilables et ordonnées par priorité** de templates et de commandes. C'est le
+mécanisme qui remplace des rules modulaires, à l'échelle de plusieurs dépôts.
+
+**Pile de résolution**, parcourue à chaque lookup de template (à l'exécution, rien n'est figé) :
+
+```
+1. .specify/templates/overrides/       ← surcharges ponctuelles du projet
+2. .specify/presets/<id>/templates/    ← presets installés, triés par priorité
+3. .specify/extensions/<id>/templates/ ← templates fournis par des extensions
+4. .specify/templates/                 ← templates du cœur
+```
+
+```bash
+specify preset add enterprise-safe --priority 10       # couche de base
+specify preset add healthcare-compliance --priority 5  # écrase la précédente
+specify preset add --dev ./mon-preset                  # depuis un dossier local
+specify preset resolve spec-template                   # qui gagne, et pourquoi
+```
+
+- **Priorité basse = l'emporte.**
+- Un preset **remplace** par défaut ; les *composition strategies* (dont `wrap`) augmentent au
+  lieu d'écraser.
+- Les **templates** se résolvent à l'exécution ; les **commandes** s'enregistrent à
+  l'installation, dans les répertoires d'agent détectés.
+- `constitution-template` suit le même modèle : installer ou réordonner un preset ne réécrit
+  **pas** la constitution vivante.
+
+## Extensions
+
+| Extension | Rôle |
+|---|---|
+| `agent-context` | Gère un bloc `<!-- SPECKIT START -->` / `<!-- SPECKIT END -->` dans `CLAUDE.md`, `.github/copilot-instructions.md`, `AGENTS.md`… `context_files` en synchronise plusieurs. Hooks `after_specify`, `after_plan`. |
+
+```bash
+specify extension add agent-context     # PAS installée par `specify init`
+```
+
+> **À savoir avant de promettre quoi que ce soit** : *« Spec Kit itself never touches your agent
+> context file. This extension is the only thing that does, and it's opt-in. »*
+
+## Le preset `constitution-sync` — piège documenté
+
+Il propage la constitution dans `plan/spec/tasks-template.md` et les docs. **GitHub le
+déconseille par défaut** : *« it duplicates the constitution as the source of truth and can
+fight the composition stack »*. À n'installer que si l'équipe relit les templates matérialisés
+comme des artefacts committés en PR.
 
 ---
 

@@ -31,7 +31,7 @@ s'auto-évaluent en prompts envoyés.
 |---|---|---|---|---|
 | 1 | Socle Copilot | Piloter Copilot, pas le subir | Prédire à l'avance l'effet d'un changement de fichier de customisation, 3 fois sur 3 | 4 h |
 | 2 | Méthode SDD | Savoir *pourquoi* avant *comment* | Expliquer en 5 min, sans notes, la différence spec/plan/tasks et pourquoi ce n'est pas du waterfall | 3 h |
-| 3 | SpecKit mécanique | Connaître l'outil de bout en bout | Un cycle complet bouclé sur une feature jetable, tous artefacts produits | 4 h |
+| 3 | SpecKit mécanique | Connaître l'outil de bout en bout | Un cycle complet bouclé sur une feature jetable + les 21 rules réparties sur 3 couches | 5 h |
 | 4 | Chantier Conduit | Éprouver la méthode sur du vrai | La suite Hurl RealWorld passe au vert sur auth + articles | 16 h |
 | 5 | Industrialisation | Passer de l'atelier à la chaîne | Une issue assignée au cloud agent produit une PR relue automatiquement et mergeable | 6 h |
 | 6 | Kit de coaching | Transmettre | Un tiers rejoue l'atelier 1 depuis le playbook, sans aide | 8 h |
@@ -85,7 +85,7 @@ techniques inexploitables.
 
 ---
 
-## Palier 3 — SpecKit, la mécanique · ~4 h
+## Palier 3 — SpecKit, la mécanique · ~5 h
 
 **Objectif** : connaître l'outil dans ses détails, y compris ce qu'il ne fait pas.
 
@@ -93,13 +93,17 @@ techniques inexploitables.
 - Installer, initialiser, choisir entre le layout *skills* et le layout *commands*.
 - Citer les 10 commandes, leur ordre, et lesquelles sont optionnelles.
 - Dire quel artefact produit quelle commande, et où il atterrit.
+- **Répartir une convention sur la bonne couche** : constitution (décisions) / instructions
+  scopées (frappes) / presets (réutilisation inter-dépôts). C'est la question qui vient
+  systématiquement quand une équipe arrive de rules modulaires.
 - Repérer les **gates manquants** : SpecKit enchaîne sans forcer de validation humaine ; c'est
   la principale différence avec le pipeline maison de `conduit-fullstack`, et le principal
   risque en équipe.
 
 **Critère de sortie** : un cycle complet bouclé sur une feature **jetable** — pas Conduit,
 quelque chose de trivial du type « endpoint de healthcheck » — avec tous les artefacts produits
-et lus. Puis tout jeter. Le but est la mécanique, pas le résultat.
+et lus. Puis tout jeter. Le but est la mécanique, pas le résultat. Plus la répartition des
+21 rules de `conduit-fullstack` sur les trois couches, justifiée.
 
 **Piège principal** : commencer directement sur Conduit. La première exécution sert à
 découvrir l'outil ; y mêler un enjeu réel brouille les deux apprentissages.

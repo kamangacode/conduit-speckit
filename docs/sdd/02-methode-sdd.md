@@ -146,7 +146,7 @@ formalisation d'une pratique qu'elle a déjà à moitié, que comme une révolut
 
 | `conduit-fullstack` (`/dev`) | SpecKit | Écart notable |
 |---|---|---|
-| `.claude/rules/` (21 fichiers scopés) | `.specify/memory/constitution.md` (un fichier) | SpecKit centralise ; les rules scopées sont **plus fines**. Un vrai avantage du dispositif maison. |
+| `.claude/rules/` (21 fichiers scopés) | **Trois mécanismes, pas un** : constitution + instructions scopées + presets | Tes rules font deux métiers (gouverner une *décision* / gouverner l'*écriture d'un fichier*) que SpecKit sépare. Détail en [§3.6 du palier 3](03-speckit.md). |
 | `frame` (problème, contraintes, tier) | `/speckit.specify` | SpecKit n'a pas de notion de **tier** (S / F-lite / F-full). Tout passe par le cycle complet. |
 | `spec` (acceptance criteria) | `/speckit.specify` + `/speckit.clarify` | `/clarify` est **meilleur** : il pose des questions ciblées au lieu de laisser l'humain deviner ce qui manque. |
 | `analyze` (F-full) | `/speckit.plan` + `research.md` | Équivalent. |

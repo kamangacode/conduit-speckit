@@ -246,6 +246,10 @@ l'agent ?**
 
 | Date | Fichier concerné | Ce qui était écrit | Ce qui a été observé | Corrigé ? |
 |---|---|---|---|---|
+| 2026-09-05 | `03-speckit.md` §3.1 | `brew install uv` | Sur macOS Intel (x86_64), pas de bottle pour uv 0.12.10 : Homebrew compile depuis les sources Rust, tient le verrou du Cellar pendant des dizaines de minutes, `brew link uv` échoue et `uv` reste introuvable. Symptôme final : `zsh: command not found: specify`. | oui — passage à l'installeur Astral |
+| 2026-09-05 | `README.md` étape 3 | `specify integration list \| grep -i copilot` | La commande exige un `.specify/` déjà présent : `Error: Not a Spec Kit project`. Impossible avant init — or l'étape s'intitule « avant de le poser ». Le `grep` masquait l'erreur, d'où une sortie vide inexplicable. | oui — remplacée par `specify check` |
+| 2026-09-05 | `README.md` + `01-socle-copilot.md` | Rien entre l'install du CLI et l'exercice 1.1 | Aucune vérification que Copilot répond, ni mention de l'IDE requis. Poste réel : Copilot présent dans JetBrains, pas dans VS Code — alors que tous les mécanismes du programme (`prompts/`, `agents/`, `skills/`, `.vscode/settings.json`) sont VS Code. | oui — nouveau §1.0 |
+| 2026-09-05 | `01-socle-copilot.md` §1.0 | *(hypothèse initiale : extension Copilot à installer)* | Faux. Depuis VS Code 1.136, `github.copilot-chat` 0.64.0 est **built-in**. `code --list-extensions` ne le montre pas (faux négatif) et installer `GitHub.copilot` échoue par `cannot be downgraded to version 0.48.1`. | oui — noté comme piège dans le §1.0 |
 
 ---
 

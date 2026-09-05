@@ -42,7 +42,7 @@ Dans `conduit-fullstack`, un pipeline qui est **déjà** du SDD a été construi
 
 | Ce qui existe déjà | L'équivalent SpecKit |
 |---|---|
-| `.claude/rules/` — conventions versionnées avec le code | `.specify/memory/constitution.md` |
+| `.claude/rules/` — conventions versionnées avec le code | **Pas un seul fichier** : constitution (décisions) + `.github/instructions/` scopées (frappes) + presets (réutilisation). Voir [palier 3, §3.6](03-speckit.md) |
 | `/dev` → `frame` (cadrage, tier) | `/speckit.specify` (le *quoi* et le *pourquoi*) |
 | `/dev` → `spec` (acceptance criteria) | `/speckit.specify` + `/speckit.clarify` |
 | `/dev` → `analyze` (analyse technique F-full) | `/speckit.plan` (+ `research.md`) |
@@ -67,12 +67,12 @@ gens.
 |---|---|---|---|---|
 | 1 | [Socle Copilot](01-socle-copilot.md) | Les 4 surfaces, la hiérarchie des fichiers de customisation, qui honore quoi | `github-speckit` instrumenté + preuve de comportement | ~4 h |
 | 2 | [Méthode SDD](02-methode-sdd.md) | L'inversion spec/code, spec vs plan vs tasks, pourquoi ce n'est pas du waterfall | Note de synthèse + mapping vers le pipeline maison | ~3 h |
-| 3 | [SpecKit, la mécanique](03-speckit.md) | CLI, les 10 commandes, les artefacts, les deux layouts Copilot | SpecKit installé + un cycle jetable bouclé | ~4 h |
+| 3 | [SpecKit, la mécanique](03-speckit.md) | CLI, les 10 commandes, les artefacts, les layouts, **l'architecture en 3 couches** | SpecKit installé + un cycle jetable bouclé + les rules réparties | ~5 h |
 | 4 | [Le chantier Conduit](04-chantier-conduit.md) | SDD pour de vrai : 3 itérations, Java/Spring, conformité Hurl | Auth + articles conformes, `specs/` complet | ~16 h |
 | 5 | [Industrialisation](05-industrialisation.md) | Cloud agent, code review pilotée, CI, les limites dures | Boucle issue → PR → review automatisée | ~6 h |
 | 6 | [Kit de coaching](06-kit-coaching.md) | Transformer une pratique en transmission | Ateliers minutés, grille de maturité, métriques | ~8 h |
 
-**Total ≈ 41 h**, soit 5 à 7 semaines à 6-8 h/semaine. Détail, critères de sortie et calendrier
+**Total ≈ 42 h**, soit 5 à 7 semaines à 6-8 h/semaine. Détail, critères de sortie et calendrier
 dans [`00-programme.md`](00-programme.md).
 
 ---
@@ -91,17 +91,37 @@ git init && git add -A
 git commit -m "chore: PRD Conduit + programme SDD (baseline)"
 git branch -M main && git checkout -b chore/speckit-bootstrap
 
-# 2. Installer les prérequis
-brew install uv
+# 2. Installer les prérequis (le pourquoi de chaque commande : palier 3, §3.1)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v1.0.4
-specify check          # vérifie les prérequis (git, agents détectés)
 
-# 3. Regarder ce que SpecKit VA poser, avant de le poser
-specify init --help
-specify integration list | grep -i copilot
+# 3. Vérifier le poste — SpecKit, puis la surface qui exécutera ses commandes
+specify check          # prérequis + intégrations disponibles, dont `copilot`
+specify init --help    # ce que l'init posera, quand on y arrivera au palier 3
+code --version         # VS Code : c'est LUI qui exécutera les commandes SpecKit
 ```
 
-Puis ouvrir le [palier 1](01-socle-copilot.md) et faire l'exercice 1.1.
+> **Ces trois étapes n'initialisent pas SpecKit, et c'est voulu.** Elles installent un CLI et
+> vérifient un poste ; **aucun fichier n'est écrit dans le dépôt.** Le `specify init` réel
+> arrive au [palier 3, §3.2](03-speckit.md), une fois que tu sauras lire ce qu'il pose. Si tu
+> cherchais l'initialisation ici, elle n'y est pas — c'est la question la plus fréquente sur ce
+> programme, et la réponse est : *pas encore, et volontairement.*
+>
+> **Ne pas chercher `specify integration list` à ce stade** : cette commande exige un `.specify/`
+> déjà présent et échoue par `Not a Spec Kit project` tant que l'init n'a pas eu lieu. La
+> découverte des intégrations **avant** init, c'est `specify check`.
+
+Puis ouvrir le [palier 1](01-socle-copilot.md) — **en commençant par le §1.0**, qui vérifie que
+Copilot répond réellement sur ton poste. Sans ce §1.0, l'exercice 1.1 démarre sur une surface
+dont rien ne prouve qu'elle fonctionne, et le premier échec devient indiscernable d'une erreur
+de méthode.
+
+> **Le palier 1 n'entre pas en conflit avec SpecKit.** Le §1.4 te fait écrire à la main
+> `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` et `AGENTS.md`.
+> `specify init` **n'écrit aucun de ces trois chemins** — il pose `.specify/` et, selon le
+> layout, `.github/skills/` ou `.github/agents/` + `.github/prompts/`. Les deux couches
+> cohabitent sans se marcher dessus, `--force` compris. Détail vérifié au
+> [palier 3, §3.2](03-speckit.md).
 
 > **Ne pas sauter le palier 1 pour aller directement à SpecKit.** SpecKit n'est qu'une façon de
 > structurer ce qu'on donne à Copilot. Sans savoir comment Copilot consomme un fichier

@@ -30,6 +30,74 @@ démo. Et ça demande de connaître la mécanique de contexte, pas les slash com
 
 ---
 
+## 1.0 — Le poste de travail, avant tout le reste
+
+> **Ce palier s'observe, il ne se lit pas.** Les trois manches du §1.3 supposent un Copilot qui
+> répond. Tant que ce n'est pas établi, un exercice raté ne prouve rien : on ne sait pas si la
+> configuration est mauvaise ou si la surface est muette. **Vérifier d'abord, prédire ensuite.**
+
+### L'IDE du programme, et pourquoi ce n'est pas négociable
+
+**Le programme se fait dans VS Code.** Ce n'est pas une préférence, c'est une contrainte de
+mécanisme : `.github/prompts/*.prompt.md`, `.github/agents/*.agent.md`,
+`.github/skills/*/SKILL.md` et le merge `.vscode/settings.json` — tout ce que pose l'intégration
+Copilot de SpecKit — sont des mécanismes **VS Code**. Le plugin Copilot de JetBrains ne les
+honore pas.
+
+Tenter le palier dans IntelliJ produit exactement l'erreur que le §1.1 décrit comme la plus
+coûteuse : une consigne écrite dans un fichier que la surface ne lit pas, et la conclusion
+« Copilot n'écoute pas ». **Garder IntelliJ pour écrire le Java du [palier 4](04-chantier-conduit.md)
+est parfaitement sain ; y faire tourner le cycle SDD ne l'est pas.**
+
+### Les quatre vérifications
+
+```bash
+# 1. VS Code et son CLI. Si `code` est absent du PATH, le lier depuis le bundle :
+#    ln -sf "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ~/.local/bin/code
+code --version
+
+# 2. Copilot Chat. Depuis VS Code 1.136, il est INTÉGRÉ À L'ÉDITEUR — rien à installer.
+#    Il n'apparaît donc pas dans `code --list-extensions`, qui ne montre que les extensions
+#    utilisateur. Le chercher là et ne rien voir est un faux négatif.
+ls "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/copilot"
+
+# 3. Le compte GitHub côté CLI
+gh auth status
+```
+
+> **Ne pas installer `GitHub.copilot` depuis la marketplace sur une VS Code récente.** Ce paquet
+> dépend de `github.copilot-chat` dans une version plus ancienne que le built-in, et l'install
+> échoue par `cannot be downgraded`. Le message est déroutant parce qu'il nomme une extension
+> qu'on ne cherchait pas à installer. Il n'y a rien à faire : Copilot est déjà là.
+
+**4. La seule vérification qui ne se scripte pas — l'abonnement et la session.** Aucune commande
+ne l'établit de façon fiable : le jeton `gh` n'a pas les portées Copilot, et l'API répond `404`
+même pour un compte qui a un siège. Il faut donc l'établir dans l'interface :
+
+1. Ouvrir VS Code sur `github-speckit`.
+2. Ouvrir le panneau Chat, basculer en mode **Agent**.
+3. Poser une question triviale sur le dépôt, par exemple *« Quels fichiers y a-t-il sous docs/prd/ ? »*.
+
+**Critère d'entrée dans le palier** : cette question obtient une réponse. Pas une réponse
+*juste* — une réponse **tout court**. Si Copilot réclame une connexion ou signale l'absence de
+siège, régler ça maintenant : rien de ce qui suit dans le programme ne fonctionne sans.
+
+### Ce que ce palier suppose déjà fait
+
+| Prérequis | D'où il vient | Comment savoir que c'est bon |
+|---|---|---|
+| Dépôt `github-speckit` avec une baseline commitée | [README, étape 1](README.md) | `git log --oneline -1` renvoie le commit de baseline |
+| `uv` et `specify` installés | [README, étape 2](README.md) · [palier 3, §3.1](03-speckit.md) | `specify check` affiche *Specify CLI is ready to use!* |
+| VS Code + Copilot Chat en mode Agent | **ce §1.0** | la question triviale ci-dessus obtient une réponse |
+| SpecKit initialisé dans le dépôt | **pas encore, et c'est normal** | rien à vérifier : `.specify/` n'existe qu'après le [palier 3, §3.2](03-speckit.md) |
+
+La dernière ligne est celle qui déroute. **Le palier 1 se fait sur un dépôt où SpecKit n'est pas
+installé**, parce qu'il porte sur la mécanique de contexte de Copilot — laquelle préexiste à
+SpecKit et lui survivrait. Les fichiers que tu écris au §1.4 ne sont pas des fichiers SpecKit :
+ce sont des fichiers Copilot, que SpecKit exploitera ensuite sans jamais les écraser.
+
+---
+
 ## 1.1 — Les quatre surfaces
 
 Copilot n'est pas un produit, c'est quatre produits qui partagent une marque. Ils n'ont ni le
