@@ -74,7 +74,7 @@ gh auth status
 ne l'établit de façon fiable : le jeton `gh` n'a pas les portées Copilot, et l'API répond `404`
 même pour un compte qui a un siège. Il faut donc l'établir dans l'interface :
 
-1. Ouvrir VS Code sur `github-speckit`.
+1. Ouvrir VS Code sur `conduit-speckit`.
 2. Ouvrir le panneau Chat, basculer en mode **Agent**.
 3. Poser une question triviale sur le dépôt, par exemple *« Quels fichiers y a-t-il sous docs/prd/ ? »*.
 
@@ -86,7 +86,7 @@ siège, régler ça maintenant : rien de ce qui suit dans le programme ne foncti
 
 | Prérequis | D'où il vient | Comment savoir que c'est bon |
 |---|---|---|
-| Dépôt `github-speckit` avec une baseline commitée | [README, étape 1](README.md) | `git log --oneline -1` renvoie le commit de baseline |
+| Dépôt `conduit-speckit` avec une baseline commitée | [README, étape 1](README.md) | `git log --oneline -1` renvoie le commit de baseline |
 | `uv` et `specify` installés | [README, étape 2](README.md) · [palier 3, §3.1](03-speckit.md) | `specify check` affiche *Specify CLI is ready to use!* |
 | VS Code + Copilot Chat en mode Agent | **ce §1.0** | la question triviale ci-dessus obtient une réponse |
 | SpecKit initialisé dans le dépôt | **pas encore, et c'est normal** | rien à vérifier : `.specify/` n'existe qu'après le [palier 3, §3.2](03-speckit.md) |
@@ -224,12 +224,12 @@ l'écart. Trois manches justes d'affilée = palier validé.
 
 ---
 
-## 1.4 — Instrumenter `github-speckit` pour de vrai
+## 1.4 — Instrumenter `conduit-speckit` pour de vrai
 
 Une fois les trois manches faites, poser le socle réel du dépôt. Il servira tout le programme.
 
 ```
-github-speckit/
+conduit-speckit/
 ├── .github/
 │   ├── copilot-instructions.md          # conventions générales du dépôt
 │   └── instructions/
@@ -272,7 +272,7 @@ les deux sorties sur le seul critère `Token` vs `Bearer`. Coller les deux extra
 - [ ] Les 3 manches de prédiction sont passées, avec l'écart noté pour chacune.
 - [ ] La question de périmètre du niveau 2 (`applyTo`) est **tranchée par l'observation**, pas
       par la doc, et la réponse est écrite.
-- [ ] `github-speckit` a ses 4 fichiers de contexte.
+- [ ] `conduit-speckit` a ses 4 fichiers de contexte.
 - [ ] La preuve avant/après sur `Token` vs `Bearer` est dans `journal.md`.
 
 → Palier suivant : [`02-methode-sdd.md`](02-methode-sdd.md)

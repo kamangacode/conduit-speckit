@@ -65,7 +65,7 @@ gens.
 
 | # | Palier | Ce qui s'apprend | Ce qui se produit | Effort |
 |---|---|---|---|---|
-| 1 | [Socle Copilot](01-socle-copilot.md) | Les 4 surfaces, la hiérarchie des fichiers de customisation, qui honore quoi | `github-speckit` instrumenté + preuve de comportement | ~4 h |
+| 1 | [Socle Copilot](01-socle-copilot.md) | Les 4 surfaces, la hiérarchie des fichiers de customisation, qui honore quoi | `conduit-speckit` instrumenté + preuve de comportement | ~4 h |
 | 2 | [Méthode SDD](02-methode-sdd.md) | L'inversion spec/code, spec vs plan vs tasks, pourquoi ce n'est pas du waterfall | Note de synthèse + mapping vers le pipeline maison | ~3 h |
 | 3 | [SpecKit, la mécanique](03-speckit.md) | CLI, les 10 commandes, les artefacts, les layouts, **l'architecture en 3 couches** | SpecKit installé + un cycle jetable bouclé + les rules réparties | ~5 h |
 | 4 | [Le chantier Conduit](04-chantier-conduit.md) | SDD pour de vrai : 3 itérations, Java/Spring, conformité Hurl | Auth + articles conformes, `specs/` complet | ~16 h |
@@ -82,7 +82,7 @@ dans [`00-programme.md`](00-programme.md).
 Ne pas lire les six paliers d'affilée. Faire **ceci**, aujourd'hui, dans cet ordre :
 
 ```bash
-cd ~/IdeaProjects/github-speckit
+cd ~/IdeaProjects/conduit-speckit
 
 # 1. Créer la baseline.
 #    `specify init --force` remplace des fichiers aux chemins en conflit :

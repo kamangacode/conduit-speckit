@@ -56,7 +56,7 @@ d'épingler aussi explicitement. Préférer la forme Git avec le tag.
 ## 3.2 — Initialisation, et le choix de layout
 
 ```bash
-cd ~/IdeaProjects/github-speckit
+cd ~/IdeaProjects/conduit-speckit
 git checkout -b chore/speckit-bootstrap        # la baseline, impérativement
 
 specify init --here --integration copilot
