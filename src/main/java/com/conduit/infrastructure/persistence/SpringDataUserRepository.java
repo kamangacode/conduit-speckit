@@ -7,6 +7,7 @@ import java.util.UUID;
 
 interface SpringDataUserRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByUsername(String username);
     boolean existsByEmail(String email);
     boolean existsByEmailAndIdNot(String email, UUID id);
     boolean existsByUsername(String username);
