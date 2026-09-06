@@ -205,7 +205,58 @@ programme.
 
 ## 4.3 — Itération 2 : `002-articles-crud` · ~5 h
 
-Même cycle. Trois nouveautés à observer.
+### Le déroulé
+
+Reprendre le cycle complet sur une branche et un répertoire de spec distincts :
+
+```
+/speckit.specify
+
+Périmètre : CRUD d'articles Conduit.
+Référence fonctionnelle : docs/prd/PRD-conduit.md sections 7.3, 8, 9, 10,
+et les règles R-1 (slug), R-6 (propriété), R-7 (listes sans body).
+
+Un membre authentifié peut consulter, créer, modifier et supprimer ses articles.
+Hors périmètre : commentaires, favoris, profils publics, suivi et flux personnel.
+```
+
+Puis, dans l'ordre :
+
+```
+/speckit.clarify
+/speckit.plan
+/speckit.tasks
+/speckit.analyze
+/speckit.implement
+/speckit.converge
+```
+
+Avant de lancer l'implémentation, vérifier dans `spec.md` et `tasks.md` que les
+tests HTTP couvrent au minimum : consultation d'un article, création, mise à
+jour par son auteur, refus de mise à jour/suppression par un autre membre,
+suppression, slug généré et absence de `body` dans les listes.
+
+### Ce qu'il faut observer, étape par étape
+
+| Étape | Ce qu'il faut mesurer |
+|---|---|
+| `specify` | La spec exprime-t-elle des comportements observables, notamment 403/404 et le slug, sans imposer une implémentation ? |
+| `clarify` | Les questions sur collision de slug, propriété et ressource inexistante sont-elles posées ou explicitement tranchées ? |
+| `plan` | Les ports, cas d'utilisation, mapping de persistence et contrôleur restent-ils séparés ? |
+| `tasks` | Les tâches de test HTTP précèdent-elles l'implémentation et chaque tâche possède-t-elle un chemin réel ? |
+| `analyze` | Les écarts entre la spec, le contrat et les tâches sont-ils détectés avant le code ? |
+| `implement` | Les corrections passent-elles par les artefacts SDD plutôt que par un patch manuel du code ? |
+| `converge` | Le contrôle retrouve-t-il du travail restant après le premier vert ? |
+
+### Le verdict
+
+```bash
+./mvnw spring-boot:run &
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
+
+Comparer le nombre d'échecs du premier passage avec celui de l'itération 1 et
+classer chaque défaut dans `journal.md` : spec, plan, constitution ou agent.
 
 **Le contexte accumulé.** La constitution est enrichie des corrections de l'itération 1. Le
 plan a un existant sur lequel s'appuyer. **La question à mesurer** : y a-t-il moins d'échecs
@@ -234,6 +285,41 @@ implémentation (« le service vérifie `article.author.id == currentUser.id` »
 ## 4.4 — Itération 3 : `003-articles-listing` · ~6 h
 
 **L'itération la plus importante du programme. Ne pas la sauter.**
+
+### Le déroulé
+
+La première passe reprend volontairement les ambiguïtés du PRD. La seconde
+reprend exactement le même cycle après clarification :
+
+```
+/speckit.specify
+
+Périmètre : listing et pagination des articles Conduit.
+Référence fonctionnelle : docs/prd/PRD-conduit.md sections 7.3, 8, 9, 10,
+et les règles R-2 (tri), R-3 (filtres), R-7 (listes sans body), R-10 (pagination).
+
+Un visiteur ou un membre peut lister les articles avec les filtres et la pagination.
+Hors périmètre : création, modification, suppression, commentaires, favoris et profils.
+```
+
+```bash
+/speckit.clarify
+/speckit.plan
+/speckit.tasks
+/speckit.analyze
+/speckit.implement
+/speckit.converge
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
+
+Pour la **passe A**, conserver les questions non tranchées et relever les
+échecs. Pour la **passe B**, mettre à jour la spec avec les six décisions,
+régénérer le plan et les tâches, puis rejouer la même suite Hurl. Ne modifier
+ni le code ni les fixtures entre les deux passes, sauf ce qui est nécessaire
+pour appliquer les artefacts régénérés.
+
+À chaque passe, noter dans `journal.md` : le nombre d'échecs Hurl, les cycles
+de régénération, les questions posées et la cause de chaque défaut.
 
 Les deux premières se sont bien passées : Conduit est un domaine simple, SDD y brille. Celle-ci
 est conçue pour **faire mal**, parce que c'est là que se trouvent les arguments d'un coach
