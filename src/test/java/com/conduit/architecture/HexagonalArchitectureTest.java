@@ -33,4 +33,27 @@ class HexagonalArchitectureTest {
         .resideInAnyPackage("com.conduit.interfaces..")
         .check(classes);
   }
+
+  @Test
+  void infrastructure_and_rest_adapters_are_grouped_by_domain() {
+    JavaClasses classes = new ClassFileImporter().importPackages("com.conduit");
+    classes()
+        .that()
+        .resideInAnyPackage("com.conduit.infrastructure..")
+        .should()
+        .resideInAnyPackage(
+            "com.conduit.infrastructure.article..",
+            "com.conduit.infrastructure.user..",
+            "com.conduit.infrastructure.config..")
+        .check(classes);
+    classes()
+        .that()
+        .resideInAnyPackage("com.conduit.interfaces.rest..")
+        .should()
+        .resideInAnyPackage(
+            "com.conduit.interfaces.rest.article..",
+            "com.conduit.interfaces.rest.user..",
+            "com.conduit.interfaces.rest.shared..")
+        .check(classes);
+  }
 }

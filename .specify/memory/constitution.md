@@ -57,7 +57,10 @@ impossible or fail a dedicated integration test.
 
 The implementation terrain is Java 25 LTS, Spring Boot, and Maven. Code MUST respect
 the package boundaries `domain/`, `application/`, `infrastructure/`, and
-`interfaces/`; REST inbound adapters MUST reside under `interfaces/rest/`.
+`interfaces/`; infrastructure adapters MUST be grouped by bounded context under
+`infrastructure/<domain>/`, and REST inbound adapters MUST be grouped under
+`interfaces/rest/<domain>/` with `interfaces/rest/shared/` reserved for cross-domain
+HTTP concerns.
 The package name `interface/` MUST NOT be used because `interface` is a Java
 keyword. The PRD and RealWorld specification MUST be linked from any
 feature specification that changes an API contract. Any deliberate divergence

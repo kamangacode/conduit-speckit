@@ -1,12 +1,14 @@
-package com.conduit.infrastructure.persistence;
+package com.conduit.infrastructure.article.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.conduit.application.article.ArticleRepository;
+import com.conduit.application.user.UserRepository;
 import com.conduit.domain.article.Article;
 import com.conduit.domain.article.ArticleQuery;
 import com.conduit.domain.article.Tag;
 import com.conduit.domain.user.User;
+import com.conduit.infrastructure.user.persistence.UserRepositoryAdapter;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +39,7 @@ class ArticleRepositoryPostgresTest {
           .withPassword("test-only");
 
   @Autowired ArticleRepository articles;
-  @Autowired SpringDataUserRepository users;
+  @Autowired UserRepository users;
 
   @DynamicPropertySource
   static void configureDatabase(DynamicPropertyRegistry registry) {
@@ -73,10 +75,9 @@ class ArticleRepositoryPostgresTest {
   @Test
   @SuppressWarnings("null")
   void persistsFiltersPaginatesAndDeletesArticlesThroughPostgres() {
-    users.save(
-        UserEntity.fromDomain(
-            User.create("article-pg@example.invalid", "article-pg", "hash", null, null)));
-    UUID persistedAuthorId = users.findByUsername("article-pg").orElseThrow().getId();
+    User persistedUser =
+        users.save(User.create("article-pg@example.invalid", "article-pg", "hash", null, null));
+    UUID persistedAuthorId = persistedUser.id();
     Article article =
         new Article(
             UUID.randomUUID(),
@@ -101,17 +102,14 @@ class ArticleRepositoryPostgresTest {
   @Test
   @SuppressWarnings("null")
   void paginatesACollectionOfAtLeastOneHundredArticles() {
-    UserEntity user =
-        users.save(
-            UserEntity.fromDomain(
-                User.create("scale@example.invalid", "scale-user", "hash", null, null)));
+    User user = users.save(User.create("scale@example.invalid", "scale-user", "hash", null, null));
     Instant base = Instant.now();
     for (int index = 0; index < 100; index++) {
       UUID id = UUID.randomUUID();
       articles.save(
           new Article(
               id,
-              user.getId(),
+              user.id(),
               "scale-" + index,
               "Scale " + index,
               "Description",

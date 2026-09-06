@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.shared;
 
 import com.conduit.application.article.ArticleException;
 import com.conduit.application.user.UserException;

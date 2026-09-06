@@ -1,10 +1,11 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.user;
 
 import com.conduit.application.user.GetCurrentUserUseCase;
 import com.conduit.application.user.LoginUserUseCase;
 import com.conduit.application.user.RegisterUserUseCase;
 import com.conduit.application.user.TokenService;
 import com.conduit.application.user.UpdateCurrentUserUseCase;
+import com.conduit.interfaces.rest.shared.TokenAuthenticationFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;

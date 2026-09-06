@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.shared;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

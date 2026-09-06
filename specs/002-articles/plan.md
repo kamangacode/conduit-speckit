@@ -90,8 +90,10 @@ specs/002-articles/
 src/main/java/com/conduit/
 ├── domain/article/
 ├── application/article/
-├── infrastructure/persistence/
-└── interfaces/rest/
+├── infrastructure/article/persistence/
+├── infrastructure/user/persistence/
+├── infrastructure/user/security/
+└── interfaces/rest/{article,user,shared}/
 src/main/resources/db/migration/V2__create_articles.sql
 src/test/java/com/conduit/article/
 src/test/java/com/conduit/architecture/

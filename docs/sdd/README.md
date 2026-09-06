@@ -105,6 +105,12 @@ Le code suit les quatre frontières hexagonales `domain`, `application`,
 pas utilisé car `interface` est un mot-clé du langage. Cette décision est tracée
 dans l'[ADR 006](../adr/006-rest-adapters-under-interfaces.md).
 
+Les classes d'adaptation sont ensuite regroupées par domaine : persistence et
+services techniques sous `infrastructure/article/` ou `infrastructure/user/`,
+contrôleurs et mappers sous `interfaces/rest/article/` ou `interfaces/rest/user/`.
+Les filtres, erreurs et configurations HTTP transverses vivent sous
+`interfaces/rest/shared/`.
+
 ---
 
 ## Les six paliers

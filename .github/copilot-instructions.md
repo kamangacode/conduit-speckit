@@ -10,6 +10,9 @@ ci-dessous s'appliquent à ce terrain lorsqu'il est créé.
 - Le code Java suit les packages `domain/`, `application/`, `infrastructure/` et `interfaces/`.
 - Les adaptateurs HTTP REST résident sous `interfaces/rest/`; `interface/` n'est pas utilisé car
 	`interface` est un mot-clé Java.
+- Les adapters de persistence résident sous `infrastructure/<domaine>/persistence/` et les
+	services techniques propres à un domaine sous `infrastructure/<domaine>/security/` ou un
+	sous-package équivalent. Les composants transverses restent sous `infrastructure/config/`.
 - Le domaine et les cas d'utilisation utilisent des noms métier en PascalCase pour les types,
 	camelCase pour les méthodes et variables, et restent indépendants du framework.
 - La persistence Java utilise Spring Data JPA/Hibernate derrière les ports applicatifs ; les

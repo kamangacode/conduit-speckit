@@ -6,7 +6,7 @@ applyTo: "**/domain/**/*.java, **/application/**/*.java, **/infrastructure/**/*.
 
 Cette instruction s'applique au terrain Java/Spring de Conduit lorsqu'il existe ; elle ne transforme pas les documents Spec Kit en application runtime.
 
-Les dépendances pointent vers l'intérieur : `domain` ne dépend d'aucun framework, `application` dépend des ports du domaine, `infrastructure` implémente les adaptateurs et `interfaces/rest` expose les contrôleurs REST. Le domaine ne connaît ni Spring, ni JPA, ni la base de données.
+Les dépendances pointent vers l'intérieur : `domain` ne dépend d'aucun framework, `application` dépend des ports du domaine, `infrastructure` implémente les adaptateurs groupés par domaine (`article`, `user`) et `interfaces/rest` expose les contrôleurs REST groupés par domaine (`article`, `user`, `shared`). Le domaine ne connaît ni Spring, ni JPA, ni la base de données.
 
 Les ports sont définis du côté du domaine ou de l'application selon le contrat qu'ils servent. Les cas d'utilisation ne dépendent pas des contrôleurs. Les contrôleurs valident et mappent l'entrée, délèguent, puis mappent la sortie ; ils ne contiennent pas de logique métier.
 

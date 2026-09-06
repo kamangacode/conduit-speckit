@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.article;
 
 import com.conduit.application.article.ArticleCommands;
 import com.conduit.application.article.ArticleException;
@@ -11,6 +11,7 @@ import com.conduit.application.article.ArticleUseCaseConfiguration.ListTagsUseCa
 import com.conduit.application.article.ArticleUseCaseConfiguration.UpdateArticleUseCase;
 import com.conduit.application.user.UserRepository;
 import com.conduit.domain.article.ArticleQuery;
+import com.conduit.interfaces.rest.shared.TokenAuthenticationFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.shared;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;

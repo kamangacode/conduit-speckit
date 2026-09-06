@@ -28,9 +28,9 @@ Move all current HTTP controllers, response mappers, filters, error handling, an
 HTTP configuration to `com.conduit.interfaces.rest`.
 
 Use `interfaces` rather than `interface` because `interface` is a Java keyword.
-Use `rest` to make the transport protocol explicit. Organize by feature under
-`interfaces.rest` later if the number of endpoints grows, for example
-`interfaces.rest.article` and `interfaces.rest.user`.
+Use `rest` to make the transport protocol explicit. Organize adapters by bounded
+context under `interfaces.rest`: `article`, `user`, and `shared` for cross-domain
+HTTP concerns.
 
 The application layer remains independent of this package. An ArchUnit rule
 ensures inbound adapters stay under `com.conduit.interfaces..` and that the

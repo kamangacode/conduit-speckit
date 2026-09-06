@@ -85,13 +85,13 @@ src/
 ├── main/java/com/conduit/
 │   ├── domain/user/
 │   ├── application/user/
-│   ├── infrastructure/persistence/
-│   ├── infrastructure/security/
-│   └── api/http/
+│   ├── infrastructure/user/persistence/
+│   ├── infrastructure/user/security/
+│   └── interfaces/rest/user/
 └── test/java/com/conduit/
     ├── domain/user/
     ├── application/user/
-    └── api/http/
+    └── interfaces/rest/{user,shared}/
 
 conformance/
 ├── hurl/auth.hurl
@@ -102,11 +102,12 @@ conformance/
 **Structure Decision**: Use the repository constitution's hexagonal package
 boundaries. `domain/user` contains framework-free account concepts and rules;
 `application/user` owns registration, login, current-user, and update use cases;
-  `infrastructure/persistence` owns PostgreSQL repositories, JPA entities, and
-  mappings;
-`infrastructure/security` owns Argon2id and JWT ports/adapters; and
-`api/http` owns request mapping, response serialization, and HTTP status
-mapping. Tests mirror these boundaries, with mandatory HTTP integration coverage
+  `infrastructure/user/persistence` owns PostgreSQL repositories, JPA entities,
+  and mappings;
+`infrastructure/user/security` owns Argon2id and JWT ports/adapters;
+`interfaces/rest/user` owns User request mapping and response serialization;
+`interfaces/rest/shared` owns cross-domain filters, errors, and HTTP configuration.
+Tests mirror these boundaries, with mandatory HTTP integration coverage
 for every endpoint.
 
 ## Phase 0: Research

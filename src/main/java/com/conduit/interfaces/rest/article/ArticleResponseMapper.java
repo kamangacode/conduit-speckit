@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.article;
 
 import com.conduit.application.user.UserRepository;
 import com.conduit.domain.article.Article;

@@ -198,6 +198,11 @@ est organisé en couches hexagonales : `domain`, `application`, `infrastructure`
 d'utilisation restent indépendants de Spring ; JPA et les repositories Spring
 restent dans l'infrastructure.
 
+Les adapters sont regroupés par domaine : `infrastructure/article/` et
+`infrastructure/user/` pour la persistence et les services techniques, et
+`interfaces/rest/article/`, `interfaces/rest/user/` et `interfaces/rest/shared/`
+pour les adaptateurs HTTP.
+
 Lefthook orchestre les contrôles locaux : Spotless, Checkstyle et Gitleaks en
 pre-commit, puis `./mvnw verify -P integration` en pre-push.
 

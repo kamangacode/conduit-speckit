@@ -1,4 +1,4 @@
-package com.conduit.interfaces.rest;
+package com.conduit.interfaces.rest.user;
 
 import com.conduit.application.user.TokenService;
 import com.conduit.domain.user.User;
