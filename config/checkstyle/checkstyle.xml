@@ -5,12 +5,20 @@
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="warning"/>
+    <module name="FileTabCharacter"/>
     <module name="LineLength">
         <property name="max" value="140"/>
         <property name="ignorePattern" value="^package|^import|https?://"/>
     </module>
     <module name="TreeWalker">
         <module name="AvoidStarImport"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="FallThrough"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="NeedBraces"/>
+        <module name="OneStatementPerLine"/>
+        <module name="OneTopLevelClass"/>
+        <module name="OuterTypeFilename"/>
         <module name="TypeName"/>
         <module name="MethodName"/>
         <module name="MemberName"/>
