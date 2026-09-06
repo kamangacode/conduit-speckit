@@ -26,6 +26,9 @@ required independent lanes has no valid result.
 	discovery path reports zero scenarios and is therefore not used. Bruno could not start because the local Node runtime is missing
 	`libllhttp.9.3.dylib`; no Bruno result is claimed.
 - JaCoCo is configured as an informative report only; no coverage threshold is enabled.
+- The OWASP Dependency-Check probe was blocked before analysis because the local environment
+	has no NVD API key; the tool rejected the empty key. Gitleaks is not installed locally, so
+	the security-scan tasks remain open rather than being reported as passed.
 
 ## Ambiguities Blocking Test Generation
 
