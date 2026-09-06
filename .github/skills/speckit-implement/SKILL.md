@@ -98,6 +98,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read .specify/memory/constitution.md for governance constraints
    - **IF EXISTS**: Read quickstart.md for integration scenarios
+   - **IF EXISTS**: Read test-cases.yaml and traceability.md. Treat them as the executable-test
+     inventory and evidence contract for the feature.
 
 4. **Project Setup Verification**:
    - **REQUIRED**: Create/verify ignore files based on actual project setup:
@@ -155,6 +157,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
    - **File-based coordination**: Tasks affecting the same files must run sequentially
    - **Validation checkpoints**: Verify each phase completion before proceeding
+   - **Generated tests first**: Create or validate the functional tests and fixtures before
+     implementing the behavior they exercise. A generated test may fail at this point; that is
+     expected and must be recorded, not removed or weakened.
 
 7. Implementation execution rules:
    - **Setup first**: Initialize project structure, dependencies, configuration
@@ -176,6 +181,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
+   - Confirm every acceptance case in `test-cases.yaml` has an executed internal test or an
+     independent external conformance test, with the result recorded in `traceability.md`
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 

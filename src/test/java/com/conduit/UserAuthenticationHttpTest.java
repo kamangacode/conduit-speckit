@@ -3,6 +3,8 @@ package com.conduit;
 import com.conduit.application.user.UserRepository;
 import com.conduit.test.InMemoryUserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -26,6 +28,11 @@ class UserAuthenticationHttpTest {
     @Autowired MockMvc mockMvc;
 
     @Test
+    @Tags({
+            @Tag("AC-US1-001"), @Tag("AC-US1-004"), @Tag("AC-US2-001"),
+            @Tag("AC-US3-001"), @Tag("AC-US3-003"), @Tag("AC-US4-001"),
+            @Tag("AC-US4-004"), @Tag("AC-US4-005")
+    })
     void registersLogsInReadsAndUpdatesCurrentUserWithoutPassword() throws Exception {
         String registration = """
                 {"user":{"username":"alice","email":"alice@example.invalid","password":"password123"}}
@@ -58,6 +65,10 @@ class UserAuthenticationHttpTest {
     }
 
     @Test
+    @Tags({
+            @Tag("AC-US1-002"), @Tag("AC-US1-003"), @Tag("AC-US2-002"),
+            @Tag("AC-US4-002"), @Tag("AC-US4-003")
+    })
     void rejectsDuplicateAndInvalidRequestsAtHttpBoundary() throws Exception {
         String request = """
                 {"user":{"username":"bob","email":"bob@example.invalid","password":"password123"}}
@@ -73,6 +84,9 @@ class UserAuthenticationHttpTest {
     }
 
     @Test
+    @Tags({
+            @Tag("AC-US2-003"), @Tag("AC-US3-002"), @Tag("AC-US4-006")
+    })
     void rejectsMissingOrBearerAuthentication() throws Exception {
         mockMvc.perform(get("/api/user")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/user").header("Authorization", "Bearer invalid"))

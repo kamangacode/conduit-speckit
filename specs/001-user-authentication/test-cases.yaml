@@ -1,0 +1,164 @@
+version: 1
+feature: 001-user-authentication
+source: spec.md
+cases:
+  - id: AC-US1-001
+    story: US1
+    requirement: [FR-001, FR-003, FR-004]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: POST /api/users
+    given: no member uses the email or username
+    when: submit username, email, and a password of at least 8 characters
+    then: status 201; response contains user.email, user.username, user.bio, user.image, and user.token
+    external: conformance/hurl/auth.hurl
+  - id: AC-US1-002
+    story: US1
+    requirement: [FR-008, FR-010]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#rejectsDuplicateAndInvalidRequestsAtHttpBoundary
+    request: POST /api/users
+    given: a member already uses the submitted email or username
+    when: submit a registration request with the conflicting value
+    then: status 409; response contains a field-keyed errors object
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US1-003
+    story: US1
+    requirement: [FR-009, FR-011]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#rejectsDuplicateAndInvalidRequestsAtHttpBoundary
+    request: POST /api/users
+    given: a required registration field is missing or invalid
+    when: submit the registration request
+    then: status 422; response contains field-specific error arrays
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US1-004
+    story: US1
+    requirement: [FR-013, FR-014]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: POST /api/users
+    given: registration succeeds
+    when: inspect the response
+    then: password and password hash are absent
+    external: conformance/hurl/auth.hurl
+  - id: AC-US2-001
+    story: US2
+    requirement: [FR-002, FR-003, FR-004]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: POST /api/users/login
+    given: a member exists and credentials are correct
+    when: submit email and password
+    then: status 200; response contains the User fields and token
+    external: conformance/hurl/auth.hurl
+  - id: AC-US2-002
+    story: US2
+    requirement: [FR-011, FR-014]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#rejectsMissingOrBearerAuthentication
+    request: POST /api/users/login
+    given: credentials are incorrect or incomplete
+    when: attempt to sign in
+    then: reject without revealing which credential failed or returning a password
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US2-003
+    story: US2
+    requirement: [FR-005]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#rejectsMissingOrBearerAuthentication
+    request: GET /api/user
+    given: sign-in returned a token
+    when: "use Authorization: Token <jwt>"
+    then: accept the token; reject the Bearer scheme
+    external: conformance/hurl/auth.hurl
+  - id: AC-US3-001
+    story: US3
+    requirement: [FR-003, FR-004, FR-006]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: GET /api/user
+    given: a valid token identifies a member
+    when: request the current account
+    then: status 200; response contains that member's password-free User
+    external: conformance/hurl/auth.hurl
+  - id: AC-US3-002
+    story: US3
+    requirement: [FR-012]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#rejectsMissingOrBearerAuthentication
+    request: GET /api/user
+    given: no token or an invalid token is supplied
+    when: request the current account
+    then: status 401 without account data
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US3-003
+    story: US3
+    requirement: [FR-013]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: GET /api/user
+    given: a valid current-account response exists
+    when: inspect its fields
+    then: password and password hash are absent
+    external: conformance/hurl/auth.hurl
+  - id: AC-US4-001
+    story: US4
+    requirement: [FR-007, FR-015]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: PUT /api/user
+    given: a valid token and accepted update fields
+    when: update the current account
+    then: status 200; changed values are persisted and returned
+    external: conformance/hurl/auth.hurl
+  - id: AC-US4-002
+    story: US4
+    requirement: [FR-008, FR-010]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#rejectsDuplicateAndInvalidRequestsAtHttpBoundary
+    request: PUT /api/user
+    given: another member owns the requested email or username
+    when: submit the update
+    then: status 409; conflicting field is identified
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US4-003
+    story: US4
+    requirement: [FR-009, FR-011]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#rejectsDuplicateAndInvalidRequestsAtHttpBoundary
+    request: PUT /api/user
+    given: the update contains an invalid password or required value
+    when: submit the update
+    then: status 422; response contains field-specific error arrays
+    external: conformance/hurl/errors_auth.hurl
+  - id: AC-US4-004
+    story: US4
+    requirement: [FR-007]
+    level: functional-http
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: PUT /api/user
+    given: bio or image is nullable
+    when: set either field to null
+    then: value is stored and returned as null
+    external: conformance/hurl/auth.hurl
+  - id: AC-US4-005
+    story: US4
+    requirement: [FR-013, FR-014]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
+    request: PUT /api/user
+    given: a valid token exists
+    when: update the password and sign in again
+    then: new password works; old and new passwords are never exposed
+    external: conformance/hurl/auth.hurl
+  - id: AC-US4-006
+    story: US4
+    requirement: [FR-012]
+    level: security
+    test: com.conduit.UserAuthenticationHttpTest#rejectsMissingOrBearerAuthentication
+    request: PUT /api/user
+    given: no token or an invalid token is supplied
+    when: submit an account update
+    then: status 401 without account data
+    external: conformance/hurl/errors_auth.hurl

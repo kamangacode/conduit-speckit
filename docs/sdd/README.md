@@ -146,6 +146,7 @@ docs/sdd/
 ├── 04-chantier-conduit.md       Palier 4 — le cœur du programme
 ├── 05-industrialisation.md      Palier 5
 ├── 06-kit-coaching.md           Palier 6
+├── 08-outillage-java.md         Catalogue des outils prioritaires et nice-to-haves Java
 ├── journal.md                   Journal de bord (à remplir en continu, pas à la fin)
 ├── reference/
 │   ├── speckit-cheatsheet.md    Les 10 commandes, les artefacts, les flags CLI
