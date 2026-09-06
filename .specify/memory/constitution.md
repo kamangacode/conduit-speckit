@@ -1,12 +1,14 @@
 <!--
 Sync Impact Report
-- Version change: scaffold -> 1.0.0
+- Version change: 1.0.0 -> 1.0.1
 - Modified principles: none; the five principles below establish the initial
 	project-specific governance rules.
 - Added sections: RealWorld contract, framework isolation, HTTP integration
 	testing, externalized secrets, password hashing, and workflow constraints.
 - Removed sections: none.
 - Follow-up TODOs: determine the original ratification date.
+- Amendment: update the pedagogical implementation baseline from Java 21 to
+	Java 25 LTS.
 -->
 
 # Conduit Constitution
@@ -49,7 +51,7 @@ impossible or fail a dedicated integration test.
 
 ## Additional Constraints
 
-The implementation terrain is Java 21, Spring Boot, and Maven. Code MUST respect
+The implementation terrain is Java 25 LTS, Spring Boot, and Maven. Code MUST respect
 the package boundaries `domain/`, `application/`, `infrastructure/`, and
 `interface/`. The PRD and RealWorld specification MUST be linked from any
 feature specification that changes an API contract. Any deliberate divergence
@@ -75,4 +77,4 @@ PATCH for clarifications that do not change obligations. Each review MUST record
 evidence for the applicable gates; a missing test or unexplained contract
 divergence blocks completion.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
+**Version**: 1.0.1 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06

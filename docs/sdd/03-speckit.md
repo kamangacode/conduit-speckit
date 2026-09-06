@@ -180,7 +180,7 @@ Puis, dans le chat Copilot en **mode Agent** :
 ```
 /speckit.constitution
 
-Projet d'entraînement, Java 21 + Spring Boot. Principes :
+Projet d'entraînement, Java 25 LTS + Spring Boot. Principes :
 1. Toute API a un contrat OpenAPI avant son implémentation.
 2. Tout endpoint a un test d'intégration qui passe par la couche HTTP réelle.
 3. Le domaine ne dépend d'aucune annotation de framework.

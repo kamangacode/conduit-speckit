@@ -2,7 +2,7 @@
 
 Ce dépôt documente une méthode SDD avec GitHub Spec Kit et GitHub Copilot, éprouvée sur le
 produit Conduit décrit dans le [PRD](../docs/prd/PRD-conduit.md). Le terrain d'implémentation
-pédagogique est Java 21, Spring Boot et Maven ; les règles d'architecture et de contrat
+pédagogique est Java 25 LTS, Spring Boot et Maven ; les règles d'architecture et de contrat
 ci-dessous s'appliquent à ce terrain lorsqu'il est créé.
 
 ## Conventions de travail

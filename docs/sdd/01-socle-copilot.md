@@ -242,7 +242,7 @@ conduit-speckit/
 **Ce qu'il faut mettre dans `copilot-instructions.md`, et rien d'autre** :
 
 1. Ce qu'est le projet, en trois lignes, avec un lien vers [le PRD](../prd/PRD-conduit.md).
-2. La stack et sa version : Java 21, Spring Boot, Maven ou Gradle — tranche et écris-le.
+2. La stack et sa version : Java 25 LTS, Spring Boot, Maven ou Gradle — tranche et écris-le.
 3. Les conventions non devinables depuis le code : nommage, structure des packages, format des
    commits.
 4. **Les invariants du contrat RealWorld** que Copilot ne peut pas deviner et se trompera

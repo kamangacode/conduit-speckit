@@ -118,7 +118,7 @@ découvrir l'outil ; y mêler un enjeu réel brouille les deux apprentissages.
 
 **Périmètre** : `F-AUTH-1..4` + `F-ART-1,3,4,5,6` du [PRD](../prd/PRD-conduit.md) — inscription,
 connexion, utilisateur courant, mise à jour ; puis lister / consulter / créer / éditer /
-supprimer un article. **Stack : Java 21 + Spring Boot.**
+supprimer un article. **Stack : Java 25 LTS + Spring Boot.**
 
 **Les trois itérations** :
 
