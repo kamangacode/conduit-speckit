@@ -37,8 +37,12 @@ public class UpdateCurrentUserUseCase {
                 command.emailProvided() ? command.email() : null,
                 command.usernameProvided() ? command.username() : null,
                 passwordHash,
-                command.bioProvided() ? command.bio() : current.bio(),
-                command.imageProvided() ? command.image() : current.image()));
+                command.bioProvided() ? normalizeNullable(command.bio()) : current.bio(),
+                command.imageProvided() ? normalizeNullable(command.image()) : current.image()));
+    }
+
+    private static String normalizeNullable(String value) {
+        return value == null || value.isEmpty() ? null : value;
     }
 
     public record UpdateCommand(

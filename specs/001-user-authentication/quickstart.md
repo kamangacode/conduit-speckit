@@ -38,7 +38,7 @@ configuration are missing, without printing their values.
 From the repository root:
 
 ```bash
-HOST=http://localhost:3000/api ./conformance/run-api-tests-hurl.sh
+HOST=http://localhost:8080 ./conformance/run-api-tests-hurl.sh
 ```
 
 The authentication scenarios are sourced from
@@ -47,6 +47,19 @@ The authentication scenarios are sourced from
 They cover registration, login, current-user retrieval, account updates,
 nullable fields, uniqueness conflicts, authentication failures, password length,
 and token transport.
+
+Validated on 2026-09-06 against PostgreSQL started by Docker Compose:
+
+```text
+auth.hurl: 20 requests passed
+errors_auth.hurl: 20 requests passed
+```
+
+The complete `conformance/hurl/*.hurl` collection was also run with
+`HOST=http://localhost:8080`. It executed 13 files and 62 requests; the two
+authentication files passed, while the 11 remaining files failed because the
+article, comment, profile, feed, favorite, and tag endpoints are outside this
+feature's scope and are not implemented yet.
 
 ## Focused HTTP checks
 

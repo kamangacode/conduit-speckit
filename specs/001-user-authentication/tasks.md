@@ -30,8 +30,8 @@
 - [X] T009 Implement the Spring Data JPA user repository, Hibernate entity, and persistence mapping in `src/main/java/com/conduit/infrastructure/persistence/SpringDataUserRepository.java`, `src/main/java/com/conduit/infrastructure/persistence/UserEntity.java`, and `src/main/java/com/conduit/infrastructure/persistence/UserRepositoryAdapter.java`
 - [X] T010 Implement Argon2id hashing and password verification without logging raw credentials in `src/main/java/com/conduit/infrastructure/security/Argon2PasswordHasher.java`
 - [X] T011 Implement JWT signing and verification from an external required secret in `src/main/java/com/conduit/infrastructure/security/JwtTokenService.java`
-- [X] T012 Implement `Authorization: Token <jwt>` parsing and authenticated identity propagation in `src/main/java/com/conduit/interface/http/TokenAuthenticationFilter.java`
-- [X] T013 Implement shared JSON error mapping for 401, 409, and 422 responses in `src/main/java/com/conduit/interface/http/ApiErrorHandler.java`
+- [X] T012 Implement `Authorization: Token <jwt>` parsing and authenticated identity propagation in `src/main/java/com/conduit/api/http/TokenAuthenticationFilter.java`
+- [X] T013 Implement shared JSON error mapping for 401, 409, and 422 responses in `src/main/java/com/conduit/api/http/ApiErrorHandler.java`
 
 **Checkpoint**: The service can construct the User aggregate, persist it, hash and verify credentials, authenticate the exact Token scheme, and serialize contract errors without a Spring annotation in `domain/`.
 
@@ -48,10 +48,10 @@
 
 ### Implementation for User Story 1
 
-- [X] T016 [US1] Implement registration request/response DTOs and the User response mapper in `src/main/java/com/conduit/interface/http/UserResponseMapper.java`
+- [X] T016 [US1] Implement registration request/response DTOs and the User response mapper in `src/main/java/com/conduit/api/http/UserResponseMapper.java`
 - [X] T017 [US1] Implement the registration use case with Argon2id hashing and unique email/username conflict handling in `src/main/java/com/conduit/application/user/RegisterUserUseCase.java`
-- [X] T018 [US1] Implement the anonymous registration route with HTTP 201, 409, 422, and `Content-Type` contract mapping in `src/main/java/com/conduit/interface/http/UserController.java`
-- [ ] T019 [US1] Verify registration against the official Hurl scenarios in `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
+- [X] T018 [US1] Implement the anonymous registration route with HTTP 201, 409, 422, and `Content-Type` contract mapping in `src/main/java/com/conduit/api/http/UserController.java`
+- [X] T019 [US1] Verify registration against the official Hurl scenarios in `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
 
 **Checkpoint**: User Story 1 is independently functional and testable through the HTTP boundary.
 
@@ -69,8 +69,8 @@
 ### Implementation for User Story 2
 
 - [X] T022 [US2] Implement the login use case with generic invalid-credential errors and JWT issuance in `src/main/java/com/conduit/application/user/LoginUserUseCase.java`
-- [X] T023 [US2] Add the login route and response mapping to `src/main/java/com/conduit/interface/http/UserController.java`
-- [ ] T024 [US2] Verify login and invalid-credential scenarios against `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
+- [X] T023 [US2] Add the login route and response mapping to `src/main/java/com/conduit/api/http/UserController.java`
+- [X] T024 [US2] Verify login and invalid-credential scenarios against `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
 
 **Checkpoint**: User Stories 1 and 2 both work independently through HTTP; a member can create an account and authenticate.
 
@@ -88,7 +88,7 @@
 ### Implementation for User Story 3
 
 - [X] T027 [US3] Implement the current-user retrieval use case using the verified token subject in `src/main/java/com/conduit/application/user/GetCurrentUserUseCase.java`
-- [X] T028 [US3] Add the authenticated `GET /api/user` route and 401 mapping to `src/main/java/com/conduit/interface/http/UserController.java`
+- [X] T028 [US3] Add the authenticated `GET /api/user` route and 401 mapping to `src/main/java/com/conduit/api/http/UserController.java`
 
 **Checkpoint**: User Stories 1 through 3 are independently functional; authenticated reads cannot select another account by client-supplied identity.
 
@@ -108,8 +108,8 @@
 - [X] T031 [US4] Implement update request validation for email, username, password, bio, image, and nullable semantics in `src/main/java/com/conduit/api/http/UserController.java`
 - [X] T032 [US4] Implement the current-user update use case with partial changes, Argon2id replacement, and 409 uniqueness conflict handling in `src/main/java/com/conduit/application/user/UpdateCurrentUserUseCase.java`
 - [X] T033 [US4] Add the authenticated `PUT /api/user` route and response/status mapping to `src/main/java/com/conduit/api/http/UserController.java`
-- [X] T034 [US4] Ensure persistence mapping never exposes passwordHash through serializers or logs in `src/main/java/com/conduit/infrastructure/persistence/UserRecord.java` and `src/main/java/com/conduit/api/http/UserResponseMapper.java`
-- [ ] T035 [US4] Verify update persistence, nullable normalization, password policy, and token continuity against `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
+- [X] T034 [US4] Ensure persistence mapping never exposes passwordHash through serializers or logs in `src/main/java/com/conduit/infrastructure/persistence/UserEntity.java` and `src/main/java/com/conduit/api/http/UserResponseMapper.java`
+- [X] T035 [US4] Verify update persistence, nullable normalization, password policy, and token continuity against `conformance/hurl/auth.hurl` and `conformance/hurl/errors_auth.hurl`
 
 **Checkpoint**: All four in-scope endpoints are independently testable through the real HTTP boundary.
 
@@ -117,12 +117,12 @@
 
 **Purpose**: Complete cross-cutting evidence, documentation, and security gates.
 
-- [ ] T036 [P] Add fail-fast startup integration tests for missing JWT secret and database URL in `src/test/java/com/conduit/interface/http/RequiredConfigurationStartupTest.java`
-- [ ] T037 [P] Add log and error redaction tests proving password values, passwordHash, and JWT secrets are absent from observable output in `src/test/java/com/conduit/security/SensitiveDataRedactionTest.java`
-- [ ] T038 Run the complete Hurl API conformance suite and record the command and result in `specs/001-user-authentication/quickstart.md`
-- [ ] T039 Update the API contract and data-model links if implementation paths or response behavior change in `specs/001-user-authentication/contracts/user-authentication.openapi.yaml` and `specs/001-user-authentication/data-model.md`
-- [ ] T040 Validate the quickstart scenarios, all HTTP integration tests, and repository formatting in `specs/001-user-authentication/quickstart.md`
-- [ ] T041 Record implementation evidence and requirement-to-test links in `specs/001-user-authentication/tasks.md`
+- [X] T036 [P] Add fail-fast startup integration tests for missing JWT secret and database URL in `src/test/java/com/conduit/api/http/RequiredConfigurationStartupTest.java`
+- [X] T037 [P] Add log and error redaction tests proving password values, passwordHash, and JWT secrets are absent from observable output in `src/test/java/com/conduit/security/SensitiveDataRedactionTest.java`
+- [X] T038 Run the complete Hurl API conformance suite and record the command and result in `specs/001-user-authentication/quickstart.md`
+- [X] T039 Update the API contract and data-model links if implementation paths or response behavior change in `specs/001-user-authentication/contracts/user-authentication.openapi.yaml` and `specs/001-user-authentication/data-model.md`
+- [X] T040 Validate the quickstart scenarios, all HTTP integration tests, and repository formatting in `specs/001-user-authentication/quickstart.md`
+- [X] T041 Record implementation evidence and requirement-to-test links in `specs/001-user-authentication/tasks.md`
 
 ## Dependencies & Execution Order
 
@@ -172,28 +172,28 @@
 ## Parallel Example: User Story 1
 
 ```text
-Task: T014 [P] [US1] HTTP contract tests in src/test/java/com/conduit/interface/http/UserRegistrationHttpTest.java
+Task: T014 [P] [US1] HTTP contract tests in src/test/java/com/conduit/UserAuthenticationHttpTest.java
 Task: T015 [P] [US1] Registration use-case tests in src/test/java/com/conduit/application/user/RegisterUserUseCaseTest.java
 ```
 
 ## Parallel Example: User Story 2
 
 ```text
-Task: T020 [P] [US2] HTTP login tests in src/test/java/com/conduit/interface/http/UserLoginHttpTest.java
+Task: T020 [P] [US2] HTTP login tests in src/test/java/com/conduit/UserAuthenticationHttpTest.java
 Task: T021 [P] [US2] Login use-case tests in src/test/java/com/conduit/application/user/LoginUserUseCaseTest.java
 ```
 
 ## Parallel Example: User Story 3
 
 ```text
-Task: T025 [P] [US3] Current-user HTTP tests in src/test/java/com/conduit/interface/http/CurrentUserHttpTest.java
+Task: T025 [P] [US3] Current-user HTTP tests in src/test/java/com/conduit/UserAuthenticationHttpTest.java
 Task: T026 [P] [US3] Current-user use-case tests in src/test/java/com/conduit/application/user/GetCurrentUserUseCaseTest.java
 ```
 
 ## Parallel Example: User Story 4
 
 ```text
-Task: T029 [P] [US4] Current-user update HTTP tests in src/test/java/com/conduit/interface/http/UpdateCurrentUserHttpTest.java
+Task: T029 [P] [US4] Current-user update HTTP tests in src/test/java/com/conduit/UserAuthenticationHttpTest.java
 Task: T030 [P] [US4] Current-user update use-case tests in src/test/java/com/conduit/application/user/UpdateCurrentUserUseCaseTest.java
 ```
 
@@ -232,10 +232,17 @@ Task: T030 [P] [US4] Current-user update use-case tests in src/test/java/com/con
 
 **Purpose**: Close the remaining evidence, runtime, security, and documentation gaps found after the initial implementation pass.
 
-- [ ] T042 [US1] Run the registration Hurl scenarios against a configured Conduit runtime and record the 201, 409, 422, and password non-disclosure results per `US1/AC1`, `US1/AC2`, and `US1/AC4` (missing)
-- [ ] T043 [US2] Run the login and invalid-credential Hurl scenarios against a configured Conduit runtime and record the 200, 401, 422, and Token-header results per `US2/AC1` and `US2/AC2` (missing)
-- [ ] T044 [US4] Run the current-user update Hurl scenarios against PostgreSQL and verify persistence, nullable fields, password replacement, and token continuity per `US4/AC1`-`US4/AC5` (missing)
-- [ ] T045 Add fail-fast startup integration tests for missing `JWT_SECRET` and `DATABASE_URL` in `src/test/java/com/conduit/api/http/RequiredConfigurationStartupTest.java` per Constitution IV (missing)
-- [ ] T046 Add observability redaction tests proving password values, password hashes, JWT secrets, and database credentials never appear in logs or errors in `src/test/java/com/conduit/security/SensitiveDataRedactionTest.java` per FR-013 and FR-014 (missing)
-- [ ] T047 Run the complete Hurl suite and update `specs/001-user-authentication/quickstart.md` with the actual command, environment prerequisites, and result per SC-001 and SC-006 (missing)
-- [ ] T048 Record implementation evidence and final requirement-to-test links in `specs/001-user-authentication/tasks.md` and verify the contract/data-model references match the actual JPA package paths per SC-003 and SC-006 (missing)
+- [X] T042 [US1] Run the registration Hurl scenarios against a configured Conduit runtime and record the 201, 409, 422, and password non-disclosure results per `US1/AC1`, `US1/AC2`, and `US1/AC4`
+- [X] T043 [US2] Run the login and invalid-credential Hurl scenarios against a configured Conduit runtime and record the 200, 401, 422, and Token-header results per `US2/AC1` and `US2/AC2`
+- [X] T044 [US4] Run the current-user update Hurl scenarios against PostgreSQL and verify persistence, nullable fields, password replacement, and token continuity per `US4/AC1`-`US4/AC5`
+- [X] T045 Add fail-fast startup integration tests for missing `JWT_SECRET` and `DATABASE_URL` in `src/test/java/com/conduit/api/http/RequiredConfigurationStartupTest.java` per Constitution IV
+- [X] T046 Add observability redaction tests proving password values, password hashes, JWT secrets, and database credentials never appear in logs or errors in `src/test/java/com/conduit/security/SensitiveDataRedactionTest.java` per FR-013 and FR-014
+- [X] T047 Run the complete Hurl suite and update `specs/001-user-authentication/quickstart.md` with the actual command, environment prerequisites, and result per SC-001 and SC-006
+- [X] T048 Record implementation evidence and final requirement-to-test links in `specs/001-user-authentication/tasks.md` and verify the contract/data-model references match the actual JPA package paths per SC-003 and SC-006
+
+## Implementation Evidence
+
+- `mvn clean test`: passed with Java 25.0.4.
+- `HOST=http://localhost:8080 ./conformance/run-api-tests-hurl.sh conformance/hurl/auth.hurl conformance/hurl/errors_auth.hurl`: 40 requests passed against PostgreSQL.
+- Full Hurl collection: 2 of 13 files passed; the remaining 11 target out-of-scope article, comment, profile, feed, favorite, and tag endpoints.
+- HTTP tests: `UserAuthenticationHttpTest`, `RequiredConfigurationStartupTest`, and `SensitiveDataRedactionTest` cover the implemented authentication boundary and configuration/security gates.

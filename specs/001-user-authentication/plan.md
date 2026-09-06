@@ -87,11 +87,11 @@ src/
 │   ├── application/user/
 │   ├── infrastructure/persistence/
 │   ├── infrastructure/security/
-│   └── interface/http/
+│   └── api/http/
 └── test/java/com/conduit/
     ├── domain/user/
     ├── application/user/
-    └── interface/http/
+    └── api/http/
 
 conformance/
 ├── hurl/auth.hurl
@@ -105,7 +105,7 @@ boundaries. `domain/user` contains framework-free account concepts and rules;
   `infrastructure/persistence` owns PostgreSQL repositories, JPA entities, and
   mappings;
 `infrastructure/security` owns Argon2id and JWT ports/adapters; and
-`interface/http` owns request mapping, response serialization, and HTTP status
+`api/http` owns request mapping, response serialization, and HTTP status
 mapping. Tests mirror these boundaries, with mandatory HTTP integration coverage
 for every endpoint.
 

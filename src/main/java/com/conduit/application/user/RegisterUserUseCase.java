@@ -25,7 +25,10 @@ public class RegisterUserUseCase {
     }
 
     static void validatePassword(String password) {
-        if (password == null || password.length() < 8) {
+        if (password == null || password.isBlank()) {
+            throw new UserException("password", "can't be blank", UserException.ErrorKind.VALIDATION);
+        }
+        if (password.length() < 8) {
             throw new UserException("password", "must contain at least 8 characters", UserException.ErrorKind.VALIDATION);
         }
     }

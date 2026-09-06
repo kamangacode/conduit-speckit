@@ -106,19 +106,19 @@ L'API démarrée par défaut sur le port `8080` doit être ciblée explicitement
 
 ```bash
 cd conformance
-HOST=http://localhost:8080/api ./run-api-tests-hurl.sh
+HOST=http://localhost:8080 ./run-api-tests-hurl.sh
 ```
 
 Pour Bruno :
 
 ```bash
-HOST=http://localhost:8080/api ./run-api-tests-bruno.sh
+HOST=http://localhost:8080 ./run-api-tests-bruno.sh
 ```
 
 Les scripts peuvent aussi recevoir des dossiers ou fichiers ciblés. Par exemple :
 
 ```bash
-HOST=http://localhost:8080/api ./run-api-tests-hurl.sh hurl/auth.hurl
+HOST=http://localhost:8080 ./run-api-tests-hurl.sh hurl/auth.hurl
 ```
 
 La documentation détaillée de la collection se trouve dans
@@ -252,7 +252,8 @@ schéma.
   avec `set -a; source .env; set +a` et que `docker compose ps` indique un service
   sain.
 - **Le test Hurl ne trouve pas l'API** : vérifier que l'API tourne sur `8080` et
-  utiliser `HOST=http://localhost:8080/api`.
+  utiliser `HOST=http://localhost:8080`. Les scénarios ajoutent eux-mêmes le
+  préfixe `/api`.
 - **Un changement de contrat casse un scénario** : modifier d'abord la
   spécification et le scénario Hurl concernés, puis adapter l'implémentation et la
   collection Bruno générée.
