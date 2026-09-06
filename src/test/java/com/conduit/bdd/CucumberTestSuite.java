@@ -9,7 +9,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@ConfigurationParameter(key = FEATURES_PROPERTY_NAME, value = "classpath:features/articles.feature")
+@ConfigurationParameter(key = FEATURES_PROPERTY_NAME, value = "target/test-classes/features/articles.feature")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.conduit.bdd")
 public class CucumberTestSuite {
 }

@@ -21,8 +21,9 @@ required independent lanes has no valid result.
 - Hurl `errors_articles.hurl` reached the deferred `/api/articles/feed` assertion and stopped at
 	`404` versus its expected `401`; the feed is out of scope for this feature and the Hurl file was
 	not changed.
-- The requested Cucumber command completed with 0 discovered scenarios, so Cucumber evidence is
-	not claimed. Bruno could not start because the local Node runtime is missing
+- Cucumber scenarios pass when the compiled feature is selected explicitly with
+	`-Dcucumber.features=target/test-classes/features/articles.feature`; the default Maven
+	discovery path reports zero scenarios and is therefore not used. Bruno could not start because the local Node runtime is missing
 	`libllhttp.9.3.dylib`; no Bruno result is claimed.
 
 ## Ambiguities Blocking Test Generation
