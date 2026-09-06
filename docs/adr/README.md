@@ -12,3 +12,4 @@ tools, contracts, architecture, data models, or workflows.
 | [003](003-h2-and-postgresql-test-lanes.md) | Keep H2 and PostgreSQL as separate test lanes | Accepted |
 | [004](004-cucumber-feature-files.md) | Use Cucumber feature files for functional scenarios | Accepted |
 | [005](005-test-tooling-waves-in-sdd-cycle.md) | Add test tooling waves to the SDD cycle | Accepted |
+| [006](006-rest-adapters-under-interfaces.md) | Place REST adapters under interfaces | Accepted |

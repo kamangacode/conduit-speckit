@@ -1,4 +1,4 @@
-package com.conduit.api.http;
+package com.conduit.interfaces.rest;
 
 import com.conduit.application.article.ArticleCommands;
 import com.conduit.application.article.ArticleException;

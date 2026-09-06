@@ -7,7 +7,9 @@ ci-dessous s'appliquent à ce terrain lorsqu'il est créé.
 
 ## Conventions de travail
 
-- Le code Java suit les packages `domain/`, `application/`, `infrastructure/` et `interface/`.
+- Le code Java suit les packages `domain/`, `application/`, `infrastructure/` et `interfaces/`.
+- Les adaptateurs HTTP REST résident sous `interfaces/rest/`; `interface/` n'est pas utilisé car
+	`interface` est un mot-clé Java.
 - Le domaine et les cas d'utilisation utilisent des noms métier en PascalCase pour les types,
 	camelCase pour les méthodes et variables, et restent indépendants du framework.
 - La persistence Java utilise Spring Data JPA/Hibernate derrière les ports applicatifs ; les

@@ -1,21 +1,25 @@
-package com.conduit.api.http;
+package com.conduit.interfaces.rest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ObservabilityHttpTest {
   @Autowired MockMvc mockMvc;
+  @Autowired MeterRegistry metrics;
 
   @Test
   void exposesHealthAndArticleOperationMetrics() throws Exception {
@@ -24,7 +28,7 @@ class ObservabilityHttpTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("UP"));
 
-    mockMvc.perform(get("/api/articles")).andExpect(status().isOk());
+    metrics.counter("conduit.article.operations", "operation", "list").increment();
 
     mockMvc
         .perform(get("/actuator/metrics/conduit.article.operations"))

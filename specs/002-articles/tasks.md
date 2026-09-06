@@ -28,7 +28,7 @@ description: "Task list for article publishing and discovery"
 - [X] T012 Define article persistence port in `src/main/java/com/conduit/application/article/ArticleRepository.java`
 - [X] T013 Implement JPA entities/adapters in `src/main/java/com/conduit/infrastructure/persistence/`
 - [X] T014 Configure article use cases in `src/main/java/com/conduit/application/article/ArticleUseCaseConfiguration.java`
-- [X] T015 Implement HTTP mapping and errors in `src/main/java/com/conduit/api/http/ArticleController.java`, `ArticleResponseMapper.java`, and `ApiErrorHandler.java`
+- [X] T015 Implement HTTP mapping and errors in `src/main/java/com/conduit/interfaces/rest/ArticleController.java`, `ArticleResponseMapper.java`, and `ApiErrorHandler.java`
 - [X] T016 Add architecture boundary test in `src/test/java/com/conduit/architecture/HexagonalArchitectureTest.java`
 - [X] T017 Verify generated fixtures and HTTP tests in `src/test/java/com/conduit/article/`
 
@@ -41,7 +41,7 @@ description: "Task list for article publishing and discovery"
 - [X] T018 [P] [US1] Verify AC-US1 fixtures in `src/test/java/com/conduit/article/ArticleAcceptanceTest.java` and `ArticleFixtures.java`
 - [X] T019 [US1] Implement CRUD, ownership, slug regeneration, and tags in `src/main/java/com/conduit/application/article/`
 - [X] T020 [US1] Implement persistence in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java`
-- [X] T021 [US1] Implement article mutation routes in `src/main/java/com/conduit/api/http/ArticleController.java`
+- [X] T021 [US1] Implement article mutation routes in `src/main/java/com/conduit/interfaces/rest/ArticleController.java`
 - [X] T022 [US1] Run tagged Cucumber AC-US1 scenarios in `src/test/resources/features/articles.feature`
 - [X] T023 [US1] Run PostgreSQL/Testcontainers evidence in `src/test/java/com/conduit/infrastructure/persistence/ArticleRepositoryPostgresTest.java`
 - [X] T024 [US1] Run Hurl evidence in `conformance/hurl/articles.hurl`, `errors_articles.hurl`, and `errors_authorization.hurl`
@@ -56,7 +56,7 @@ description: "Task list for article publishing and discovery"
 
 - [X] T027 [P] [US2] Verify AC-US2 fixtures in `src/test/java/com/conduit/article/ListArticlesUseCaseTest.java` and `ArticleAcceptanceTest.java`
 - [X] T028 [US2] Implement retrieval/list use cases in `src/main/java/com/conduit/application/article/`
-- [X] T029 [US2] Implement filtering and projections in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java` and `src/main/java/com/conduit/api/http/ArticleResponseMapper.java`
+- [X] T029 [US2] Implement filtering and projections in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java` and `src/main/java/com/conduit/interfaces/rest/ArticleResponseMapper.java`
 - [X] T030 [US2] Run tagged Cucumber AC-US2 scenarios in `src/test/resources/features/articles.feature`
 - [X] T031 [US2] Run PostgreSQL filtering/projection evidence in `src/test/java/com/conduit/infrastructure/persistence/ArticleRepositoryPostgresTest.java`
 - [X] T032 [US2] Run Hurl article and scoped error evidence in `conformance/hurl/articles.hurl` and `conformance/hurl/articles-errors-scoped.hurl`
@@ -70,7 +70,7 @@ description: "Task list for article publishing and discovery"
 **Independent test**: Validate limit/offset ordering, totals, invalid values, and a 100-article collection.
 
 - [X] T035 [P] [US3] Verify pagination fixtures in `src/test/java/com/conduit/article/ListArticlesUseCaseTest.java` and `ArticleAcceptanceTest.java`
-- [X] T036 [US3] Implement pagination validation in `src/main/java/com/conduit/domain/article/ArticleQuery.java` and `src/main/java/com/conduit/api/http/ArticleController.java`
+- [X] T036 [US3] Implement pagination validation in `src/main/java/com/conduit/domain/article/ArticleQuery.java` and `src/main/java/com/conduit/interfaces/rest/ArticleController.java`
 - [X] T037 [US3] Implement newest-first persistence queries in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java`
 - [X] T038 [US3] Add the 100-article PostgreSQL proof in `src/test/java/com/conduit/infrastructure/persistence/ArticleRepositoryPostgresTest.java`
 - [X] T039 [US3] Run tagged Cucumber AC-US3 scenarios in `src/test/resources/features/articles.feature`
@@ -87,7 +87,7 @@ description: "Task list for article publishing and discovery"
 
 - [X] T044 [P] [US4] Verify tag fixtures in `src/test/java/com/conduit/article/ListTagsUseCaseTest.java`
 - [X] T045 [US4] Implement normalized tag catalogue in `src/main/java/com/conduit/application/article/`
-- [X] T046 [US4] Implement tag persistence and `GET /api/tags` in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java` and `src/main/java/com/conduit/api/http/ArticleController.java`
+- [X] T046 [US4] Implement tag persistence and `GET /api/tags` in `src/main/java/com/conduit/infrastructure/persistence/ArticleRepositoryAdapter.java` and `src/main/java/com/conduit/interfaces/rest/ArticleController.java`
 - [X] T047 [US4] Run tagged Cucumber AC-US4 scenarios in `src/test/resources/features/articles.feature`
 - [X] T048 [US4] Run PostgreSQL tag evidence in `src/test/java/com/conduit/infrastructure/persistence/ArticleRepositoryPostgresTest.java`
 - [X] T049 [US4] Run Hurl tag evidence in `conformance/hurl/tags.hurl` and `conformance/hurl/articles.hurl`
@@ -97,7 +97,7 @@ description: "Task list for article publishing and discovery"
 ## Phase 7: Polish and Cross-Cutting Concerns
 
 - [X] T052 Add informative JaCoCo reporting and calibration notes in `pom.xml` and `specs/002-articles/research.md`
-- [X] T053 Add Actuator health, structured logs, metrics, and `ObservabilityHttpTest.java` in `src/main/resources/application.yml`, `src/main/java/com/conduit/api/http/ArticleController.java`, and `src/test/java/com/conduit/api/http/`
+- [X] T053 Add Actuator health, structured logs, metrics, and `ObservabilityHttpTest.java` in `src/main/resources/application.yml`, `src/main/java/com/conduit/interfaces/rest/ArticleController.java`, and `src/test/java/com/conduit/interfaces/rest/`
 - [X] T054 Run Gitleaks and record the result in `specs/002-articles/traceability.md`
 - [X] T055 Keep OWASP Dependency-Check documented as deferred in `pom.xml` until `NVD_API_KEY` exists; exclude it from default `verify` and Lefthook
 - [X] T056 Run the reproducible sequence from `specs/002-articles/quickstart.md`, isolating deferred feed/favorite/comment endpoints

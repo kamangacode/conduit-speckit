@@ -1,5 +1,5 @@
 ---
-applyTo: "**/interface/**/*.java, **/controller/**/*.java, specs/**/contracts/**, docs/prd/specifications/backend/**"
+applyTo: "**/interfaces/**/*.java, **/controller/**/*.java, specs/**/contracts/**, docs/prd/specifications/backend/**"
 ---
 
 # Contrats API Conduit
