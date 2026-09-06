@@ -227,3 +227,15 @@ Task: T030 [P] [US4] Current-user update use-case tests in src/test/java/com/con
 - Every task names at least one concrete file path.
 - HTTP integration tasks are mandatory; service-only tests do not satisfy the constitution.
 - No task introduces secrets, real credentials, or raw password values into versioned files.
+
+## Phase 8: Convergence
+
+**Purpose**: Close the remaining evidence, runtime, security, and documentation gaps found after the initial implementation pass.
+
+- [ ] T042 [US1] Run the registration Hurl scenarios against a configured Conduit runtime and record the 201, 409, 422, and password non-disclosure results per `US1/AC1`, `US1/AC2`, and `US1/AC4` (missing)
+- [ ] T043 [US2] Run the login and invalid-credential Hurl scenarios against a configured Conduit runtime and record the 200, 401, 422, and Token-header results per `US2/AC1` and `US2/AC2` (missing)
+- [ ] T044 [US4] Run the current-user update Hurl scenarios against PostgreSQL and verify persistence, nullable fields, password replacement, and token continuity per `US4/AC1`-`US4/AC5` (missing)
+- [ ] T045 Add fail-fast startup integration tests for missing `JWT_SECRET` and `DATABASE_URL` in `src/test/java/com/conduit/api/http/RequiredConfigurationStartupTest.java` per Constitution IV (missing)
+- [ ] T046 Add observability redaction tests proving password values, password hashes, JWT secrets, and database credentials never appear in logs or errors in `src/test/java/com/conduit/security/SensitiveDataRedactionTest.java` per FR-013 and FR-014 (missing)
+- [ ] T047 Run the complete Hurl suite and update `specs/001-user-authentication/quickstart.md` with the actual command, environment prerequisites, and result per SC-001 and SC-006 (missing)
+- [ ] T048 Record implementation evidence and final requirement-to-test links in `specs/001-user-authentication/tasks.md` and verify the contract/data-model references match the actual JPA package paths per SC-003 and SC-006 (missing)
