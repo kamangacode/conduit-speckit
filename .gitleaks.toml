@@ -1,0 +1,8 @@
+title = "Conduit secret scan"
+
+[allowlist]
+description = "Generated build output and local test fixtures are not source secrets."
+paths = [
+  '''target/''',
+  '''\.mvn/wrapper/'''
+]

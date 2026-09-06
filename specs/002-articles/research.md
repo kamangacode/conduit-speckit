@@ -32,3 +32,13 @@
   tooling.
 - **Alternatives considered**: Enable thresholds and operational tools in this feature. Rejected
   because no concrete need or calibration result has been recorded.
+
+## Calibration: Keep JaCoCo Informative
+
+- **Observed need**: The feature now has unit, MockMvc/Cucumber, and PostgreSQL/Testcontainers
+  lanes, but the repository still contains legacy tests and no stable historical coverage baseline.
+- **Observed baseline**: JaCoCo report generation succeeds through `./mvnw verify jacoco:report`;
+  the report is informative and does not enforce a threshold.
+- **Calibration rule**: Keep the report non-blocking until several clean feature cycles establish
+  a baseline and distinguish meaningful regressions from legacy coverage noise. Any future threshold
+  requires a new recorded measurement and an explicit task.

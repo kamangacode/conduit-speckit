@@ -14,3 +14,16 @@ spring:
 conduit:
   jwt:
     secret: ${JWT_SECRET}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+logging:
+  structured:
+    format:
+      console: ecs

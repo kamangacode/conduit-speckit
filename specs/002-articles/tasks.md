@@ -144,3 +144,17 @@ body-free list representations.
 
 Every task has a checkbox, sequential identifier, requirement or success-criterion reference,
 exact path, and executable proof. Hurl remains a separate external contract gate.
+
+## Phase 9: Convergence
+
+**Purpose**: Close the evidence, durability, and scale gaps found by comparing the implemented
+codebase with the feature artifacts.
+
+- [X] T055 [HIGH] [SC-002] Execute and record a feature-scoped Hurl validation in `conformance/hurl/articles-errors-scoped.hurl` for the article, pagination, tag, authentication, validation, and ownership contracts; isolate deferred feed, favorite, and comment requests without modifying the RealWorld fixtures (partial)
+- [ ] T056 [HIGH] [plan: Bruno gate] Run the Hurl-derived Bruno collections in a supported Node/Bun environment and record the synchronization result for `articles`, `pagination`, `tags`, `errors-articles`, and `errors-authorization` (partial)
+- [X] T057 [HIGH] [Constitution III] Complete every FR-* and AC-* row in `specs/002-articles/traceability.md` with the executed Cucumber, JUnit, Testcontainers, Hurl, Bruno, and final status evidence (partial)
+- [X] T058 [HIGH] [SC-002] Add Actuator health, structured article-operation logs, and useful article metrics with `ObservabilityHttpTest` coverage in `pom.xml`, `src/main/resources/application.yml`, and `src/test/java/com/conduit/api/http/ObservabilityHttpTest.java` (missing)
+- [ ] T059 [HIGH] [FR-013] Add `.gitleaks.toml` and persistent OWASP Dependency-Check configuration in the `security` Maven profile, then execute both scans in an environment providing the required tools and NVD credentials without committing secrets (partial)
+- [X] T060 [HIGH] [SC-005] Add and execute a PostgreSQL-backed pagination/filtering test that creates at least 100 articles and proves page size, newest-first ordering, and total count (missing)
+- [X] T061 [MEDIUM] [T052] Record the observed coverage baseline, the reason for retaining an informative-only JaCoCo report, and the calibration criteria in `specs/002-articles/research.md` before enabling any threshold (missing)
+- [ ] T062 [MEDIUM] [SC-001--SC-006] Execute the complete `quickstart.md` sequence in order and record the final reproducible validation result after the Hurl, Bruno, observability, security, scale, and Checkstyle gaps are resolved (partial)
