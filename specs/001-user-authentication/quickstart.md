@@ -33,6 +33,26 @@ Git and must never be committed.
 The implementation must fail at startup when required secrets or database
 configuration are missing, without printing their values.
 
+## Run Java tests
+
+The project has two deliberately separate persistence lanes:
+
+- H2 remains the fast local lane for the regular Spring tests and does not require
+   Docker.
+- `UserRepositoryPostgresTest` starts PostgreSQL 16 with Testcontainers and runs
+   Flyway migrations. It runs when `docker info` succeeds; a container, migration,
+   connection, or assertion failure fails the build.
+
+Run the PostgreSQL lane explicitly:
+
+```bash
+mvn test -Dtest=UserRepositoryPostgresTest
+```
+
+When Docker is unavailable, this one class is reported as skipped with an explicit
+reason; the H2 tests still run. This is not reported as PostgreSQL coverage. CI is
+expected to provide Docker so the PostgreSQL lane executes there.
+
 ## Run the acceptance suite
 
 From the repository root:
