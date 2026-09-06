@@ -43,10 +43,15 @@ synchronization has not run.
 - With Node 22 LTS selected through `/usr/local/opt/node@22/bin`, Bruno `articles`, `pagination`,
 	and `tags` pass (28 requests, 28 assertions). Bruno `errors-articles` still fails on deferred
 	feed/favorite requests outside this feature scope; those fixtures were not modified.
+- The scoped Bruno collection `errors-articles-scoped` now passes 8 requests and 8 assertions,
+	covering article authentication, validation, not-found, and ownership errors without deferred
+	feed/favorite/comment endpoints.
 - Final ordered validation on 2026-09-06: explicit Cucumber selection, `./mvnw clean verify
 	-P integration`, Hurl scoped suites, then Bruno `articles pagination tags`; all executable
 	feature-scoped gates passed. The full quickstart remains partial only because the legacy error
 	collections include deferred iteration-3 endpoints; the NVD scan is explicitly deferred.
+- Final quickstart rerun: Cucumber -> `./mvnw clean verify -P integration` (26 tests) -> Hurl
+	(37 requests) -> Bruno `articles pagination tags errors-articles-scoped`; all stages passed.
 
 ## Ambiguities Blocking Test Generation
 

@@ -1,0 +1,33 @@
+meta {
+  name: Create owned article
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/api/articles
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token_owner}}
+}
+
+body:json {
+  {
+    "article": {
+      "title": "Scoped ownership {{uid}}",
+      "description": "test",
+      "body": "test"
+    }
+  }
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:post-response {
+  bru.setVar("slug", res.body.article.slug);
+}

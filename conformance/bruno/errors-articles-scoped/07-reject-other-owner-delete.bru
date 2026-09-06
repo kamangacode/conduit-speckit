@@ -1,0 +1,23 @@
+meta {
+  name: Reject delete by another user
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{host}}/api/articles/{{slug}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token_other}}
+}
+
+assert {
+  res.status: eq 403
+}
+
+script:post-response {
+  expect(res.body.errors.article[0]).to.eql("forbidden");
+}

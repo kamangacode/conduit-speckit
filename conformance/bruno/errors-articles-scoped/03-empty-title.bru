@@ -1,0 +1,33 @@
+meta {
+  name: Reject empty title
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/api/articles
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token_owner}}
+}
+
+body:json {
+  {
+    "article": {
+      "title": "",
+      "description": "test",
+      "body": "test"
+    }
+  }
+}
+
+assert {
+  res.status: eq 422
+}
+
+script:post-response {
+  expect(res.body.errors.title[0]).to.eql("can't be blank");
+}
