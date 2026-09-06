@@ -1,0 +1,147 @@
+version: 1
+feature: 002-articles
+source: spec.md
+cases:
+  - id: AC-US1-001
+    story: US1
+    requirement: [FR-001, FR-002, FR-010a, FR-013, FR-014]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:3
+    test: com.conduit.article.ArticleAcceptanceTest#creates_article
+    request: POST /api/articles
+    given: an authenticated author and valid article fields
+    when: the author creates an article with optional tags
+    then: status 201; complete article has a unique slug, timestamps, public author, normalized tags, favorited false, and favoritesCount 0
+    external: conformance/hurl/articles.hurl
+  - id: AC-US1-002
+    story: US1
+    requirement: [FR-002a, FR-003, FR-010a, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:10
+    test: com.conduit.article.ArticleAcceptanceTest#updates_owned_article
+    request: PUT /api/articles/{slug}
+    given: an authenticated owner and an existing article
+    when: the author updates accepted fields including the title
+    then: status 200; omitted fields are preserved, changes persist, updatedAt changes, and slug is regenerated uniquely
+    external: conformance/hurl/articles.hurl
+  - id: AC-US1-003
+    story: US1
+    requirement: [FR-004, FR-012, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:17
+    test: com.conduit.article.ArticleAcceptanceTest#deletes_owned_article
+    request: DELETE /api/articles/{slug}
+    given: an authenticated owner and an existing article
+    when: the owner deletes the article
+    then: status 204; later retrieval returns 404 with an article error
+    external: conformance/hurl/articles.hurl
+  - id: AC-US1-004
+    story: US1
+    requirement: [FR-003, FR-010a, FR-012]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:24
+    test: com.conduit.article.ArticleAcceptanceTest#preserves_or_replaces_article_tags
+    request: PUT /api/articles/{slug}
+    given: an authenticated owner and an article with tags
+    when: tagList is omitted, empty, or null
+    then: status 200 preserves or removes tags for omitted or empty input; null tagList returns 422
+    external: conformance/hurl/articles.hurl
+  - id: AC-US2-001
+    story: US2
+    requirement: [FR-005, FR-009, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:31
+    test: com.conduit.article.ArticleAcceptanceTest#gets_article_anonymously
+    request: GET /api/articles/{slug}
+    given: a published article
+    when: an anonymous reader retrieves its slug
+    then: status 200; article includes body, tags, timestamps, public author, favorited false, and favoritesCount 0
+    external: conformance/hurl/articles.hurl
+  - id: AC-US2-002
+    story: US2
+    requirement: [FR-006, FR-009, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:38
+    test: com.conduit.article.ArticleAcceptanceTest#lists_articles_without_body
+    request: GET /api/articles
+    given: published articles
+    when: an anonymous reader lists articles
+    then: status 200; response includes articles and articlesCount and every list article omits body
+    external: conformance/hurl/articles.hurl
+  - id: AC-US2-003
+    story: US2
+    requirement: [FR-006, FR-007, FR-009, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:45
+    test: com.conduit.article.ArticleAcceptanceTest#filters_articles_by_author_and_tag
+    request: GET /api/articles?author={username}&tag={tag}
+    given: published articles with distinct authors and tags
+    when: a reader filters by author or tag
+    then: status 200; only matching articles are returned and articlesCount is the complete filtered count
+    external: conformance/hurl/articles.hurl
+  - id: AC-US2-004
+    story: US2
+    requirement: [FR-006, FR-013, FR-014]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:52
+    test: com.conduit.article.ArticleAcceptanceTest#lists_articles_as_authenticated_reader
+    request: GET /api/articles
+    given: an authenticated reader and published articles
+    when: the reader lists public articles
+    then: status 200; the RealWorld article projection includes the reader-specific favorite state
+    external: conformance/hurl/articles.hurl
+  - id: AC-US3-001
+    story: US3
+    requirement: [FR-008, FR-009, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:59
+    test: com.conduit.article.ArticleAcceptanceTest#returns_newest_first_page
+    request: GET /api/articles?limit=1
+    given: two articles created in sequence
+    when: a reader requests limit 1
+    then: status 200; the newest article is returned and articlesCount remains the total matching count
+    external: conformance/hurl/pagination.hurl
+  - id: AC-US3-002
+    story: US3
+    requirement: [FR-008, FR-009, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:66
+    test: com.conduit.article.ArticleAcceptanceTest#returns_offset_page
+    request: GET /api/articles?limit=1&offset=1
+    given: two articles created in sequence
+    when: a reader requests the second page
+    then: status 200; the next article is returned and articlesCount is unchanged
+    external: conformance/hurl/pagination.hurl
+  - id: AC-US3-003
+    story: US3
+    requirement: [FR-008a, FR-012]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:73
+    test: com.conduit.article.ArticleAcceptanceTest#rejects_invalid_pagination
+    request: GET /api/articles?limit=-1 or offset=-1
+    given: invalid or negative pagination input
+    when: a reader lists articles
+    then: status 422; errors identify limit or offset
+    external: conformance/hurl/errors_articles.hurl
+  - id: AC-US4-001
+    story: US4
+    requirement: [FR-010, FR-010a, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:80
+    test: com.conduit.article.ArticleAcceptanceTest#lists_used_normalized_tags
+    request: GET /api/tags
+    given: published articles with tags
+    when: a reader requests the tag catalogue
+    then: status 200; tags contains every used normalized tag without duplicates
+    external: conformance/hurl/tags.hurl
+  - id: AC-US4-002
+    story: US4
+    requirement: [FR-007, FR-010, FR-013]
+    level: functional-http
+    feature: src/test/resources/features/articles.feature:87
+    test: com.conduit.article.ArticleAcceptanceTest#returns_empty_list_for_unknown_tag
+    request: GET /api/articles?tag={unknown}
+    given: no published article uses a requested tag
+    when: a reader filters the article list
+    then: status 200; articles is empty and articlesCount is 0
+    external: conformance/hurl/articles.hurl

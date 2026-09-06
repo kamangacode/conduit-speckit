@@ -29,7 +29,7 @@ manifest = YAML.load_file(manifest_path)
 cases = manifest.fetch("cases")
 specification = File.read(spec_path)
 case_ids = cases.map { |test_case| test_case.fetch("id") }
-requirement_ids = specification.scan(/FR-\d{3}/).uniq
+requirement_ids = specification.scan(/FR-\d{3}[a-z]?/).uniq
 referenced_requirements = cases.flat_map { |test_case| test_case.fetch("requirement") }.uniq
 
 abort "Duplicate acceptance case IDs" unless case_ids.uniq.length == case_ids.length

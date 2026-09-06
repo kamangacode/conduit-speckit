@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: Conduit article feature contract
+  version: 1.0.0
+paths:
+  /articles:
+    get:
+      summary: List public articles
+      parameters:
+        - { name: tag, in: query, schema: { type: string } }
+        - { name: author, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 0 } }
+        - { name: offset, in: query, schema: { type: integer, minimum: 0 } }
+      responses:
+        '200': { description: Article list without article body }
+        '422': { description: Field-keyed validation errors }
+    post:
+      summary: Create an article
+      security: [{ Token: [] }]
+      responses:
+        '201': { description: Complete article response }
+        '401': { description: Token authentication error }
+        '422': { description: Field-keyed validation errors }
+  /articles/{slug}:
+    get:
+      summary: Retrieve an article
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Complete article response }
+        '404': { description: Article not found }
+    put:
+      summary: Update an owned article
+      security: [{ Token: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Complete updated article response }
+        '401': { description: Token authentication error }
+        '403': { description: Ownership error }
+        '404': { description: Article not found }
+        '422': { description: Field-keyed validation errors }
+    delete:
+      summary: Delete an owned article
+      security: [{ Token: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Article deleted }
+        '401': { description: Token authentication error }
+        '403': { description: Ownership error }
+        '404': { description: Article not found }
+  /tags:
+    get:
+      summary: List used normalized tags
+      responses:
+        '200': { description: Tag list }
+components:
+  securitySchemes:
+    Token:
+      type: apiKey
+      in: header
+      name: Authorization
