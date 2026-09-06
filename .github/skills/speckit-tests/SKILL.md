@@ -82,3 +82,16 @@ Before reporting completion:
 - validate every implemented requirement has internal or external evidence;
 - list gaps separately from covered cases;
 - add the generated test and traceability tasks to `tasks.md`.
+
+## Local pilot command
+
+This repository provides a dependency-free Ruby tool for the first pilot:
+
+```bash
+ruby scripts/functional-tests.rb validate specs/001-user-authentication
+ruby scripts/functional-tests.rb generate specs/001-user-authentication target/generated-test-sources
+```
+
+The generated Java class contains one tagged, intentionally failing JUnit skeleton per case.
+Move or replace each skeleton with a real assertion at the implementation boundary; never make a
+skeleton green by asserting a constant or by adding `@Disabled` permanently.
