@@ -228,6 +228,11 @@
                 </plugins>
             </build>
         </profile>
+        <!--
+            Deferred security gate: activate with -Psecurity only when NVD_API_KEY
+            is available in the environment. It is intentionally excluded from
+            the default verify and Lefthook paths.
+        -->
         <profile>
             <id>security</id>
             <build>

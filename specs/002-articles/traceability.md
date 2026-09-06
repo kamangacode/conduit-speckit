@@ -32,22 +32,21 @@ synchronization has not run.
 	not changed.
 - Cucumber scenarios pass when the compiled feature is selected explicitly with
 	`-Dcucumber.features=target/test-classes/features/articles.feature`; the default Maven
-	discovery path reports zero scenarios and is therefore not used. Bruno could not start because the local Node runtime is missing
-	`libllhttp.9.3.dylib`; no Bruno result is claimed.
+	discovery path reports zero scenarios and is therefore not used.
 - JaCoCo is configured as an informative report only; no coverage threshold is enabled.
 - `./mvnw -Dtest=ObservabilityHttpTest test`: passed; Actuator health and
 	`conduit.article.operations` metrics are reachable over HTTP.
-- `.gitleaks.toml` and the Maven `security` profile now externalize scan configuration. The OWASP
-	probe remains blocked before analysis because the local environment has no NVD API key, and
-	Gitleaks now passes locally: `gitleaks git --config .gitleaks.toml` scanned 32 commits and
-	found no leaks. The OWASP scan remains open because it requires an NVD API key.
+- `.gitleaks.toml` and the Maven `security` profile now externalize scan configuration. Gitleaks
+	now passes locally: `gitleaks git --config .gitleaks.toml` scanned 33 commits and found no leaks.
+	The OWASP/NVD scan is explicitly deferred until `NVD_API_KEY` is supplied; it is not part of
+	default `verify` or Lefthook.
 - With Node 22 LTS selected through `/usr/local/opt/node@22/bin`, Bruno `articles`, `pagination`,
 	and `tags` pass (28 requests, 28 assertions). Bruno `errors-articles` still fails on deferred
 	feed/favorite requests outside this feature scope; those fixtures were not modified.
 - Final ordered validation on 2026-09-06: explicit Cucumber selection, `./mvnw clean verify
 	-P integration`, Hurl scoped suites, then Bruno `articles pagination tags`; all executable
 	feature-scoped gates passed. The full quickstart remains partial only because the legacy error
-	collections include deferred iteration-3 endpoints and the OWASP scan still requires `NVD_API_KEY`.
+	collections include deferred iteration-3 endpoints; the NVD scan is explicitly deferred.
 
 ## Ambiguities Blocking Test Generation
 
