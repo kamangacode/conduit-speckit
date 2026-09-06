@@ -60,10 +60,16 @@ uv tool install specify-cli
 | Layout | Obtention | Fichiers posés |
 |---|---|---|
 | **skills** *(défaut)* | `--integration copilot` | `.github/skills/speckit-<commande>/SKILL.md` |
-| **commands** *(opt-in)* | `--integration copilot --integration-options="--commands"` | `.github/agents/*.agent.md`<br>`.github/prompts/*.prompt.md`<br>merge dans `.vscode/settings.json` |
+| **commands** *(layout alternatif)* | Selon la version du CLI et l'intégration ; vérifier `specify init --help` | `.github/agents/*.agent.md`<br>`.github/prompts/*.prompt.md`<br>éventuellement une configuration VS Code |
 
-**Recommandé pour la formation : `--commands`** — les prompts sont directement lisibles, ce qui
-démystifie l'outil, et les chemins réutilisent les mécanismes Copilot standards.
+Dans le CLI vérifié le 2026-09-06, `specify init --help` ne propose pas `--commands` pour
+Copilot ; il expose seulement l'option générique `--commands-dir` pour les intégrations qui la
+supportent. Ne pas ajouter cette option à une commande sans vérifier son aide locale.
+
+Pour cette installation, les fichiers `.github/skills/speckit-<commande>/SKILL.md` sont donc la
+source réelle des commandes Spec Kit. Ils contiennent les mêmes instructions opératoires qu'un
+prompt, mais sous le layout `skills`. Les prompts ne sont pas générés automatiquement par la
+commande `specify init --here --integration copilot` utilisée dans ce projet.
 
 ---
 
