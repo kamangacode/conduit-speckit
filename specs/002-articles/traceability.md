@@ -5,7 +5,25 @@ Feature: [Article publishing and discovery](spec.md)
 `test-cases.yaml` derives one case from every acceptance scenario. Cucumber is the internal
 business-scenario layer; JUnit covers domain and use-case rules; Testcontainers proves PostgreSQL
 and Flyway; Hurl is the independent RealWorld contract oracle; Bruno is checked only as the Hurl
-derivative. All evidence is `not run` until implementation executes it.
+derivative. Execution evidence is recorded below; a matrix row remains `not run` when one of its
+required independent lanes has no valid result.
+
+## Execution Evidence
+
+- `./mvnw clean test`: passed, 22 tests, 0 failures.
+- `./mvnw clean verify -P integration`: passed, 24 tests, 0 failures; both article and user
+	PostgreSQL/Testcontainers tests executed with Flyway.
+- `./mvnw -Dtest=ArticleAcceptanceTest,ListArticlesUseCaseTest,ListTagsUseCaseTest test`:
+	passed, 9 focused article tests, 0 failures.
+- `HOST=http://localhost:8080 ./conformance/run-api-tests-hurl.sh conformance/hurl/articles.hurl`:
+	passed, 17 requests.
+- The Hurl `pagination.hurl` and `tags.hurl` contracts passed, 11 requests total.
+- Hurl `errors_articles.hurl` reached the deferred `/api/articles/feed` assertion and stopped at
+	`404` versus its expected `401`; the feed is out of scope for this feature and the Hurl file was
+	not changed.
+- The requested Cucumber command completed with 0 discovered scenarios, so Cucumber evidence is
+	not claimed. Bruno could not start because the local Node runtime is missing
+	`libllhttp.9.3.dylib`; no Bruno result is claimed.
 
 ## Ambiguities Blocking Test Generation
 
