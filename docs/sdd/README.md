@@ -61,6 +61,44 @@ gens.
 
 ---
 
+## La stratégie de tests fonctionnels
+
+Le projet Java utilise plusieurs couches de preuve, chacune avec un rôle précis :
+
+- **JUnit 5 / Spring Boot Test** teste le domaine, les cas d'utilisation et les intégrations
+   Spring ciblées.
+- **Cucumber** porte les scénarios métier dans des feature files Gherkin, générés à partir des
+   critères d'acceptation et tagués avec les identifiants `AC-*` et `FR-*`.
+- **Testcontainers** vérifie les migrations et la persistence contre PostgreSQL réel lorsque
+   Docker est disponible.
+- **Hurl** vérifie le contrat HTTP RealWorld avec un oracle externe indépendant.
+- **Bruno** fournit une exécution interactive de la collection dérivée de Hurl ; Hurl reste la
+   source de vérité.
+
+> Hurl et Cucumber peuvent donc tester des parcours proches, mais avec deux objectifs différents :
+>
+> - **Cucumber vérifie que l’implémentation répond aux scénarios métier du projet.**
+> - **Hurl vérifie que l’API respecte un contrat externe indépendant.**
+
+Le rythme par feature est :
+
+```text
+spec.md
+   -> test-cases.yaml
+   -> feature files Cucumber + matrice de traçabilité
+   -> Cucumber / H2 : feedback fonctionnel rapide
+   -> JUnit : domaine et application
+   -> Testcontainers / PostgreSQL : persistence réelle
+   -> Hurl : conformité externe
+   -> Bruno : exécution secondaire synchronisée avec Hurl
+```
+
+Le détail des outils, commandes et critères de sortie se trouve dans
+[`08-outillage-java.md`](08-outillage-java.md). Le pilote actuellement exécuté est
+[`user-authentication.feature`](../../src/test/resources/features/user-authentication.feature).
+
+---
+
 ## Les six paliers
 
 | # | Palier | Ce qui s'apprend | Ce qui se produit | Effort |

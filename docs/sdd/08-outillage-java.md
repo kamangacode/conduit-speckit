@@ -51,7 +51,55 @@ Les tests de domaine restent indépendants de Spring et de la base.
 **Preuve.** `./mvnw test` exécute les tests unitaires rapidement ; les tests d'intégration sont
 identifiables et exécutables par une commande dédiée.
 
-### 3. Testcontainers
+### 3. Cucumber JVM et les feature files
+
+**Rôle.** Décrire les scénarios fonctionnels en Gherkin, dans un format lisible par l'équipe et
+exécutable par le build Java. Chaque scénario porte les identifiants `AC-*` et `FR-*` issus de la
+specification.
+
+**État.** Pilote implémenté avec Cucumber JVM `7.20.1`, Spring Boot, JUnit Platform et MockMvc.
+Le feature file pilote se trouve dans
+[`src/test/resources/features/user-authentication.feature`](../../src/test/resources/features/user-authentication.feature)
+et ses steps dans `src/test/java/com/conduit/bdd/`.
+
+**Implémentation attendue.** La génération part de `spec.md` puis de `test-cases.yaml` : un cas
+d'acceptation devient un scénario `.feature`, avec ses tags, son Given/When/Then, ses fixtures et
+son lien dans `traceability.md`. Une ambiguïté de statut, de donnée ou de comportement doit
+produire une clarification, pas une hypothèse silencieuse.
+
+**Preuve.** Exécuter :
+
+```bash
+mvn test -Dtest=CucumberTestSuite -Dcucumber.plugin=json:target/cucumber.json
+```
+
+Le rapport JSON est la preuve au niveau scénario. Cucumber utilise H2 pour le feedback rapide ;
+les comportements PostgreSQL sont vérifiés par la lane Testcontainers séparée.
+
+### 4. Hurl
+
+**Rôle.** Vérifier le contrat HTTP RealWorld avec un oracle externe, indépendant des tests et du
+code générés dans ce dépôt.
+
+**État.** La suite est présente dans `conformance/hurl/` et constitue la référence externe du
+contrat. Elle ne doit pas être remplacée par les scénarios Cucumber.
+
+**Implémentation attendue.** Démarrer PostgreSQL et l'application, attendre un endpoint de santé,
+puis exécuter `conformance/run-api-tests-hurl.sh`. Conserver les scénarios Hurl hors du code de
+production et ne pas modifier l'oracle pour faire passer l'implémentation.
+
+**Complémentarité avec Cucumber.** Hurl et Cucumber peuvent donc tester des parcours proches,
+mais avec deux objectifs différents :
+
+- **Cucumber vérifie que l'implémentation répond aux scénarios métier du projet.**
+- **Hurl vérifie que l'API respecte un contrat externe indépendant.**
+
+Cucumber est la couche fonctionnelle lisible et traçable vers `spec.md`. Hurl est la couche de
+conformité indépendante qui protège contre les tests tautologiques. Une fonctionnalité n'est pas
+considérée complètement éprouvée si seule l'une de ces deux preuves existe lorsque le périmètre
+RealWorld la couvre.
+
+### 5. Testcontainers
 
 **Rôle.** Exécuter les tests d'intégration contre le même moteur PostgreSQL que celui attendu en
 production, plutôt que de dépendre d'une base locale ou de H2.
@@ -66,7 +114,7 @@ au démarrage et injecter la `DataSource` de test via une configuration dédiée
 **Preuve.** Une suite d'intégration démarre sur une machine sans PostgreSQL local et valide les
 migrations Flyway ainsi que les repositories JPA.
 
-### 4. ArchUnit
+### 6. ArchUnit
 
 **Rôle.** Vérifier automatiquement les frontières de l'architecture hexagonale que le compilateur
 et les tests fonctionnels ne garantissent pas : le domaine ne dépend ni de Spring, ni de JPA, ni
@@ -81,7 +129,7 @@ Documenter toute exception dans la règle ou dans un ADR.
 **Preuve.** Un test ArchUnit échoue lorsqu'une entité du domaine importe une annotation Spring ou
 qu'un cas d'utilisation importe un contrôleur.
 
-### 5. Spotless + Checkstyle ou Error Prone
+### 7. Spotless + Checkstyle ou Error Prone
 
 **Rôle.** Rendre le formatage et les règles de qualité déterministes, sans discussion de style
 dans les revues.
@@ -99,7 +147,7 @@ justifiées et identiques en local et en CI.
 **Preuve.** Un fichier mal formaté ou une règle bloquante fait échouer le build de façon
 reproductible.
 
-### 6. JaCoCo
+### 8. JaCoCo
 
 **Rôle.** Mesurer la couverture de lignes et de branches afin de repérer les zones non testées.
 
@@ -112,7 +160,7 @@ code métier plutôt qu'un objectif arbitraire global.
 **Limite.** La couverture de lignes ne prouve pas la conformité au contrat RealWorld ; elle
 complète les tests de comportement, elle ne les remplace pas.
 
-### 7. CI GitHub Actions
+### 9. CI GitHub Actions
 
 **Rôle.** Rejouer le build sur un runner propre et vérifier que les résultats locaux ne dépendent
 pas d'artefacts générés ou d'une configuration personnelle.
@@ -125,20 +173,18 @@ Un second job peut lancer la conformité Hurl contre PostgreSQL.
 
 **Preuve.** Une pull request ne peut pas être considérée verte sur la seule base d'un build local.
 
-### 8. Vérification de conformité Hurl / Bruno
+### 10. Vérification de conformité Bruno
 
-**Rôle.** Tester le contrat HTTP RealWorld avec un juge externe aux tests écrits par
-l'implémentation.
+**Rôle.** Fournir une exécution interactive ou alternative de la collection de conformité HTTP.
 
-**État.** Les collections de conformance sont présentes dans `conformance/` ; leur exécution CI
-reste à brancher et à maintenir comme gate.
+**État.** La collection est présente dans `conformance/bruno/` et dérivée des fichiers Hurl. Hurl
+reste la source de vérité ; Bruno ne définit pas un troisième contrat.
 
-**Implémentation attendue.** Démarrer PostgreSQL et l'application, attendre un endpoint de santé,
-puis exécuter `conformance/run-api-tests-hurl.sh` ou la collection Bruno. Conserver les scénarios
-hors du code de production.
+**Implémentation attendue.** Utiliser `conformance/run-api-tests-bruno.sh` pour l'exécution Bruno
+ou ouvrir la collection dans l'application Bruno. Vérifier sa synchronisation avec Hurl en CI.
 
-**Preuve.** Les invariants critiques sont vérifiés, notamment `Authorization: Token`, les erreurs
-422 et l'absence de `body` dans les listes d'articles.
+**Preuve.** Les invariants critiques restent ceux de Hurl, notamment `Authorization: Token`, les
+erreurs 422 et l'absence de `body` dans les listes d'articles.
 
 ## Sécurité et dépendances
 
@@ -233,15 +279,17 @@ l'architecture, la conformité et la CI soient fiables.
 
 1. Maven Wrapper et Java 25 vérifié.
 2. JUnit 5 avec séparation unitaires/intégration.
-3. Spotless et une première règle de qualité mesurée.
-4. Workflow CI avec `./mvnw verify`.
+3. Premier feature file Cucumber généré depuis `test-cases.yaml`.
+4. Spotless et une première règle de qualité mesurée.
+5. Workflow CI avec `./mvnw verify`.
 
 ### Vague 2 — rendre le comportement fiable
 
 1. Testcontainers PostgreSQL.
 2. Flyway exécuté dans les tests d'intégration.
 3. ArchUnit sur les frontières hexagonales.
-4. Gate de conformité Hurl/Bruno.
+4. Gate Cucumber sur les scénarios métier.
+5. Gate de conformité Hurl, puis vérification de synchronisation Bruno.
 
 ### Vague 3 — rendre le projet durable
 
@@ -250,6 +298,24 @@ l'architecture, la conformité et la CI soient fiables.
 3. Actuator, logs structurés et métriques utiles.
 4. Adoption sélective des nice-to-haves selon un problème observé.
 
+## Rythme de test par feature
+
+Pour chaque feature, le cycle recommandé est le suivant :
+
+1. Écrire ou clarifier les scénarios observables dans `spec.md`.
+2. Générer `test-cases.yaml`, puis les feature files Cucumber et la matrice de traçabilité.
+3. Exécuter les scénarios Cucumber sur H2 pour obtenir un feedback fonctionnel rapide.
+4. Exécuter les tests d'application et de domaine JUnit.
+5. Exécuter les tests PostgreSQL/Testcontainers lorsque Docker est disponible ; un échec du
+	conteneur casse le build.
+6. Exécuter Hurl comme oracle externe indépendant.
+7. Vérifier Bruno contre Hurl, sans en faire une nouvelle source de vérité.
+8. Mettre à jour les preuves et les statuts dans `traceability.md`.
+
+La séparation est intentionnelle : Cucumber prouve que le comportement métier décrit par le
+projet est implémenté ; Hurl prouve que le contrat externe est respecté. Les deux peuvent
+exercer le même endpoint sans être redondants, car ils ne partagent pas le même oracle.
+
 ## Critères de sortie du socle
 
 - [ ] Un poste vierge lance `./mvnw verify` avec Java 25.
@@ -257,7 +323,9 @@ l'architecture, la conformité et la CI soient fiables.
 - [ ] Les tests d'intégration utilisent PostgreSQL et Flyway, sans dépendre de H2.
 - [ ] Une violation d'architecture échoue via ArchUnit.
 - [ ] La CI exécute le même build que le développeur et publie les rapports.
-- [ ] La conformité Hurl/Bruno est exécutée sur chaque pull request pertinente.
+- [ ] Les feature files Cucumber sont exécutés et publiés avec leurs tags `AC-*` et `FR-*`.
+- [ ] La conformité Hurl est exécutée sur chaque pull request pertinente.
+- [ ] Bruno reste synchronisé avec Hurl et n'introduit pas de contrat divergent.
 - [ ] Les vulnérabilités et secrets suivent une politique d'exception traçable.
 - [ ] Chaque outil adopté possède un fichier de configuration réel et une commande documentée.
 

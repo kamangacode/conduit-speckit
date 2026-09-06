@@ -49,6 +49,18 @@ Run the PostgreSQL lane explicitly:
 mvn test -Dtest=UserRepositoryPostgresTest
 ```
 
+Run the Cucumber feature-file lane explicitly:
+
+```bash
+mvn test -Dtest=CucumberTestSuite -Dcucumber.plugin=json:target/cucumber.json
+```
+
+The pilot feature is
+[`src/test/resources/features/user-authentication.feature`](../../src/test/resources/features/user-authentication.feature).
+Its two scenarios use the H2 test lane and are tagged with the corresponding
+`AC-*` and `FR-*` identifiers. The JSON report is the scenario-level execution
+evidence; Surefire currently reports the Cucumber engine itself as zero tests.
+
 When Docker is unavailable, this one class is reported as skipped with an explicit
 reason; the H2 tests still run. This is not reported as PostgreSQL coverage. CI is
 expected to provide Docker so the PostgreSQL lane executes there.

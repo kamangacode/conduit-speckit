@@ -6,6 +6,7 @@ cases:
     story: US1
     requirement: [FR-001, FR-003, FR-004]
     level: functional-http
+    feature: src/test/resources/features/user-authentication.feature:4
     test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
     request: POST /api/users
     given: no member uses the email or username
@@ -36,6 +37,7 @@ cases:
     story: US1
     requirement: [FR-013, FR-014]
     level: security
+    feature: src/test/resources/features/user-authentication.feature:4
     test: com.conduit.UserAuthenticationHttpTest#registersLogsInReadsAndUpdatesCurrentUserWithoutPassword
     request: POST /api/users
     given: registration succeeds
@@ -86,6 +88,7 @@ cases:
     story: US3
     requirement: [FR-012]
     level: security
+    feature: src/test/resources/features/user-authentication.feature:15
     test: com.conduit.UserAuthenticationHttpTest#rejectsMissingOrBearerAuthentication
     request: GET /api/user
     given: no token or an invalid token is supplied

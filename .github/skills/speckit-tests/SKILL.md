@@ -30,6 +30,7 @@ Create or update these files under the feature directory:
 ```text
 test-cases.yaml       # one stable AC-* case per acceptance scenario
 traceability.md       # requirement -> case -> internal/external evidence
+src/test/resources/features/*.feature  # readable executable scenarios when Cucumber is used
 ```
 
 Each case must include:
@@ -42,6 +43,7 @@ Each case must include:
 - Given/When/Then behavior;
 - expected status, headers, fields, and forbidden fields where applicable;
 - expected internal test location and independent external oracle when one exists.
+- feature-file location when the Java project uses Cucumber.
 
 ## Generation rules
 
@@ -70,6 +72,8 @@ For the Java/Spring Boot project, generate or update tests at the boundary descr
 - external contract: Hurl, kept outside generated Java tests.
 
 Generated JUnit tests must carry `@Tag("AC-USx-yyy")` and the covered `@Tag("FR-###")` values.
+Generated Cucumber scenarios must carry the same `@AC-*` and `@FR-*` tags and be executable by
+the project's Cucumber runner.
 Use deterministic fixtures and never place real secrets or raw passwords in versioned files.
 
 ## Completion gate
