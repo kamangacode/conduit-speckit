@@ -5,6 +5,10 @@ spring:
     password:
   flyway:
     enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
 conduit:
   jwt:
     secret: test-secret-test-secret-test-secret-test-secret

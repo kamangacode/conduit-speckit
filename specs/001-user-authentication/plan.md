@@ -18,8 +18,8 @@ suite.
 
 **Language/Version**: Java 25 LTS
 
-**Primary Dependencies**: Spring Boot, Maven, Argon2id password hashing, and
-JJWT for JWT signing and verification
+**Primary Dependencies**: Spring Boot, Spring Data JPA/Hibernate, Maven, Argon2id
+password hashing, and JJWT for JWT signing and verification
 
 **Storage**: PostgreSQL target, accessed only through infrastructure adapters
 
@@ -102,7 +102,8 @@ conformance/
 **Structure Decision**: Use the repository constitution's hexagonal package
 boundaries. `domain/user` contains framework-free account concepts and rules;
 `application/user` owns registration, login, current-user, and update use cases;
-`infrastructure/persistence` owns PostgreSQL repositories and mappings;
+  `infrastructure/persistence` owns PostgreSQL repositories, JPA entities, and
+  mappings;
 `infrastructure/security` owns Argon2id and JWT ports/adapters; and
 `interface/http` owns request mapping, response serialization, and HTTP status
 mapping. Tests mirror these boundaries, with mandatory HTTP integration coverage

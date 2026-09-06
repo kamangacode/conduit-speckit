@@ -7,6 +7,10 @@ spring:
     password: ${DATABASE_PASSWORD:}
   flyway:
     enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 conduit:
   jwt:
     secret: ${JWT_SECRET}

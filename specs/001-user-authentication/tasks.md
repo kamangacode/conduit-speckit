@@ -27,7 +27,7 @@
 - [X] T006 [P] Define user persistence and lookup ports in `src/main/java/com/conduit/application/user/UserRepository.java`
 - [X] T007 [P] Define password hashing and JWT ports in `src/main/java/com/conduit/application/user/PasswordHasher.java` and `src/main/java/com/conduit/application/user/TokenService.java`
 - [X] T008 Create the PostgreSQL users schema migration with unique email and username constraints in `src/main/resources/db/migration/V1__create_users.sql`
-- [X] T009 Implement the infrastructure user repository and persistence mapping in `src/main/java/com/conduit/infrastructure/persistence/UserRepositoryAdapter.java` and `src/main/java/com/conduit/infrastructure/persistence/UserRecord.java`
+- [X] T009 Implement the Spring Data JPA user repository, Hibernate entity, and persistence mapping in `src/main/java/com/conduit/infrastructure/persistence/SpringDataUserRepository.java`, `src/main/java/com/conduit/infrastructure/persistence/UserEntity.java`, and `src/main/java/com/conduit/infrastructure/persistence/UserRepositoryAdapter.java`
 - [X] T010 Implement Argon2id hashing and password verification without logging raw credentials in `src/main/java/com/conduit/infrastructure/security/Argon2PasswordHasher.java`
 - [X] T011 Implement JWT signing and verification from an external required secret in `src/main/java/com/conduit/infrastructure/security/JwtTokenService.java`
 - [X] T012 Implement `Authorization: Token <jwt>` parsing and authenticated identity propagation in `src/main/java/com/conduit/interface/http/TokenAuthenticationFilter.java`
