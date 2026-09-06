@@ -106,7 +106,7 @@ body-free list representations.
 
 **Purpose**: Complete tooling wave 3 without unrequested nice-to-haves.
 
-- [ ] T048 Add an informative JaCoCo report for SC-003 in `pom.xml` and prove it with `./mvnw verify jacoco:report`; record the baseline without a blocking threshold in `specs/002-articles/traceability.md`
+- [X] T048 Add an informative JaCoCo report for SC-003 in `pom.xml` and prove it with `./mvnw verify jacoco:report`; record the baseline without a blocking threshold in `specs/002-articles/traceability.md`
 - [ ] T049 Add Gitleaks configuration and a validation task for FR-013 in `.gitleaks.toml`, then prove it with `gitleaks git --config .gitleaks.toml`
 - [ ] T050 Add dependency scanning for FR-013 in `pom.xml`, then prove it with `./mvnw org.owasp:dependency-check-maven:check`
 - [ ] T051 Add Actuator health, structured logs, and useful article-operation metrics for SC-002 in `pom.xml` and `src/main/resources/application.yml`, then prove health and metrics with `./mvnw test -Dtest=ObservabilityHttpTest` in `src/test/java/com/conduit/api/http/ObservabilityHttpTest.java`

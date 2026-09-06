@@ -25,6 +25,7 @@ required independent lanes has no valid result.
 	`-Dcucumber.features=target/test-classes/features/articles.feature`; the default Maven
 	discovery path reports zero scenarios and is therefore not used. Bruno could not start because the local Node runtime is missing
 	`libllhttp.9.3.dylib`; no Bruno result is claimed.
+- JaCoCo is configured as an informative report only; no coverage threshold is enabled.
 
 ## Ambiguities Blocking Test Generation
 
