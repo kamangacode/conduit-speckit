@@ -39,8 +39,11 @@ synchronization has not run.
 	`conduit.article.operations` metrics are reachable over HTTP.
 - `.gitleaks.toml` and the Maven `security` profile now externalize scan configuration. The OWASP
 	probe remains blocked before analysis because the local environment has no NVD API key, and
-	Gitleaks is not installed locally; scan execution remains open rather than being reported as
-	passed.
+	Gitleaks now passes locally: `gitleaks git --config .gitleaks.toml` scanned 32 commits and
+	found no leaks. The OWASP scan remains open because it requires an NVD API key.
+- With Node 22 LTS selected through `/usr/local/opt/node@22/bin`, Bruno `articles`, `pagination`,
+	and `tags` pass (28 requests, 28 assertions). Bruno `errors-articles` still fails on deferred
+	feed/favorite requests outside this feature scope; those fixtures were not modified.
 
 ## Ambiguities Blocking Test Generation
 
