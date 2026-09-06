@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 -> 1.0.1
+- Version change: 1.0.1 -> 1.1.0
 - Modified principles: none; the five principles below establish the initial
 	project-specific governance rules.
 - Added sections: RealWorld contract, framework isolation, HTTP integration
@@ -9,6 +9,8 @@ Sync Impact Report
 - Follow-up TODOs: determine the original ratification date.
 - Amendment: update the pedagogical implementation baseline from Java 21 to
 	Java 25 LTS.
+- Amendment: standardize Spring Data JPA/Hibernate as the persistence adapter
+	for the Java terrain.
 -->
 
 # Conduit Constitution
@@ -56,7 +58,9 @@ the package boundaries `domain/`, `application/`, `infrastructure/`, and
 `interface/`. The PRD and RealWorld specification MUST be linked from any
 feature specification that changes an API contract. Any deliberate divergence
 from those sources MUST be documented and covered by a contract or integration
-test.
+test. Persistence MUST use Spring Data JPA/Hibernate behind application ports;
+JPA entities and repositories MUST remain in `infrastructure/`, and Flyway MUST
+remain the schema migration source of truth.
 
 ## Development Workflow
 
@@ -77,4 +81,4 @@ PATCH for clarifications that do not change obligations. Each review MUST record
 evidence for the applicable gates; a missing test or unexplained contract
 divergence blocks completion.
 
-**Version**: 1.0.1 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
