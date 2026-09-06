@@ -1,50 +1,78 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: scaffold -> 1.0.0
+- Modified principles: none; the five principles below establish the initial
+	project-specific governance rules.
+- Added sections: RealWorld contract, framework isolation, HTTP integration
+	testing, externalized secrets, password hashing, and workflow constraints.
+- Removed sections: none.
+- Follow-up TODOs: determine the original ratification date.
+-->
+
+# Conduit Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. RealWorld Contract Supremacy
+The PRD at `docs/prd/PRD-conduit.md` and the RealWorld specification are the
+source of truth. When an implementation preference conflicts with the contract,
+the contract MUST win. HTTP authentication MUST use `Authorization: Token <jwt>`;
+validation errors MUST return HTTP 422 with `{"errors":{"champ":["message"]}}`;
+article list endpoints MUST omit `body`; unauthenticated `following` and
+`favorited` MUST be `false`; and responses MUST use
+`Content-Type: application/json; charset=utf-8`.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Framework-Isolated Domain
+Code under `domain/` MUST be plain Java and MUST NOT contain Spring or JPA
+annotations, including `@Entity`, `@Service`, and `@Autowired`. Domain logic
+MUST remain testable without a Spring context. Persistence and framework mapping
+MUST live under `infrastructure/`.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Real HTTP Integration Tests
+Every endpoint MUST have an integration test that traverses the HTTP layer using
+MockMvc, WebTestClient, or an equivalent real application boundary. Unit tests
+of services or test-only wiring do not satisfy this requirement. Contract,
+authentication, validation, serialization, and status-code behavior MUST be
+verified at the HTTP boundary.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Externalized Secrets and Fail-Fast Configuration
+JWT secrets and database URLs MUST come from external configuration and MUST NOT
+be hard-coded. Application startup MUST fail when a required configuration value
+is absent. Failure messages and logs MUST identify the missing setting without
+printing its value.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Hashed Passwords Only
+Passwords MUST be hashed with Argon2id or BCrypt before persistence. The raw
+`password` value MUST NOT appear in any response, log, exception, or validation
+message. API DTOs and serializers MUST make accidental password exposure
+impossible or fail a dedicated integration test.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Additional Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+The implementation terrain is Java 21, Spring Boot, and Maven. Code MUST respect
+the package boundaries `domain/`, `application/`, `infrastructure/`, and
+`interface/`. The PRD and RealWorld specification MUST be linked from any
+feature specification that changes an API contract. Any deliberate divergence
+from those sources MUST be documented and covered by a contract or integration
+test.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Changes MUST follow the repository's Spec Kit cycle:
+`/speckit-constitution` -> `/speckit-specify` -> `/speckit-clarify` when needed
+-> `/speckit-plan` -> `/speckit-tasks` -> `/speckit-implement` ->
+`/speckit-converge`. Reviews MUST verify contract invariants, domain/framework
+separation, HTTP integration coverage, secret handling, and password non-
+disclosure before a change is considered complete.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+This constitution supersedes conflicting local implementation preferences. Every
+amendment MUST update the Sync Impact Report, explain its compatibility impact,
+and update affected specifications, plans, tasks, and tests before
+implementation. Versioning follows semantic versioning: MAJOR for removed or
+redefined obligations, MINOR for new or materially expanded obligations, and
+PATCH for clarifications that do not change obligations. Each review MUST record
+evidence for the applicable gates; a missing test or unexplained contract
+divergence blocks completion.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
