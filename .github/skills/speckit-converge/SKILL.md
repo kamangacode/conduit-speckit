@@ -129,6 +129,12 @@ Load only the minimal necessary context from each artifact:
 - Task IDs (to compute the next ID and next phase number)
 - Descriptions, phase grouping, and referenced file paths
 
+**From test evidence (when present):**
+
+- `test-cases.yaml`: AC-* cases, FR-* references, and generated test locations;
+- `traceability.md`: one final row for every FR-* and AC-* with Cucumber, optional
+  JUnit, optional Testcontainers, Hurl, and execution-status columns.
+
 **From constitution (if not an unfilled template):**
 
 - Principle names and MUST/SHOULD normative statements
@@ -140,6 +146,9 @@ Create an internal model (do not echo raw artifacts):
 - **Requirements inventory**: one stable key per FR-### / SC-### / user-story acceptance
   scenario (e.g. `US1/AC2`), plus the plan decisions and constitution principles that
   impose buildable obligations.
+- **Evidence inventory**: one key per FR-* and AC-* entry, including its Cucumber
+  scenario, optional JUnit and Testcontainers proof, Hurl proof, and current execution
+  status. A missing, blocked, or failed required proof is a convergence finding.
 - **Code-scope map**: from the file paths named in `plan.md` and `tasks.md`, plus a keyword
   search for the concepts each requirement describes, derive the set of source files and
   components in scope for assessment. Bound the assessment to these — do **not** infer

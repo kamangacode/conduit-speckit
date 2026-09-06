@@ -214,12 +214,13 @@ l'agent ?**
 
 | Étape | Durée |
 |---|---|
-| `/speckit.specify` | |
-| `/speckit.clarify` + réponses | |
+| `/speckit-specify` | |
+| `/speckit-clarify` + réponses | |
 | Revue humaine de la spec (gate) | |
-| `/speckit.plan` | |
-| `/speckit.tasks` | |
-| `/speckit.taskstoissues` | |
+| `/speckit-plan` | |
+| `/speckit-tests` | |
+| `/speckit-tasks` | |
+| `/speckit-taskstoissues` | |
 | Cloud agent → PR | |
 | Copilot code review | |
 | CI de conformité | |

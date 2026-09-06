@@ -141,6 +141,8 @@ specs/
     ├── data-model.md        Le modèle de données
     ├── contracts/           Contrats d'API / d'interface
     ├── checklists/          Checklists de qualité
+        ├── test-cases.yaml      Cas AC dérivés des scénarios d'acceptation
+        ├── traceability.md      Matrice des preuves et statuts d'exécution
     └── tasks.md             Les unités de travail ordonnées
 ```
 
@@ -152,21 +154,22 @@ specs/
 
 | Ordre | Commande | Rôle | Produit |
 |---|---|---|---|
-| 0 | `/speckit.constitution` | Principes gouvernant le projet | `.specify/memory/constitution.md` |
-| 1 | `/speckit.specify` | Le **quoi** et le **pourquoi** | `spec.md` + une branche de feature |
-| 2 | `/speckit.plan` | Le **comment** | `plan.md`, `research.md`, `data-model.md`, `contracts/` |
-| 3 | `/speckit.tasks` | L'**ordre** | `tasks.md` |
-| 4 | `/speckit.implement` | L'exécution | Code + tests |
-| 5 | `/speckit.converge` | Confronte le code aux artefacts, **rouvre du travail** | Ajouts dans `tasks.md` |
+| 0 | `/speckit-constitution` | Principes gouvernant le projet | `.specify/memory/constitution.md` |
+| 1 | `/speckit-specify` | Le **quoi** et le **pourquoi** | `spec.md` + une branche de feature |
+| 2 | `/speckit-clarify` | Les ambiguïtés qui bloquent une preuve | `spec.md` enrichie |
+| 3 | `/speckit-plan` | Le **comment** | `plan.md`, `research.md`, `data-model.md`, `contracts/` |
+| 4 | `/speckit-tests` | Cas AC, scénarios Cucumber et matrice de preuve | `test-cases.yaml`, feature files, `traceability.md` |
+| 5 | `/speckit-tasks` | L'**ordre** | `tasks.md` |
+| 6 | `/speckit-implement` | L'exécution | Code + preuves |
+| 7 | `/speckit-converge` | Confronte le code aux artefacts, **rouvre du travail** | Ajouts dans `tasks.md` |
 
 ### Les commandes optionnelles
 
 | Commande | Quand | Rôle |
 |---|---|---|
-| `/speckit.clarify` | Après `specify`, **avant** `plan` | Questions ciblées sur ce qui est sous-spécifié |
-| `/speckit.analyze` | Après `tasks` | Cohérence **entre** spec, plan et tasks |
-| `/speckit.checklist` | À la demande | Checklist de validation qualité |
-| `/speckit.taskstoissues` | Après `tasks` | `tasks.md` → issues GitHub |
+| `/speckit-analyze` | Après `tasks` | Cohérence **entre** spec, plan et tasks |
+| `/speckit-checklist` | À la demande | Checklist de validation qualité |
+| `/speckit-taskstoissues` | Après `tasks` | `tasks.md` → issues GitHub |
 
 > **`/speckit.clarify` est la commande la plus rentable du lot et celle qu'on saute le plus
 > souvent.** Sans elle, l'agent comble les silences de la spec par des hypothèses
@@ -177,23 +180,25 @@ specs/
 ## L'ordre recommandé
 
 ```
-/speckit.constitution     ← une fois par projet, puis enrichi à chaque leçon apprise
+/speckit-constitution     ← une fois par projet, puis enrichi à chaque leçon apprise
         ↓
-/speckit.specify          ← une fois par feature
+/speckit-specify          ← une fois par feature
         ↓
-/speckit.clarify          ← NE PAS SAUTER
+/speckit-clarify          ← NE PAS SAUTER
         ↓
    [gate humain]          ← ABSENT DE SPECKIT — à ajouter soi-même
         ↓
-/speckit.plan
+/speckit-plan
         ↓
-/speckit.tasks
+/speckit-tests             ← cas AC, Cucumber et matrice initiale
         ↓
-/speckit.analyze          ← cohérence entre artefacts
+/speckit-tasks
         ↓
-/speckit.implement
+/speckit-analyze           ← cohérence entre artefacts
         ↓
-/speckit.converge         ← rouvre ce qui manque
+/speckit-implement
+        ↓
+/speckit-converge          ← rouvre ce qui manque
         ↓
    [juge externe]         ← ABSENT DE SPECKIT — suite de conformité, CI
 ```

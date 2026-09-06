@@ -72,9 +72,12 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Generate dependency graph showing user story completion order
    - Create parallel execution examples per user story
    - Validate task completeness (each user story has all needed tasks, independently testable)
-   - Derive functional-test cases from every acceptance scenario before implementation. Use the
-     `speckit-tests` workflow and include `test-cases.yaml`, generated test sources, fixtures, and
-     `traceability.md` in the task breakdown.
+   - Require artifacts from the completed `speckit-tests` workflow: `test-cases.yaml`, generated
+     Cucumber feature files, JUnit tests or fixtures, and `traceability.md`. If they are absent or
+     contain blocking ambiguities, STOP and instruct the user to run `/speckit-tests` or
+     `/speckit-clarify`.
+   - Include a validation task for each configured tool. Each task must have an ID, cite one or
+     more FR-* or AC-* identifiers, name a real file path, and emit executable evidence.
 
 4. **Generate tasks.md**: Use TASKS_TEMPLATE_CONTENT (from the JSON output above) as the structure. For compatibility with older setup scripts that omit TASKS_TEMPLATE_CONTENT, read TASKS_TEMPLATE instead. Fill with:
    - Correct feature name from plan.md
@@ -82,8 +85,11 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
    - Phase 3+: One phase per user story (in priority order from spec.md)
    - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks
-   - For every user story, place functional-test generation and test execution tasks before the
-     corresponding implementation tasks.
+   - For every user story, use this mandatory order: validate generated AC cases; generate or
+     verify Cucumber feature files; generate or verify JUnit tests and fixtures; implement;
+     execute Cucumber; execute PostgreSQL/Testcontainers when Docker is available; execute Hurl;
+     verify Bruno synchronization; update `traceability.md`. Generation happens before
+     implementation; execution happens after implementation. Cucumber must pass before Hurl.
    - Final Phase: Polish & cross-cutting concerns
    - All tasks must follow the strict checklist format (see Task Generation Rules below)
    - Clear file paths for each task
@@ -145,8 +151,18 @@ The tasks.md should be immediately executable - each task must be specific enoug
 **CRITICAL**: Tasks MUST be organized by user story to enable independent implementation and testing.
 
 **Tests are mandatory for this project**: every acceptance scenario must have a generated case,
-an executable test or an independent external oracle, and a traceability entry. API user stories
-must include HTTP functional tests before implementation tasks.
+an executable Cucumber scenario, and a traceability entry. API user stories must also include a
+separate Hurl contract task. Hurl is never replaced by Cucumber.
+
+For Java features, task waves are ordered as follows:
+
+1. Reproducible build: Maven Wrapper, Java 25 verification, JUnit unit/integration separation,
+  Cucumber generation, formatting and a measured quality signal, then CI `./mvnw verify`.
+2. Reliable behavior: Testcontainers PostgreSQL with Flyway, ArchUnit, Cucumber gate, Hurl gate,
+  then Bruno synchronization.
+3. Durable operation: informative JaCoCo, secret and dependency scanning, and actionable
+  observability. A nice-to-have or blocking coverage threshold requires an observed need and,
+  for JaCoCo, a recorded calibration.
 
 ### Checklist Format (REQUIRED)
 

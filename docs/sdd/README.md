@@ -30,7 +30,7 @@ Trois choix de conception en découlent :
    n'a pas été écrite par l'agent. Elle passe ou elle ne passe pas. C'est l'antidote au test
    tautologique que produit une IA qui note sa propre copie.
 3. **Le cycle tourne trois fois, pas une.** Périmètre volontairement restreint (auth +
-   articles) pour boucler `constitution → specify → plan → tasks → implement → converge` en
+   articles) pour boucler `constitution → specify → clarify → plan → tests → tasks → implement → converge` en
    entier, plusieurs fois. Boucler une seule fois sur un gros périmètre n'apprend rien : les
    erreurs de méthode se paient trop tard pour être corrigées.
 
@@ -43,12 +43,12 @@ Dans `conduit-fullstack`, un pipeline qui est **déjà** du SDD a été construi
 | Ce qui existe déjà | L'équivalent SpecKit |
 |---|---|
 | `.claude/rules/` — conventions versionnées avec le code | **Pas un seul fichier** : constitution (décisions) + `.github/instructions/` scopées (frappes) + presets (réutilisation). Voir [palier 3, §3.6](03-speckit.md) |
-| `/dev` → `frame` (cadrage, tier) | `/speckit.specify` (le *quoi* et le *pourquoi*) |
-| `/dev` → `spec` (acceptance criteria) | `/speckit.specify` + `/speckit.clarify` |
-| `/dev` → `analyze` (analyse technique F-full) | `/speckit.plan` (+ `research.md`) |
-| `/dev` → `plan` (items cochables) | `/speckit.tasks` |
-| `/dev` → `implement` | `/speckit.implement` |
-| `/dev` → `review` + `validate` | `/speckit.analyze` + `/speckit.checklist` |
+| `/dev` → `frame` (cadrage, tier) | `/speckit-specify` (le *quoi* et le *pourquoi*) |
+| `/dev` → `spec` (acceptance criteria) | `/speckit-specify` + `/speckit-clarify` |
+| `/dev` → `analyze` (analyse technique F-full) | `/speckit-plan` (+ `research.md`) |
+| `/dev` → `plan` (items cochables) | `/speckit-tests` + `/speckit-tasks` |
+| `/dev` → `implement` | `/speckit-implement` |
+| `/dev` → `review` + `validate` | `/speckit-analyze` + `/speckit-checklist` |
 | `docs/adr/` — décisions tracées | `plan.md` (« every technology choice has documented rationale ») |
 | `artifacts/frames/`, `specs/`, `plans/` | `specs/NNN-feature/` |
 | Les gates utilisateur obligatoires entre steps | **Le point faible de SpecKit — à remettre soi-même** |

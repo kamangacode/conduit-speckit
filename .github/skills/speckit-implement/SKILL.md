@@ -157,9 +157,14 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
    - **File-based coordination**: Tasks affecting the same files must run sequentially
    - **Validation checkpoints**: Verify each phase completion before proceeding
-   - **Generated tests first**: Create or validate the functional tests and fixtures before
-     implementing the behavior they exercise. A generated test may fail at this point; that is
-     expected and must be recorded, not removed or weakened.
+   - **Generated tests first**: Create or validate acceptance cases, Cucumber feature files, and
+     JUnit tests and fixtures before implementing the behavior they exercise. A generated test
+     may fail at this point; that is expected and must be recorded, not removed or weakened.
+   - **Execution gates after implementation**: Run Cucumber business scenarios first, then the
+     PostgreSQL/Testcontainers and Flyway lane when Docker is available, then Hurl against the
+     external RealWorld contract, then the Bruno synchronization check. Do not run Hurl before
+     the relevant Cucumber scenarios. When Docker is available, a container startup failure is a
+     failed gate; only an unavailable Docker daemon permits retaining the H2 feedback lane alone.
 
 7. Implementation execution rules:
    - **Setup first**: Initialize project structure, dependencies, configuration
@@ -181,8 +186,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
-   - Confirm every acceptance case in `test-cases.yaml` has an executed internal test or an
-     independent external conformance test, with the result recorded in `traceability.md`
+   - Confirm every FR-* and AC-* in `test-cases.yaml` and `spec.md` has a final matrix row in
+     `traceability.md` naming its Cucumber test, optional JUnit test, optional Testcontainers
+     proof, Hurl proof, and execution status.
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 

@@ -129,30 +129,31 @@ specs/                       # vide au départ : une feature = un dossier NNN-sl
 
 ## 3.3 — Les dix commandes
 
-Cinq forment le cycle principal, cinq sont optionnelles mais font une grande partie de la
+Six forment le cycle principal, quatre sont optionnelles mais font une grande partie de la
 valeur réelle.
 
 ### Le cycle principal
 
 | Ordre | Commande | Rôle | Produit |
 |---|---|---|---|
-| 0 | `/speckit.constitution` | Les principes gouvernant le projet | `.specify/memory/constitution.md` |
-| 1 | `/speckit.specify` | Le **quoi** et le **pourquoi** | `specs/NNN-slug/spec.md` + une branche |
-| 2 | `/speckit.plan` | Le **comment** : stack, architecture, contrats | `plan.md`, `research.md`, `data-model.md`, `contracts/` |
-| 3 | `/speckit.tasks` | L'**ordre** : unités exécutables | `tasks.md` |
-| 4 | `/speckit.implement` | L'exécution | Le code et ses tests |
-| 5 | `/speckit.converge` | Confronte le code réel aux artefacts et **rouvre du travail** | Ajouts dans `tasks.md` |
+| 0 | `/speckit-constitution` | Les principes gouvernant le projet | `.specify/memory/constitution.md` |
+| 1 | `/speckit-specify` | Le **quoi** et le **pourquoi** | `specs/NNN-slug/spec.md` + une branche |
+| 2 | `/speckit-clarify` | Les ambiguïtés qui bloquent une preuve | `spec.md` enrichie |
+| 3 | `/speckit-plan` | Le **comment** : stack, architecture, contrats et stratégie de preuve | `plan.md`, `research.md`, `data-model.md`, `contracts/` |
+| 4 | `/speckit-tests` | Cas AC et scénarios Cucumber dérivés | `test-cases.yaml`, feature files, `traceability.md` |
+| 5 | `/speckit-tasks` | L'**ordre** : unités exécutables | `tasks.md` |
+| 6 | `/speckit-implement` | L'exécution et les gates | Le code et les preuves d'exécution |
+| 7 | `/speckit-converge` | Confronte le code réel aux artefacts et **rouvre du travail** | Ajouts dans `tasks.md` |
 
 ### Les commandes optionnelles — là où se joue la qualité
 
 | Commande | Quand | Pourquoi elle compte |
 |---|---|---|
-| `/speckit.clarify` | Après `specify`, **avant** `plan` | Pose des questions ciblées sur ce qui est sous-spécifié. **La commande la plus rentable de tout le lot.** |
-| `/speckit.analyze` | Après `tasks` | Vérifie la cohérence **entre** spec, plan et tasks. Détecte le fonctionnel qui a fui dans le plan. |
-| `/speckit.checklist` | À la demande | Génère une checklist de validation qualité. Le support d'un gate outillé. |
-| `/speckit.taskstoissues` | Après `tasks` | Convertit `tasks.md` en issues GitHub → cloud agent. Voir [palier 5](05-industrialisation.md). |
+| `/speckit-analyze` | Après `tasks` | Vérifie la cohérence **entre** spec, plan et tasks. Détecte le fonctionnel qui a fui dans le plan. |
+| `/speckit-checklist` | À la demande | Génère une checklist de validation qualité. Le support d'un gate outillé. |
+| `/speckit-taskstoissues` | Après `tasks` | Convertit `tasks.md` en issues GitHub → cloud agent. Voir [palier 5](05-industrialisation.md). |
 
-> **La commande à ne jamais sauter est `/speckit.clarify`.** Sans elle, l'agent comble les
+> **La commande à ne jamais sauter est `/speckit-clarify`.** Sans elle, l'agent comble les
 > silences de la spec par des hypothèses **silencieuses** — et une hypothèse silencieuse
 > devient du code non testé, parce qu'aucun critère d'acceptation ne la couvre. Avec elle, les
 > silences deviennent des questions explicites auxquelles un humain répond. C'est le mécanisme
@@ -178,7 +179,7 @@ git checkout -b throwaway/speckit-tour
 Puis, dans le chat Copilot en **mode Agent** :
 
 ```
-/speckit.constitution
+/speckit-constitution
 
 Projet d'entraînement, Java 25 LTS + Spring Boot. Principes :
 1. Toute API a un contrat OpenAPI avant son implémentation.
@@ -187,14 +188,14 @@ Projet d'entraînement, Java 25 LTS + Spring Boot. Principes :
 ```
 
 ```
-/speckit.specify
+/speckit-specify
 
 Un endpoint de santé qui indique si l'application est prête à servir du trafic,
 en distinguant l'application démarrée de ses dépendances joignables.
 ```
 
-Puis `/speckit.clarify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`,
-`/speckit.implement`, `/speckit.converge`.
+Puis `/speckit-clarify`, `/speckit-plan`, `/speckit-tests`, `/speckit-tasks`,
+`/speckit-analyze`, `/speckit-implement`, `/speckit-converge`.
 
 ### Ce qu'il faut observer — l'exercice réel
 

@@ -64,6 +64,14 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Evaluate gates (ERROR if violations unjustified)
    - Phase 0: Generate research.md (resolve all NEEDS CLARIFICATION)
    - Phase 1: Generate data-model.md, contracts/, quickstart.md
+   - Add `## Test strategy and tooling waves`. For each wave, map the relevant
+     FR-* and AC-* identifiers, Spec Kit stage, executable evidence, and the
+     affected real file paths. Use the project test lanes: H2 for fast feedback,
+     PostgreSQL/Testcontainers when Docker is available, Cucumber for internal
+     business scenarios, Hurl for the independent external contract, and Bruno
+     only as a synchronization check derived from Hurl.
+   - Record JaCoCo as informative until a measured calibration justifies a
+     blocking threshold. Do not add a nice-to-have tool without an observed need.
    - Re-evaluate Constitution Check post-design
 
 ## Mandatory Post-Execution Hooks

@@ -15,7 +15,7 @@ ci-dessous s'appliquent à ce terrain lorsqu'il est créé.
 - Les commits utilisent Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`)
 	et expliquent le pourquoi lorsque le changement n'est pas évident.
 - Le cycle Spec Kit est `/speckit-constitution` -> `/speckit-specify` ->
-	`/speckit-clarify` si nécessaire -> `/speckit-plan` -> `/speckit-tasks` ->
+	`/speckit-clarify` -> `/speckit-plan` -> `/speckit-tests` -> `/speckit-tasks` ->
 	`/speckit-implement` -> `/speckit-converge`.
 
 ## Invariants du contrat RealWorld

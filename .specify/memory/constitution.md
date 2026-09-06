@@ -1,8 +1,8 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.1 -> 1.1.0
-- Modified principles: none; the five principles below establish the initial
-	project-specific governance rules.
+- Version change: 1.1.0 -> 1.2.0
+- Modified principles: Development Workflow now includes evidence generation and
+	the ordered Cucumber, PostgreSQL, Hurl, and Bruno gates.
 - Added sections: RealWorld contract, framework isolation, HTTP integration
 	testing, externalized secrets, password hashing, and workflow constraints.
 - Removed sections: none.
@@ -66,10 +66,18 @@ remain the schema migration source of truth.
 
 Changes MUST follow the repository's Spec Kit cycle:
 `/speckit-constitution` -> `/speckit-specify` -> `/speckit-clarify` when needed
--> `/speckit-plan` -> `/speckit-tasks` -> `/speckit-implement` ->
+-> `/speckit-plan` -> `/speckit-tests` -> `/speckit-tasks` -> `/speckit-implement` ->
 `/speckit-converge`. Reviews MUST verify contract invariants, domain/framework
 separation, HTTP integration coverage, secret handling, and password non-
 disclosure before a change is considered complete.
+
+`/speckit-tests` MUST derive an `AC-*` case from every acceptance scenario and an executable
+Cucumber scenario tagged with that `AC-*` and its `FR-*` references. Cucumber validates internal
+business behavior. Hurl MUST remain the independent external RealWorld-contract gate and run only
+after Cucumber; Bruno synchronization follows Hurl. H2 remains the quick feedback lane. When
+Docker is available, PostgreSQL/Testcontainers and Flyway MUST run; a container startup failure
+blocks completion. The final `traceability.md` MUST contain a matrix for each FR-* and AC-* with
+its Cucumber, optional JUnit, optional Testcontainers, Hurl evidence, and execution status.
 
 ## Governance
 This constitution supersedes conflicting local implementation preferences. Every
@@ -81,4 +89,4 @@ PATCH for clarifications that do not change obligations. Each review MUST record
 evidence for the applicable gates; a missing test or unexplained contract
 divergence blocks completion.
 
-**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
+**Version**: 1.2.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06

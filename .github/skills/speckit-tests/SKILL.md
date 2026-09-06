@@ -9,9 +9,10 @@ metadata:
 
 # Generate functional-test evidence
 
-Generate the functional-test artifacts for the current feature before implementation. The
-feature's `spec.md` remains the source of truth; generated files are derived evidence and must
-never invent behavior that is absent from the specification or an explicit contract.
+Generate the functional-test artifacts for the current feature after planning and before task
+generation. The feature's `spec.md` remains the source of truth; generated files are derived
+evidence and must never invent behavior that is absent from the specification or an explicit
+contract.
 
 ## Inputs
 
@@ -45,12 +46,24 @@ Each case must include:
 - expected internal test location and independent external oracle when one exists.
 - feature-file location when the Java project uses Cucumber.
 
+## Acceptance-case derivation
+
+For every acceptance scenario, create exactly one stable `AC-USx-yyy` case. Derive exactly one
+executable Cucumber scenario from that case and tag it with `@AC-USx-yyy` and every referenced
+`@FR-###` tag. Preserve the scenario's Given/When/Then behavior and its observable status,
+fields, headers, and forbidden fields.
+
+When a scenario does not specify an observable contract detail, record it in `traceability.md`
+under `## Ambiguities blocking test generation` with the source text and the unanswered question.
+Do not infer a status, authorization rule, fixture, persistence semantic, or response field.
+Do not emit a Cucumber scenario for a blocked case until `/speckit-clarify` resolves it.
+
 ## Generation rules
 
 1. Preserve the acceptance scenario's observable behavior; do not translate it into an
    implementation detail.
 2. Refuse to silently fill in missing statuses, fields, fixtures, authorization behavior, or
-   persistence semantics. Emit a clarification marker in the generated report instead.
+   persistence semantics. Emit a blocking ambiguity in `traceability.md` instead.
 3. Generate negative assertions for security and privacy requirements, not only happy paths.
 4. Prefer one case per acceptance scenario. Do not collapse distinct failure modes into a generic
    `returns an error` test.
@@ -71,9 +84,11 @@ For the Java/Spring Boot project, generate or update tests at the boundary descr
 - architecture: ArchUnit;
 - external contract: Hurl, kept outside generated Java tests.
 
+the project's Cucumber runner.
 Generated JUnit tests must carry `@Tag("AC-USx-yyy")` and the covered `@Tag("FR-###")` values.
 Generated Cucumber scenarios must carry the same `@AC-*` and `@FR-*` tags and be executable by
-the project's Cucumber runner.
+the project's Cucumber runner. Keep Cucumber scenarios separate from Hurl: Cucumber proves the
+project's business scenarios; Hurl proves the independent external RealWorld contract.
 Use deterministic fixtures and never place real secrets or raw passwords in versioned files.
 
 ## Completion gate
@@ -85,7 +100,10 @@ Before reporting completion:
 - validate every acceptance scenario has one case;
 - validate every implemented requirement has internal or external evidence;
 - list gaps separately from covered cases;
-- add the generated test and traceability tasks to `tasks.md`.
+- initialize the final traceability matrix with one row for every FR-* and AC-* identifier. Each
+   row must name the Cucumber scenario, optional JUnit test, optional Testcontainers proof, Hurl
+   proof, and an execution status of `not run`, `passed`, `failed`, `blocked`, or `not applicable`.
+- do not edit `tasks.md`; `/speckit-tasks` consumes these generated artifacts.
 
 ## Local pilot command
 

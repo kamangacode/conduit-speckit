@@ -36,6 +36,22 @@
 
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
+## Test Strategy and Tooling Waves
+
+Map each wave to the relevant FR-* and AC-* identifiers, the Spec Kit stage, real file paths,
+and executable evidence. Keep internal Cucumber business scenarios distinct from the independent
+Hurl external-contract suite.
+
+| Wave | Requirements and cases | Spec Kit stage | Evidence |
+|---|---|---|---|
+| Reproducible build | [FR-*/AC-*] | plan, tests, tasks | Maven Wrapper, Java version, unit/integration separation, generated Cucumber features, quality measurement, CI `./mvnw verify` |
+| Reliable behavior | [FR-*/AC-*] | tests, implement | Cucumber, Testcontainers PostgreSQL with Flyway, ArchUnit, Hurl, Bruno synchronization |
+| Durable operation | [FR-*/AC-*] | plan, implement, converge | informative JaCoCo, justified security/dependency scans, useful metrics and structured logs |
+
+H2 remains the fast feedback lane. When Docker is available, PostgreSQL/Testcontainers must run
+and a container startup failure is a validation failure. A nice-to-have and a blocking JaCoCo
+threshold require an observed need and recorded calibration.
+
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*

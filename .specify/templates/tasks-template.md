@@ -7,11 +7,17 @@ description: "Task list template for feature implementation"
 
 **Input**: Design documents from `/specs/[###-feature-name]/`
 
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Prerequisites**: plan.md (required), spec.md (required for user stories), test-cases.yaml, traceability.md, research.md, data-model.md, contracts/
 
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+
+**Required test order**: Validate generated AC cases -> generate or verify Cucumber feature files
+-> generate or verify JUnit tests and fixtures -> implement -> run Cucumber -> run
+PostgreSQL/Testcontainers and Flyway when Docker is available -> run Hurl -> verify Bruno
+synchronization -> update traceability.md. Cucumber verifies internal business scenarios; Hurl
+verifies the independent external contract and cannot be replaced.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -80,21 +86,30 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Test Generation for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **NOTE: Generate AC cases, Cucumber scenarios, and JUnit fixtures first. Record unresolved
+> behavior as an ambiguity; do not invent it.**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T010 [P] [US1] Validate AC cases for FR-### in specs/[feature]/test-cases.yaml
+- [ ] T011 [P] [US1] Generate tagged Cucumber scenarios for AC-### and FR-### in src/test/resources/features/[feature].feature
+- [ ] T012 [P] [US1] Generate JUnit tests and deterministic fixtures for AC-### in src/test/java/[path]/[Name]Test.java
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T013 [P] [US1] Create [Entity1] model in src/models/[entity1].py
+- [ ] T014 [P] [US1] Create [Entity2] model in src/models/[entity2].py
+- [ ] T015 [US1] Implement [Service] in src/services/[service].py (depends on T013, T014)
+- [ ] T016 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T017 [US1] Add validation and error handling in src/[location]/[file].py
+
+### Validation for User Story 1
+
+- [ ] T018 [US1] Run tagged Cucumber scenarios for AC-### in src/test/resources/features/[feature].feature
+- [ ] T019 [US1] Run PostgreSQL/Testcontainers and Flyway evidence for AC-### in src/test/java/[path]/[Name]PostgresTest.java
+- [ ] T020 [US1] Run independent Hurl contract evidence for AC-### in conformance/hurl/[feature].hurl
+- [ ] T021 [US1] Verify the derived Bruno collection remains synchronized in conformance/bruno/[feature]/
+- [ ] T022 [US1] Record the execution evidence for FR-### and AC-### in specs/[feature]/traceability.md
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -179,10 +194,10 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-- Tests (if included) MUST be written and FAIL before implementation
+- Acceptance cases, Cucumber scenarios, and JUnit fixtures are generated before implementation
 - Models before services
 - Services before endpoints
-- Core implementation before integration
+- Core implementation before execution gates: Cucumber, Testcontainers/Flyway, Hurl, Bruno, traceability
 - Story complete before moving to next priority
 
 ### Parallel Opportunities

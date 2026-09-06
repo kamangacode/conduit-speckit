@@ -146,7 +146,7 @@ contrats de la feature dans [`specs/001-user-authentication/contracts/`](specs/0
 Le dépôt suit la séquence suivante :
 
 ```text
-constitution -> specify -> clarify (si nécessaire) -> plan -> tasks -> implement -> converge
+constitution -> specify -> clarify -> plan -> tests -> tasks -> implement -> converge
 ```
 
 ### 1. Constitution
@@ -173,20 +173,27 @@ La commande `/speckit-plan` traduit la spécification en conception technique :
 architecture, modèle de données, contrats, interfaces, dépendances et stratégie
 de test. Les décisions structurantes sont documentées dans les ADR appropriés.
 
-### 5. Tasks
+### 5. Tests
+
+La commande `/speckit-tests` dérive chaque scénario d'acceptation en cas `AC-*`, en scénario
+Cucumber tagué avec `AC-*` et `FR-*`, et initialise la matrice de traçabilité. Elle signale les
+ambiguïtés sans inventer de comportement. Cucumber prouve les scénarios métier internes; Hurl
+reste l'oracle de contrat externe indépendant.
+
+### 6. Tasks
 
 La commande `/speckit-tasks` produit des tâches ordonnées et traçables. Chaque tâche
 se rattache à une exigence, une décision ou une preuve attendue. Les tâches restent
 dans `specs/<feature>/tasks.md` et leur état représente l'avancement réel.
 
-### 6. Implement
+### 7. Implement
 
 La commande `/speckit-implement` exécute les tâches en respectant le plan. Le code
 est organisé en couches hexagonales : `domain`, `application`, `infrastructure` et
 adaptateurs HTTP. Le domaine et les cas d'utilisation restent indépendants de
 Spring ; JPA et les repositories Spring restent dans l'infrastructure.
 
-### 7. Converge
+### 8. Converge
 
 La commande `/speckit-converge` compare les artefacts avec le code et les preuves
 réellement disponibles. Elle ajoute les tâches manquantes au lieu de déclarer la
@@ -198,6 +205,8 @@ Pour la feature d'authentification courante :
 
 - [`spec.md`](specs/001-user-authentication/spec.md) : intention et exigences ;
 - [`plan.md`](specs/001-user-authentication/plan.md) : conception technique ;
+- [`test-cases.yaml`](specs/001-user-authentication/test-cases.yaml) : cas d'acceptation dérivés ;
+- [`traceability.md`](specs/001-user-authentication/traceability.md) : matrice de preuves ;
 - [`tasks.md`](specs/001-user-authentication/tasks.md) : tâches et état ;
 - [`data-model.md`](specs/001-user-authentication/data-model.md) : modèle de données ;
 - [`contracts/`](specs/001-user-authentication/contracts/) : contrats API ;
@@ -220,15 +229,16 @@ Dans GitHub Copilot, les commandes utilisent le séparateur `-` configuré dans
 /speckit-specify
 /speckit-clarify
 /speckit-plan
+/speckit-tests
 /speckit-tasks
 /speckit-implement
 /speckit-converge
 ```
 
 Pour une nouvelle feature, suivre la séquence constitution, specification,
-clarification éventuelle, plan, tâches, implémentation, puis convergence. Avant de
-conclure, vérifier les tests automatisés, la conformité HTTP et la traçabilité des
-exigences.
+clarification, plan, tests, tâches, implémentation, puis convergence. Avant de conclure,
+exécuter Cucumber, PostgreSQL/Testcontainers lorsque Docker est disponible, Hurl, puis la
+synchronisation Bruno, et mettre à jour la matrice de traçabilité.
 
 ## Architecture d'exécution
 
