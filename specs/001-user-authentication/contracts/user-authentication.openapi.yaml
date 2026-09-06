@@ -1,0 +1,175 @@
+openapi: 3.1.0
+info:
+  title: Conduit User Authentication Contract
+  version: 1.0.0
+servers:
+  - url: /api
+paths:
+  /users:
+    post:
+      operationId: createUser
+      summary: Register a member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/UserResponse'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /users/login:
+    post:
+      operationId: login
+      summary: Authenticate a member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /user:
+    get:
+      operationId: getCurrentUser
+      summary: Get the authenticated member
+      security:
+        - Token: []
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      operationId: updateCurrentUser
+      summary: Update the authenticated member
+      security:
+        - Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  securitySchemes:
+    Token:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Use the literal `Token <jwt>` prefix, never `Bearer`.
+  schemas:
+    NewUserRequest:
+      type: object
+      required: [user]
+      properties:
+        user:
+          type: object
+          required: [username, email, password]
+          properties:
+            username: { type: string, minLength: 1 }
+            email: { type: string, minLength: 1 }
+            password: { type: string, minLength: 8 }
+    LoginUserRequest:
+      type: object
+      required: [user]
+      properties:
+        user:
+          type: object
+          required: [email, password]
+          properties:
+            email: { type: string, minLength: 1 }
+            password: { type: string, minLength: 1 }
+    UpdateUserRequest:
+      type: object
+      required: [user]
+      properties:
+        user:
+          type: object
+          properties:
+            email: { type: [string, 'null'], minLength: 1 }
+            username: { type: [string, 'null'], minLength: 1 }
+            password: { type: [string, 'null'], minLength: 8 }
+            bio: { type: [string, 'null'] }
+            image: { type: [string, 'null'], format: uri }
+    UserResponse:
+      type: object
+      required: [user]
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      type: object
+      required: [email, token, username, bio, image]
+      additionalProperties: false
+      properties:
+        email: { type: string }
+        token: { type: string }
+        username: { type: string }
+        bio: { type: [string, 'null'] }
+        image: { type: [string, 'null'], format: uri }
+    ErrorResponse:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+  responses:
+    UserResponse:
+      description: User response with no password fields.
+      headers:
+        Content-Type:
+          schema: { type: string, const: application/json; charset=utf-8 }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserResponse'
+    ValidationError:
+      description: Validation failure.
+      headers:
+        Content-Type:
+          schema: { type: string, const: 'application/json; charset=utf-8' }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ConflictError:
+      description: Email or username is already in use.
+      headers:
+        Content-Type:
+          schema: { type: string, const: 'application/json; charset=utf-8' }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnauthorizedError:
+      description: Missing, malformed, or invalid authentication.
+      headers:
+        Content-Type:
+          schema: { type: string, const: 'application/json; charset=utf-8' }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
