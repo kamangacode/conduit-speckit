@@ -133,3 +133,14 @@ description: "Task list for article publishing and discovery"
 - [X] T059 [HIGH] Run and record a Bruno article-scoped error/authorization validation that excludes deferred feed, favorite, and comment endpoints while preserving the external fixtures in `conformance/bruno/` and recording the result in `specs/002-articles/traceability.md` (partial)
 - [X] T060 [MEDIUM] Execute and document the complete reproducible quickstart sequence using the explicit compiled Cucumber feature, PostgreSQL/Testcontainers, scoped Hurl contracts, supported Bruno collections, and the deferred NVD gate in `specs/002-articles/quickstart.md` and `specs/002-articles/traceability.md` (partial)
 - [X] T061 [MEDIUM] Reconcile the generated task checklist and execution-status evidence with the already implemented code and passing gates in `specs/002-articles/tasks.md` and `specs/002-articles/traceability.md` without changing `spec.md` or `plan.md` (partial)
+
+## Requirement Mapping
+
+| Requirements | Task coverage |
+|---|---|
+| FR-001--FR-004, FR-010a, FR-011--FR-014 | T018-T026, T059-T061 |
+| FR-005--FR-007, FR-009, FR-013--FR-014 | T027-T034, T059-T061 |
+| FR-008, FR-008a, FR-009, FR-012--FR-013, SC-005 | T035-T043, T059-T061 |
+| FR-007, FR-010, FR-010a, FR-013, SC-006 | T044-T051, T059-T061 |
+| SC-001--SC-004, SC-006 | T018-T058, T060-T061 |
+| SC-005 | T038, T040, T043 |

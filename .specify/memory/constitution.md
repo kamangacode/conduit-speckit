@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.1.0 -> 1.2.0
+- Version change: 1.2.0 -> 1.3.0
 - Modified principles: Development Workflow now includes evidence generation and
 	the ordered Cucumber, PostgreSQL, Hurl, and Bruno gates.
 - Added sections: RealWorld contract, framework isolation, HTTP integration
@@ -11,6 +11,8 @@ Sync Impact Report
 	Java 25 LTS.
 - Amendment: standardize Spring Data JPA/Hibernate as the persistence adapter
 	for the Java terrain.
+- Amendment: use `interfaces/rest/` for Java REST inbound adapters because
+	`interface` is a Java keyword.
 -->
 
 # Conduit Constitution
@@ -55,7 +57,9 @@ impossible or fail a dedicated integration test.
 
 The implementation terrain is Java 25 LTS, Spring Boot, and Maven. Code MUST respect
 the package boundaries `domain/`, `application/`, `infrastructure/`, and
-`interface/`. The PRD and RealWorld specification MUST be linked from any
+`interfaces/`; REST inbound adapters MUST reside under `interfaces/rest/`.
+The package name `interface/` MUST NOT be used because `interface` is a Java
+keyword. The PRD and RealWorld specification MUST be linked from any
 feature specification that changes an API contract. Any deliberate divergence
 from those sources MUST be documented and covered by a contract or integration
 test. Persistence MUST use Spring Data JPA/Hibernate behind application ports;
@@ -89,4 +93,4 @@ PATCH for clarifications that do not change obligations. Each review MUST record
 evidence for the applicable gates; a missing test or unexplained contract
 divergence blocks completion.
 
-**Version**: 1.2.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06
+**Version**: 1.3.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date is unknown | **Last Amended**: 2026-09-06

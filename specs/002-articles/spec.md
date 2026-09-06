@@ -72,8 +72,9 @@ contain metadata but omit article bodies.
    **Then** only matching articles are returned and the count reflects the complete
    filtered result set.
 4. **Given** an authenticated reader, **When** the reader requests public articles,
-   **Then** the response remains contract-compatible and includes the reader-specific
-   favorite state without requiring favorite management in this feature.
+  **Then** the response remains contract-compatible and includes the favorite fields
+  with the anonymous/default `favorited: false` state; reader-specific favorite
+  management is deferred to iteration 3.
 
 ### User Story 3 - Page through article results (Priority: P2)
 
@@ -186,8 +187,10 @@ verify both tags are present.
 
 - **SC-001**: An authenticated user can create, retrieve, update, and delete an
   article through the HTTP boundary in one end-to-end scenario.
-- **SC-002**: All article, pagination, tag, and article-error Hurl scenarios pass
-  against a PostgreSQL-backed runtime before the iteration is declared complete.
+- **SC-002**: All article-scoped article, pagination, tag, authentication, validation,
+  and ownership Hurl scenarios pass against a PostgreSQL-backed runtime before the
+  iteration is declared complete. Feed, favorite, and comment scenarios remain
+  deferred to iteration 3 and are not gates for this feature.
 - **SC-003**: At least 100% of article endpoints have an HTTP integration test covering
   success, authentication, validation, serialization, and ownership behavior.
 - **SC-004**: Public list responses contain no article body field, while single-article

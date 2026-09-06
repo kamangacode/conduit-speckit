@@ -11,13 +11,12 @@ des tâches exécutables, du code et des preuves de validation.
 ## Prérequis
 
 - Java 25 LTS. Vérifier avec `java -version`.
-- Maven 3.9 ou supérieur. Vérifier avec `mvn -version`.
+- Maven Wrapper inclus. Vérifier avec `./mvnw --version`.
 - Docker Desktop avec Docker Compose v2. Vérifier avec `docker compose version`.
 - [Hurl](https://hurl.dev/) pour la conformité HTTP.
 - [Bruno](https://www.usebruno.com/) ou Bun si les tests Bruno sont utilisés.
 
-Le projet ne contient pas de wrapper Maven. Les commandes ci-dessous utilisent donc
-`mvn` installé sur la machine.
+Le projet utilise le Maven Wrapper afin de rendre les commandes reproductibles.
 
 ## Démarrer PostgreSQL
 
@@ -62,7 +61,7 @@ lit automatiquement `.env`, mais Maven ne l'injecte pas dans le processus Java :
 set -a
 source .env
 set +a
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 L'API est alors disponible sur `http://localhost:8080`. La migration Flyway crée le
@@ -78,7 +77,7 @@ l'environnement. Ne jamais committer un secret réel.
 Les tests automatisés utilisent H2 et ne nécessitent pas de PostgreSQL :
 
 ```bash
-mvn clean test
+./mvnw clean test
 ```
 
 Cette suite couvre notamment les cas d'utilisation d'authentification, les
@@ -91,7 +90,7 @@ set -a
 source .env
 set +a
 docker compose up -d postgres
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 Dans un autre terminal, vérifier que le service est prêt avec `docker compose ps`.
@@ -125,6 +124,11 @@ La documentation détaillée de la collection se trouve dans
 [`conformance/README.md`](conformance/README.md). Les scénarios couvrent les
 articles, l'authentification, les commentaires, les favoris, le feed, la
 pagination, les profils, les tags et les erreurs d'autorisation/validation.
+
+Pour la feature articles, les gates reproductibles utilisent les contrats
+article-scoped `articles.hurl`, `pagination.hurl`, `tags.hurl` et
+`articles-errors-scoped.hurl`, puis les collections Bruno correspondantes.
+Les scénarios feed, favoris et commentaires appartiennent aux itérations suivantes.
 
 ## Contrats importants
 
@@ -190,8 +194,12 @@ dans `specs/<feature>/tasks.md` et leur état représente l'avancement réel.
 
 La commande `/speckit-implement` exécute les tâches en respectant le plan. Le code
 est organisé en couches hexagonales : `domain`, `application`, `infrastructure` et
-adaptateurs HTTP. Le domaine et les cas d'utilisation restent indépendants de
-Spring ; JPA et les repositories Spring restent dans l'infrastructure.
+`interfaces/rest` pour les adaptateurs HTTP entrants. Le domaine et les cas
+d'utilisation restent indépendants de Spring ; JPA et les repositories Spring
+restent dans l'infrastructure.
+
+Lefthook orchestre les contrôles locaux : Spotless, Checkstyle et Gitleaks en
+pre-commit, puis `./mvnw verify -P integration` en pre-push.
 
 ### 8. Converge
 

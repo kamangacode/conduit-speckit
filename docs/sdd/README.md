@@ -97,6 +97,14 @@ Le détail des outils, commandes et critères de sortie se trouve dans
 [`08-outillage-java.md`](08-outillage-java.md). Le pilote actuellement exécuté est
 [`user-authentication.feature`](../../src/test/resources/features/user-authentication.feature).
 
+### Packaging Java du terrain
+
+Le code suit les quatre frontières hexagonales `domain`, `application`,
+`infrastructure` et `interfaces`. Les adaptateurs HTTP REST résident sous
+`src/main/java/com/conduit/interfaces/rest/`; le package Java `interface/` n'est
+pas utilisé car `interface` est un mot-clé du langage. Cette décision est tracée
+dans l'[ADR 006](../adr/006-rest-adapters-under-interfaces.md).
+
 ---
 
 ## Les six paliers
@@ -112,6 +120,9 @@ Le détail des outils, commandes et critères de sortie se trouve dans
 
 **Total ≈ 42 h**, soit 5 à 7 semaines à 6-8 h/semaine. Détail, critères de sortie et calendrier
 dans [`00-programme.md`](00-programme.md).
+
+Pour situer SpecKit face au pipeline `/dev`, à BMad et à OpenSpec, voir le
+[comparatif des frameworks SDD](comparatif-frameworks-sdd.md).
 
 ---
 

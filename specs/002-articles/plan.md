@@ -33,8 +33,8 @@ articles; no separate latency target is specified.
 **Constraints**: `Authorization: Token <jwt>`; JSON response content type; `422` field-keyed
 errors; list representations omit `body`; anonymous `following` and `favorited` are `false`.
 
-**Scale/Scope**: Five article/tag endpoints. Favorites, profiles, comments, and feed behavior
-remain outside this feature.
+**Scale/Scope**: Six article/tag route operations: create, retrieve, list, update, delete, and
+tags. Favorites, profiles, comments, and feed behavior remain outside this feature.
 
 ## Test Strategy and Tooling Waves
 
@@ -45,7 +45,7 @@ proves the independent RealWorld contract and is never replaced by Cucumber.
 | Wave | Requirements and cases | Spec Kit stage | Real paths and executable evidence |
 |---|---|---|---|
 | 1. Reproducible build | FR-001--FR-014, including FR-002a, FR-008a, and FR-010a; AC-US1-001--004, AC-US2-001--004, AC-US3-001--003, AC-US4-001--002 | plan, tests, tasks | `.mvn/wrapper/maven-wrapper.properties`, `mvnw`, `pom.xml`, `src/test/resources/features/articles.feature`, `src/test/java/com/conduit/article/`; `./mvnw verify` and CI workflow output |
-| 2. Reliable behavior | FR-001--FR-014, including FR-002a, FR-008a, and FR-010a; all generated AC-* cases | tests, implement | `src/test/java/com/conduit/article/`, `src/test/java/com/conduit/architecture/`, `src/main/resources/db/migration/V2__create_articles.sql`, `conformance/hurl/articles.hurl`, `conformance/hurl/pagination.hurl`, `conformance/hurl/tags.hurl`, `conformance/bruno/articles/`; tagged Cucumber, Testcontainers/Flyway, ArchUnit, Hurl, then Bruno check |
+| 2. Reliable behavior | FR-001--FR-014, including FR-002a, FR-008a, and FR-010a; all generated AC-* cases | tests, implement | `src/test/java/com/conduit/article/`, `src/test/java/com/conduit/architecture/`, `src/main/resources/db/migration/V2__create_articles.sql`, `conformance/hurl/articles.hurl`, `conformance/hurl/pagination.hurl`, `conformance/hurl/tags.hurl`, `conformance/hurl/articles-errors-scoped.hurl`, `conformance/bruno/articles/`, `conformance/bruno/errors-articles-scoped/`; tagged Cucumber, Testcontainers/Flyway, ArchUnit, Hurl, then Bruno check |
 | 3. Durable project | FR-013--FR-014; SC-002--SC-003 | plan, implement, converge | `pom.xml`, `.github/workflows/verify.yml`, `src/main/resources/application.yml`; informative JaCoCo report, justified secret/dependency scans, structured logs and operational metrics |
 
 H2 remains the fast feedback lane. When Docker is available, Testcontainers PostgreSQL and
@@ -91,7 +91,7 @@ src/main/java/com/conduit/
 ├── domain/article/
 ├── application/article/
 ├── infrastructure/persistence/
-└── api/http/
+└── interfaces/rest/
 src/main/resources/db/migration/V2__create_articles.sql
 src/test/java/com/conduit/article/
 src/test/java/com/conduit/architecture/
