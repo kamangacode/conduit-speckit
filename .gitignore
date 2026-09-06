@@ -4,6 +4,7 @@ target/
 .gradle/
 build/
 .env*
+!.env.example
 .DS_Store
 .idea/
 .vscode/

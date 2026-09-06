@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-HOST="${HOST:-http://localhost:8000}"
+HOST="${HOST:-http://localhost:8080}"
 UID_VAL="${UID_VAL:-$(date +%s)$$}"
 
 echo "Running Hurl tests against $HOST with uid=$UID_VAL"

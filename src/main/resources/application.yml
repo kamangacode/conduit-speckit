@@ -2,8 +2,8 @@ spring:
   application:
     name: conduit
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME:}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/conduit-speckit}
+    username: ${DATABASE_USERNAME:conduit}
     password: ${DATABASE_PASSWORD:}
   flyway:
     enabled: true

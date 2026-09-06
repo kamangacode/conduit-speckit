@@ -4,7 +4,31 @@
 
 - A running Conduit API configured with an external JWT secret and database URL.
 - Hurl installed and available on `PATH`.
-- The API reachable at `http://localhost:3000`.
+- The API reachable at `http://localhost:8080`.
+
+## Start PostgreSQL locally
+
+Create a local environment file from the tracked template, replace the
+placeholder values, then start PostgreSQL:
+
+```bash
+cp .env.example .env
+docker compose up -d postgres
+```
+
+The Compose service creates the database `conduit-speckit` on port `5432` and
+persists data in the named volume `conduit-speckit-postgres-data`. Export the
+same `DATABASE_*` and `JWT_SECRET` values before starting Spring Boot:
+
+```bash
+set -a
+source .env
+set +a
+mvn spring-boot:run
+```
+
+The committed `.env.example` contains placeholders only; `.env` is ignored by
+Git and must never be committed.
 
 The implementation must fail at startup when required secrets or database
 configuration are missing, without printing their values.
