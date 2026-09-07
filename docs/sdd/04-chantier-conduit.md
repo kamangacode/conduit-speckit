@@ -1,408 +1,317 @@
 ---
-title: "Palier 4 — Le chantier Conduit"
-description: "Trois itérations SDD complètes sur auth + articles en Java/Spring Boot, jugées par la suite de conformité Hurl officielle de RealWorld."
-date: 2026-09-05
+title: "Conduit construction site, implementing every feature"
+description: "A step-by-step path to turn the Conduit PRD into Java/Spring Boot features verified by Spec Kit and RealWorld conformance."
+date: 2026-09-07
 status: ACTIVE
-effort: "~16 h"
+audience: "Developer implementing Conduit"
 ---
 
-# Palier 4 — Le chantier Conduit
+# Conduit construction site
 
-> **Le cœur du programme.** Trois itérations sur un périmètre réduit, avec un juge externe.
->
-> **Critère de sortie** : `HOST=http://localhost:8080/api ./run-api-tests-hurl.sh` au vert sur
-> le périmètre couvert.
+> This file is the implementation path. It does not replace the [PRD](../prd/PRD-conduit.md), which is the functional source of truth, or the `specs/NNN-slug/` artifacts, which are the source of feature state. Each step produces a complete, verifiable feature before the next one begins.
 
----
+## 4.0 Prepare the construction site
 
-## 4.0 — Le dispositif, et pourquoi il est construit ainsi
-
-### Le périmètre
-
-Extrait du [PRD](../prd/PRD-conduit.md), section 4 :
-
-| Itération | Features | Endpoints |
-|---|---|---|
-| **1** — `001-auth-jwt` | F-AUTH-1..4 | `POST /users`, `POST /users/login`, `GET /user`, `PUT /user` |
-| **2** — `002-articles-crud` | F-ART-3,4,5,6 | `GET/POST/PUT/DELETE /articles[/:slug]` |
-| **3** — `003-articles-listing` | F-ART-1 | `GET /articles` avec `tag`, `author`, `favorited`, `limit`, `offset` |
-
-Neuf endpoints. Ni les commentaires, ni les favoris, ni les profils, ni le feed. **C'est
-volontairement petit** — et c'est le point le plus important de la conception du palier.
-
-> **Pourquoi si petit.** L'apprentissage vient de la **répétition du cycle**, pas du volume
-> livré. Trois itérations complètes sur neuf endpoints enseignent trois fois plus qu'une
-> itération sur vingt-sept : chaque bouclage montre ce que l'itération précédente a raté, et
-> laisse l'occasion de corriger. Une seule grosse itération ne montre ses erreurs de méthode
-> qu'à la fin, quand il est trop tard pour en tirer autre chose que de la frustration.
->
-> Une fois la méthode acquise, étendre au reste du PRD est du travail, plus de
-> l'apprentissage.
-
-### Le juge externe — le point non négociable
+Read sections 2, 4, 6, 7, 8, 9, 10, and 11 of the PRD. Verify that Spec Kit is installed as described in [03-speckit.md](03-speckit.md), then prepare the repository and the constitution:
 
 ```bash
-git clone --depth 1 https://github.com/gothinkster/realworld.git /tmp/realworld
-cp -r /tmp/realworld/specs/api ./conformance/
+git switch develop
+git pull --ff-only origin develop
+/speckit-constitution
 ```
 
-La [suite Hurl](https://github.com/gothinkster/realworld/tree/main/specs/api) est écrite par
-RealWorld. Ni toi, ni Copilot, ni SpecKit n'y touchez.
+At minimum, the constitution must state the RealWorld invariants:
 
-**Pourquoi c'est structurant, et pas un détail de confort.** Un agent qui écrit le code *et*
-ses tests produit des tests qui passent — ils encodent ce que le code fait, pas ce qu'il
-devrait faire. Le symptôme est traître : la suite est verte, la couverture est bonne, et
-l'API est fausse. Un juge écrit par un tiers, avant que ton code existe, est la seule façon
-de mesurer la conformité au lieu de la cohérence interne.
+- `Authorization: Token <jwt>`, never `Bearer`;
+- validation errors use `422` with `{"errors":{"field":["message"]}}`;
+- article lists never include `body`;
+- `following` and `favorited` are `false` for an anonymous visitor;
+- passwords are hashed, never returned or logged;
+- the domain is independent from Spring and JPA;
+- every endpoint has HTTP-level proof.
 
-C'est aussi **l'argument de coaching le plus fort de tout le programme**. À un développeur qui
-dit « Copilot écrit mes tests, je suis couvert », on ne répond pas par un principe. On lui
-montre une suite verte à 100 % qui échoue sur Hurl. Cette démonstration se prépare ici.
+Do not add a rule unless it is verifiable and useful for correcting a concrete generation bias.
 
-### La règle du chantier
+## 4.1 The mandatory cycle for every feature
 
-> **Aucune ligne de code écrite à la main pendant l'implémentation.** Quand le résultat est
-> faux, on corrige **la spec, le plan ou la constitution**, et on régénère. On ne patche pas le
-> code.
+For every row in the table below, start from `develop`, create the feature branch shown in the feature section, and run the same cycle:
 
-C'est artificiel — en production, on patcherait. Mais c'est le seul régime qui apprend *où* se
-situe réellement la cause d'un défaut. Chaque patch manuel masque un défaut d'intention et
-supprime l'information qu'on venait chercher.
-
-**Tenir un compteur dans [`journal.md`](journal.md)** : pour chaque défaut, la cause était-elle
-dans la spec, le plan, la constitution ou l'agent ? **La distribution de ces causes, à la fin
-des trois itérations, est le contenu le plus précieux du programme** — c'est ce qui permet de
-dire à une équipe « voilà où ça casse réellement », avec des chiffres tirés du terrain plutôt
-qu'une intuition.
-
----
-
-## 4.1 — La constitution
-
-C'est le fichier le plus important du chantier. Il contraint **toutes** les générations
-suivantes.
-
-```
-/speckit.constitution
+```text
+/speckit-specify
+/speckit-clarify
+                 <- review and validate spec.md before continuing
+/speckit-plan
+/speckit-tests
+/speckit-tasks
+/speckit-analyze
+/speckit-implement
+/speckit-converge
+                 <- local tests, then Hurl and Bruno when covered by the feature
 ```
 
-### Ce qu'il faut y mettre
+At every pass:
 
-Le guide brownfield de SpecKit est explicite : *« ne pas inventer de standards juste pour
-remplir le gabarit »* et *« des règles irréalistes créent du bruit plutôt que des contraintes
-utiles »*.
+1. Reference the PRD `F-*` and `R-*` IDs in `spec.md`.
+2. Answer every clarification question, especially HTTP statuses and authorization cases.
+3. Check that `plan.md` introduces no behavior absent from `spec.md`.
+4. Check that `test-cases.yaml` has an `AC-*` case for every observable behavior.
+5. Check that `tasks.md` links every task to an `AC-*`, `FR-*`, `F-*`, or plan decision.
+6. When proof fails, correct the intent or plan before correcting the code.
+7. Record the executed command and result in `specs/NNN-slug/traceability.md`.
 
-Un principe mérite sa place s'il satisfait les trois conditions :
-1. il est **vérifiable** — on peut dire si une PR le respecte ;
-2. il **corrige un penchant par défaut** de l'agent ;
-3. on est **prêt à refuser du code** qui le viole.
-
-Le troisième critère est le filtre le plus sévère, et c'est celui qui manque partout. Un
-principe qu'on ne fera jamais respecter dégrade tous les autres : il apprend au lecteur — humain
-ou agent — que cette liste est indicative.
-
-### Proposition pour Conduit / Java · Spring Boot
-
-```markdown
-## I. Le contrat RealWorld prime sur tout
-Le PRD (docs/prd/PRD-conduit.md) et la spec RealWorld sont la source de vérité.
-En cas de désaccord entre une préférence d'implémentation et le contrat, le contrat gagne.
-
-Invariants systématiquement mal devinés, à respecter à la lettre :
-- En-tête : `Authorization: Token <jwt>` — le préfixe est `Token`, PAS `Bearer`.
-- Erreurs de validation : HTTP 422, corps `{"errors":{"champ":["message"]}}`.
-- Les endpoints de LISTE d'articles ne renvoient pas le champ `body` (règle R-7).
-- `following` et `favorited` valent `false` pour un utilisateur non authentifié.
-- `Content-Type: application/json; charset=utf-8`.
-
-## II. Le domaine est isolé du framework
-Aucune annotation Spring ni JPA sous `domain/`. Pas de `@Entity`, `@Service`, `@Autowired`.
-Le domaine est du Java simple, testable sans contexte Spring.
-La persistance et le mapping vivent dans `infrastructure/`.
-
-## III. Tout endpoint a un test d'intégration HTTP réel
-Un test qui traverse la couche HTTP (MockMvc ou WebTestClient), pas seulement le service.
-Un test qui ne prouve que son propre montage est refusé.
-
-## IV. Les secrets ne sont jamais en dur
-Secret JWT, URL de base de données : par configuration externe. La configuration échoue
-au démarrage (fail-fast) si une valeur requise manque, sans réafficher sa valeur.
-
-## V. Les mots de passe sont hashés
-Argon2id ou BCrypt. Le champ `password` n'apparaît dans aucune réponse, aucun log,
-aucun message d'erreur.
-```
-
-**Exercice 4.1** (1 h) — Écrire la constitution. Puis la **passer au filtre des trois
-critères**, principe par principe, et supprimer ceux qui échouent. Consigner ce qui a été
-supprimé et pourquoi : cet exercice de suppression est un excellent atelier d'équipe, parce
-qu'il force à distinguer ce qu'on croit exiger de ce qu'on exige vraiment.
-
----
-
-## 4.2 — Itération 1 : `001-auth-jwt` · ~5 h
-
-### Le déroulé
-
-```
-/speckit.specify
-
-Périmètre : authentification et gestion de l'utilisateur courant de Conduit.
-Référence fonctionnelle : docs/prd/PRD-conduit.md sections 7.1, 8, 9, 10, et les
-règles R-8 (unicité email/username) et R-9 (mot de passe jamais renvoyé, stocké hashé).
-
-Un visiteur peut créer un compte et se connecter. Un membre authentifié peut consulter
-et modifier son compte. Les réponses respectent le format `User` de la section 8.
-
-Hors périmètre : profils publics, suivi, articles, commentaires.
-```
-
-Puis **impérativement** :
-
-```
-/speckit.clarify
-```
-
-### Ce qu'il faut observer, étape par étape
-
-| Étape | Ce qu'il faut faire, et pas seulement lancer |
-|---|---|
-| `specify` | Relire `spec.md`. **Traquer les fuites techniques** : si elle nomme Spring Security, JPA ou une classe, la corriger à la main avant d'aller plus loin. Le [test du palier 2](02-methode-sdd.md) s'applique : la spec survit-elle à une réécriture en Go ? |
-| `clarify` | **Répondre sérieusement.** Attendre des questions sur : la longueur minimale du mot de passe, la durée de validité du JWT, le comportement sur email déjà pris, ce que renvoie `PUT /user` avec un corps vide. Chaque question non posée = une hypothèse silencieuse. |
-| `plan` | Vérifier que chaque choix est **justifié**. « On utilise Spring Security » sans motif est un signal faible : le plan récite au lieu de décider. |
-| `tasks` | Estimer la plus grosse tâche. Si elle dépasse ~45 min de travail agent, la découper **maintenant** — la limite de 59 min du cloud agent arrive au palier 5. |
-| `analyze` | Noter s'il trouve de vraies incohérences ou produit un rapport de complaisance. |
-| `implement` | Ne rien corriger à la main. Noter chaque défaut et sa cause. |
-| `converge` | Rouvre-t-il du travail réel ? |
-
-### Le verdict
+Common proof commands:
 
 ```bash
-./mvnw spring-boot:run &
+./mvnw test
+./mvnw verify
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+HOST=http://localhost:8080/api ./conformance/run-api-tests-bruno.sh
+```
+
+Hurl is the external oracle. Bruno is a derived execution and never becomes a second contract source.
+
+## 4.2 Feature branch and pull request protocol
+
+Each feature has its own branch. Never branch from `main`, from a previous feature branch, or from a branch containing unrelated work. Both `develop` and `main` are protected branches.
+
+At the beginning of a feature, run the command documented in its section. The command must update `develop` first and then create the branch:
+
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/<feature-slug>
+```
+
+Run all Spec Kit commands and implementation work on that branch. Before opening the pull request, run the feature's local tests and the applicable Hurl or Bruno checks:
+
+```bash
+./mvnw verify
+git status --short
+git diff develop...HEAD
+git push --set-upstream origin feat/<feature-slug>
+gh pr create --base develop --head feat/<feature-slug>
+```
+
+The pull request must point to `develop`. After the feature has been integrated and the release is ready, changes can flow from protected `develop` to protected `main` according to the repository release process. The feature pull request should include the feature scope, the relevant `specs/NNN-slug/` artifacts, test results, traceability evidence, and any external conformance result.
+
+## 4.3 Complete feature order
+
+| Order | Spec directory | PRD features | Depends on | Exit evidence |
+|---:|---|---|---|---|
+| 1 | `001-user-authentication` | F-AUTH-1 to F-AUTH-4 | project foundation | registration, login, current user, and update conform |
+| 2 | `002-profiles-and-following` | F-PROF-1 and F-PROF-2 | authentication | public profile, follow, and unfollow |
+| 3 | `003-articles-crud` | F-ART-3 to F-ART-6 | authentication | read, create, edit, and delete an article |
+| 4 | `004-articles-listing` | F-ART-1 | article CRUD | filters, ordering, pagination, and no `body` in lists |
+| 5 | `005-favorites` | F-FAV-1 | article CRUD, authentication | favorite/unfavorite, count, and relative fields |
+| 6 | `006-personal-feed` | F-ART-2 | profiles/following, articles, favorites | feed limited to followed authors and authentication required |
+| 7 | `007-comments` | F-CMT-1 to F-CMT-3 | articles, authentication | add, list, and delete the author's comment |
+| 8 | `008-tags` | F-TAG-1 | articles | list available tags |
+
+F-UI-1 to F-UI-3 are outside this API construction site. They are a frontend extension to handle after the API conformance suite is green, using the same cycle.
+
+## 4.4 Feature 001, authentication and current user
+
+Create the feature branch from `develop` before running Spec Kit:
+
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/001-user-authentication
+```
+
+Framing command:
+
+```text
+/speckit-specify
+Implement F-AUTH-1 to F-AUTH-4 from docs/prd/PRD-conduit.md. Cover registration, login, GET /api/user, and PUT /api/user. Respect R-8 and R-9, the User format, JWT, and the Authorization: Token header. Out of scope: profiles, articles, comments, favorites, and tags.
+```
+
+During `clarify`, decide field validation, behavior for an existing email or username, JWT lifetime, and missing or invalid token cases. Evidence must include `422` errors, no password in any response, and persistence of a hashed password.
+
+```bash
 HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
 ```
 
-**Le premier passage échouera.** C'est attendu, et c'est le moment le plus instructif du
-programme.
+Do not move to feature 002 until the scenarios in `specs/001-user-authentication/` and the HTTP evidence are green.
 
-**Le protocole face à un échec** — dans cet ordre, sans le raccourcir :
+## 4.5 Feature 002, profiles and following
 
-1. Lire l'échec Hurl : quel endpoint, quel écart exact ?
-2. **Remonter à la cause** : est-ce que `spec.md` couvrait ce cas ? Si non → la spec était
-   incomplète. Si oui → le plan ou l'implémentation a dévié.
-3. Corriger **à la source** : la spec, ou la constitution si l'invariant vaut pour tout le
-   projet.
-4. Régénérer.
-5. Noter dans `journal.md` : le symptôme, la cause, l'étape corrigée.
-
-> **Le pari du protocole.** Les échecs récurrents remonteront presque tous à la constitution
-> (`Bearer` au lieu de `Token`, format d'erreur, `body` dans les listes). Chaque correction
-> portée dans la constitution profite **aux itérations 2 et 3**, alors qu'un patch dans le code
-> ne profite à rien. La courbe d'échecs entre les itérations 1, 2 et 3 est la démonstration
-> chiffrée que le coaching cherche. **Relever les trois chiffres.**
-
----
-
-## 4.3 — Itération 2 : `002-articles-crud` · ~5 h
-
-### Le déroulé
-
-Reprendre le cycle complet sur une branche et un répertoire de spec distincts :
-
-```
-/speckit.specify
-
-Périmètre : CRUD d'articles Conduit.
-Référence fonctionnelle : docs/prd/PRD-conduit.md sections 7.3, 8, 9, 10,
-et les règles R-1 (slug), R-6 (propriété), R-7 (listes sans body).
-
-Un membre authentifié peut consulter, créer, modifier et supprimer ses articles.
-Hors périmètre : commentaires, favoris, profils publics, suivi et flux personnel.
-```
-
-Puis, dans l'ordre :
-
-```
-/speckit.clarify
-/speckit.plan
-/speckit.tasks
-/speckit.analyze
-/speckit.implement
-/speckit.converge
-```
-
-Avant de lancer l'implémentation, vérifier dans `spec.md` et `tasks.md` que les
-tests HTTP couvrent au minimum : consultation d'un article, création, mise à
-jour par son auteur, refus de mise à jour/suppression par un autre membre,
-suppression, slug généré et absence de `body` dans les listes.
-
-### Ce qu'il faut observer, étape par étape
-
-| Étape | Ce qu'il faut mesurer |
-|---|---|
-| `specify` | La spec exprime-t-elle des comportements observables, notamment 403/404 et le slug, sans imposer une implémentation ? |
-| `clarify` | Les questions sur collision de slug, propriété et ressource inexistante sont-elles posées ou explicitement tranchées ? |
-| `plan` | Les ports, cas d'utilisation, mapping de persistence et contrôleur restent-ils séparés ? |
-| `tasks` | Les tâches de test HTTP précèdent-elles l'implémentation et chaque tâche possède-t-elle un chemin réel ? |
-| `analyze` | Les écarts entre la spec, le contrat et les tâches sont-ils détectés avant le code ? |
-| `implement` | Les corrections passent-elles par les artefacts SDD plutôt que par un patch manuel du code ? |
-| `converge` | Le contrôle retrouve-t-il du travail restant après le premier vert ? |
-
-### Le verdict
+Create the feature branch from `develop` before running Spec Kit:
 
 ```bash
-./mvnw spring-boot:run &
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/002-profiles-and-following
+```
+
+```text
+/speckit-specify
+Implement F-PROF-1 and F-PROF-2. Add GET /api/profiles/:username, POST /follow, and DELETE /follow. The following field is relative to the current user and is false for an anonymous visitor. Out of scope: articles, comments, and favorites.
+```
+
+Clarify following yourself, an unknown user, repeated follow, and the exact effect of unfollow. Verify that the public response never exposes a password and that anonymous responses remain consistent.
+
+```bash
+./mvnw test
 HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
 ```
 
-Comparer le nombre d'échecs du premier passage avec celui de l'itération 1 et
-classer chaque défaut dans `journal.md` : spec, plan, constitution ou agent.
+## 4.6 Feature 003, article CRUD
 
-**Le contexte accumulé.** La constitution est enrichie des corrections de l'itération 1. Le
-plan a un existant sur lequel s'appuyer. **La question à mesurer** : y a-t-il moins d'échecs
-Hurl qu'à l'itération 1 ? De combien ? C'est le chiffre qui prouve — ou réfute — que
-l'investissement en spec se rentabilise.
-
-**La génération du slug (R-1).** Le PRD dit que le slug vient du titre en kebab-case. Il ne dit
-pas ce qui se passe sur collision de titres. **La spec doit trancher** — et si `/speckit.clarify`
-ne pose pas la question, c'est une information à noter : elle marque la limite de ce que
-l'outil détecte tout seul, et c'est exactement ce qu'un coach doit savoir avant de promettre
-que « l'outil pose les bonnes questions ».
-
-**L'autorisation (R-6).** Seul l'auteur peut éditer ou supprimer son article — sinon 403. C'est
-la première règle de sécurité du chantier. Vérifier que la spec l'exprime comme un
-**comportement observable** (« un membre qui n'est pas l'auteur reçoit 403 ») et non comme une
-implémentation (« le service vérifie `article.author.id == currentUser.id` »).
-
-> **Le piège d'autorisation à repérer** : sur un article inexistant, faut-il renvoyer 404 ou
-> 403 ? Le PRD ne le dit pas. Un 403 sur une ressource absente **révèle son existence** — c'est
-> une fuite d'information par canal auxiliaire. Si l'agent ne soulève pas la question, c'est un
-> excellent cas d'école pour le playbook : **une spec incomplète sur un point de sécurité produit
-> un défaut de sécurité, pas une erreur de compilation.** Rien ne la signalera.
-
----
-
-## 4.4 — Itération 3 : `003-articles-listing` · ~6 h
-
-**L'itération la plus importante du programme. Ne pas la sauter.**
-
-### Le déroulé
-
-La première passe reprend volontairement les ambiguïtés du PRD. La seconde
-reprend exactement le même cycle après clarification :
-
-```
-/speckit.specify
-
-Périmètre : listing et pagination des articles Conduit.
-Référence fonctionnelle : docs/prd/PRD-conduit.md sections 7.3, 8, 9, 10,
-et les règles R-2 (tri), R-3 (filtres), R-7 (listes sans body), R-10 (pagination).
-
-Un visiteur ou un membre peut lister les articles avec les filtres et la pagination.
-Hors périmètre : création, modification, suppression, commentaires, favoris et profils.
-```
+Create the feature branch from `develop` before running Spec Kit:
 
 ```bash
-/speckit.clarify
-/speckit.plan
-/speckit.tasks
-/speckit.analyze
-/speckit.implement
-/speckit.converge
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/003-articles-crud
+```
+
+```text
+/speckit-specify
+Implement F-ART-3 to F-ART-6. Cover GET /articles/:slug, POST /articles, PUT, and DELETE. Generate the slug according to R-1. Only the author may edit or delete. Article lists must omit body according to R-7.
+```
+
+Clarify slug collisions, missing articles, authorization by another member, required creation fields, and optional update fields. Add HTTP tests before implementation tasks. Verify `401`, `403`, and `404` separately.
+
+```bash
+./mvnw test
 HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
 ```
 
-Pour la **passe A**, conserver les questions non tranchées et relever les
-échecs. Pour la **passe B**, mettre à jour la spec avec les six décisions,
-régénérer le plan et les tâches, puis rejouer la même suite Hurl. Ne modifier
-ni le code ni les fixtures entre les deux passes, sauf ce qui est nécessaire
-pour appliquer les artefacts régénérés.
+## 4.7 Feature 004, listing, filters, and pagination
 
-À chaque passe, noter dans `journal.md` : le nombre d'échecs Hurl, les cycles
-de régénération, les questions posées et la cause de chaque défaut.
+Create the feature branch from `develop` before running Spec Kit:
 
-Les deux premières se sont bien passées : Conduit est un domaine simple, SDD y brille. Celle-ci
-est conçue pour **faire mal**, parce que c'est là que se trouvent les arguments d'un coach
-crédible.
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/004-articles-listing
+```
 
-`GET /articles` accepte `tag`, `author`, `favorited`, `limit`, `offset`. Le PRD (règle R-3) dit
-seulement qu'il accepte « au plus un usage cohérent des filtres ». **C'est une spec floue, et
-elle est floue dans le document de référence lui-même.**
+```text
+/speckit-specify
+Implement F-ART-1 and R-2, R-3, R-7, and R-10. Cover GET /api/articles with tag, author, favorited, limit, and offset, and omit body from every list item.
+```
 
-Les questions que la spec doit trancher et que le PRD laisse ouvertes :
+Do not leave ambiguities implicit. Decide with `clarify`: filter combination, unknown filter values, `limit` bounds, negative offsets, and stable ordering for equal timestamps. Verify descending date order, default values, and consistency between pages.
 
-| Question | Pourquoi c'est piégeux |
-|---|---|
-| Les filtres se combinent-ils en ET ou en OU ? | Change complètement le résultat |
-| `favorited=inconnu` : liste vide ou 404 ? | Deux comportements également défendables |
-| `limit=0` ? `limit=10000` ? | Absence de borne = risque de déni de service |
-| `offset` négatif ? | Comportement indéfini |
-| `tag` inexistant : liste vide ou erreur ? | Sémantique de filtre vs sémantique de recherche |
-| Tri stable si deux articles ont le même `createdAt` ? | Pagination incohérente entre deux pages |
+```bash
+./mvnw test
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
 
-**Le protocole de l'itération 3** — deux passes, délibérément :
+This feature exposes vague specifications most clearly. Compare the gaps before and after clarification in `traceability.md`.
 
-**Passe A — sous-spécifier volontairement.** Écrire la spec sans trancher ces questions.
-Laisser `/speckit.clarify` faire ce qu'il peut. Aller jusqu'à Hurl. **Compter les échecs et les
-classer** : lesquels viennent d'un flou de spec plutôt que d'une erreur d'implémentation ?
+## 4.8 Feature 005, favorites
 
-**Passe B — trancher les six questions**, reprendre le cycle, remesurer.
+Create the feature branch from `develop` before running Spec Kit:
 
-> **Le livrable de coaching de cette itération** : l'écart chiffré entre A et B. C'est la
-> réponse la plus solide à l'objection « on perd du temps à écrire des specs » — parce qu'elle
-> ne repose pas sur une conviction mais sur deux mesures faites dans les mêmes conditions, sur
-> le même code, avec le même juge. Un coach qui a ce chiffre en poche n'a plus besoin de
-> convaincre.
->
-> C'est aussi le seul endroit du programme où l'on observe **le tri stable** : sans lui, la
-> pagination renvoie des doublons entre deux pages. Le défaut est invisible en test unitaire,
-> visible en test de conformité. Bon matériau d'atelier.
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/005-favorites
+```
 
----
+```text
+/speckit-specify
+Implement F-FAV-1. Cover POST and DELETE /api/articles/:slug/favorite. The favorited field and favoritesCount must remain consistent in article responses. Out of scope: feed and comments.
+```
 
-## 4.5 — La synthèse du palier
+Clarify repeated favoriting, removing an absent favorite, missing articles, and counter visibility for an anonymous visitor. Verify the effect on the `favorited` filter from feature 004.
 
-À produire dans `journal.md`, ce sont les données du palier 6 :
+```bash
+./mvnw test
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
 
-| Mesure | It. 1 | It. 2 | It. 3-A | It. 3-B |
-|---|---|---|---|---|
-| Échecs Hurl au 1er passage | | | | |
-| Cycles de régénération jusqu'au vert | | | | |
-| Défauts dus à la **spec** | | | | |
-| Défauts dus au **plan** | | | | |
-| Défauts dus à la **constitution** | | | | |
-| Défauts dus à l'**agent** (spec juste, code faux) | | | | |
-| Questions posées par `/speckit.clarify` | | | | |
-| Vrais problèmes trouvés par `/speckit.analyze` | | | | |
+## 4.9 Feature 006, personal feed
 
-Et trois questions à réponse écrite :
+Create the feature branch from `develop` before running Spec Kit:
 
-1. **Quelle proportion des défauts venait de l'intention** (spec + plan + constitution) plutôt
-   que de l'agent ? C'est le chiffre qui justifie SDD — ou qui le relativise. Le publier tel
-   qu'il sort, même s'il déplaît.
-2. **`/speckit.analyze` et `/speckit.converge` sont-ils des gates fiables**, ou faut-il un juge
-   externe ? Répondre avec les observations, pas avec l'intuition.
-3. **Quelles corrections portées dans la constitution ont profité aux itérations suivantes ?**
-   C'est la démonstration concrète du retour sur investissement d'un contexte bien écrit.
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/006-personal-feed
+```
 
----
+```text
+/speckit-specify
+Implement F-ART-2 and R-4. Cover GET /api/articles/feed with limit and offset. The feed requires a valid JWT and contains only articles from followed authors.
+```
 
-## Critère de sortie — récapitulatif
+Clarify no followed authors, an article deleted between reads, pagination values, and the relative `following` and `favorited` fields. Prove that an article by an unfollowed author does not appear.
 
-- [ ] Constitution écrite, passée au filtre des trois critères, avec les suppressions tracées.
-- [ ] Les trois itérations bouclées, y compris les deux passes de l'itération 3.
-- [ ] Suite Hurl au vert sur les neuf endpoints.
-- [ ] Aucune ligne de code écrite à la main pendant les implémentations.
-- [ ] Le tableau de synthèse est rempli.
-- [ ] Les trois questions ont une réponse écrite.
+```bash
+./mvnw test
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
 
-→ Palier suivant : [`05-industrialisation.md`](05-industrialisation.md)
+## 4.10 Feature 007, comments
 
----
+Create the feature branch from `develop` before running Spec Kit:
+
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/007-comments
+```
+
+```text
+/speckit-specify
+Implement F-CMT-1 to F-CMT-3. Cover POST /api/articles/:slug/comments, GET comments, and DELETE comments/:id. Only the comment author may delete it.
+```
+
+Clarify an empty comment, missing articles, missing comments, deletion by another member, and anonymous reading. Verify the Comment format and relative profile fields in every response.
+
+```bash
+./mvnw test
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
+
+## 4.11 Feature 008, tags
+
+Create the feature branch from `develop` before running Spec Kit:
+
+```bash
+git switch develop
+git pull --ff-only origin develop
+git switch -c feat/008-tags
+```
+
+```text
+/speckit-specify
+Implement F-TAG-1 with GET /api/tags. The response exposes tags used by articles according to the PRD Tags format. Out of scope: free-text search and administration.
+```
+
+Clarify ordering, duplicates, casing, and the result when no article has a tag. Verify that the endpoint is accessible without authentication.
+
+```bash
+./mvnw test
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+```
+
+## 4.12 Final scope verification
+
+After all eight features:
+
+```bash
+./mvnw verify
+HOST=http://localhost:8080/api ./conformance/run-api-tests-hurl.sh
+HOST=http://localhost:8080/api ./conformance/run-api-tests-bruno.sh
+```
+
+The construction site is complete when:
+
+- every Must feature in the PRD is linked to a `specs/` directory;
+- every endpoint in section 7 has `AC-*` scenarios and evidence;
+- rules R-1 to R-10 are covered by traceability;
+- Hurl is green for the complete API scope;
+- Bruno has been verified as derived from Hurl;
+- `spec.md`, `plan.md`, `test-cases.yaml`, `traceability.md`, and `tasks.md` exist for every feature.
 
 ## Sources
 
-- [PRD Conduit](../prd/PRD-conduit.md) · [Spécifications RealWorld locales](../prd/specifications/README.md)
-- [Suite de conformité API RealWorld (Hurl)](https://github.com/gothinkster/realworld/tree/main/specs/api)
-- [OpenAPI officiel Conduit](../prd/specifications/backend/openapi.yml)
-- [hurl.dev](https://hurl.dev)
+- [Conduit PRD](../prd/PRD-conduit.md)
+- [Local RealWorld specifications](../prd/specifications/README.md)
+- [Hurl conformance](../../conformance/hurl/README.md)
+- [Architecture conventions](../../.github/instructions/hexagonal-architecture.instructions.md)

@@ -1,207 +1,206 @@
 ---
-title: "Palier 2 — La méthode SDD"
-description: "L'inversion spec/code, la frontière spec ≠ plan ≠ tasks, la réfutation de l'objection waterfall, et le mapping vers le pipeline maison de conduit-fullstack."
+title: "Level 2 - The SDD method"
+description: "The spec/code inversion, the spec ≠ plan ≠ tasks boundary, the refutation of the waterfall objection, and the mapping to the in-house conduit-fullstack pipeline."
 date: 2026-09-05
 status: ACTIVE
 effort: "~3 h"
 ---
 
-# Palier 2 — La méthode SDD
+# Level 2 - The SDD method
 
-> **Objectif** : comprendre l'inversion conceptuelle **avant** de toucher à l'outil, pour ne pas
-> réduire SDD à « une suite de slash commands ».
+> **Objective**: understand the conceptual inversion **before** touching the tool, so as not to
+> reduce SDD to “a series of slash commands”.
 >
-> **Critère de sortie** : une explication de 5 minutes, sans notes, dite à voix haute.
+> **Exit criteria**: a 5-minute explanation, without notes, said out loud.
 
 ---
 
-## Pourquoi ce palier avant l'outil
+## Why this bearing before the tool
 
-Un développeur qui sait *pourquoi* rattrape un outil qui change. L'inverse est faux — et
-SpecKit a sorti trois versions en trois jours fin août 2026.
+A developer who knows *why* catches up with a changing tool. The opposite is false - and
+SpecKit released three versions in three days in late August 2026.
 
-Il y a aussi une raison de coaching, plus dure : **la résistance à SDD n'est jamais technique.**
-Personne ne dit « je n'arrive pas à taper `/speckit.specify` ». Les objections réelles sont
-« on va perdre du temps à écrire au lieu de coder », « c'est du cycle en V déguisé », « nos
-specs seront périmées en deux semaines ». On n'y répond pas avec un tutoriel. On y répond en
-ayant compris ce que SDD déplace exactement.
+There is also a harder reason to learn the method: **resistance to SDD is never only technical.**
+No one says "I can't type `/speckit.specify`." The real objections are
+“we will waste time writing instead of coding”, “it’s a V-cycle in disguise”, “our
+specs will be expired in two weeks.” We don't answer it with a tutorial. It is answered by
+having figured out what exactly SDD is moving.
 
 ---
 
-## 2.1 — L'inversion
+## 2.1 - L'inversion
 
-La formulation de GitHub, à connaître mot pour mot :
+The wording of GitHub, to know word for word:
 
-> *« Code serves specifications. The Product Requirements Document isn't a guide for
+> *« Code serves specifications. The Proconduit Requirements Document isn't a guide for
 > implementation; it's the source that generates implementation. »*
 
-Et son corollaire, qui est le vrai contenu de la méthode :
+And its corollary, which is the true content of the method:
 
 > *« The specification becomes the primary artifact. Code becomes its expression in a particular
 > language and framework. »*
 >
 > *« Maintaining software means evolving specifications. »*
 
-**Ce que ça déplace concrètement.** Dans le développement classique, la spec est un échafaudage :
-utile pendant la construction, jetée après. La vérité migre vers le code dès la première ligne
-écrite, et l'écart entre les deux ne fait que croître — c'est le *specification-implementation
-gap*, la raison pour laquelle personne ne fait confiance à une doc de plus de six mois.
+**What it actually moves.** In classic development, the spec is a scaffolding:
+useful during construction, jetty afterwards. The truth migrates to the code from the first line
+written, and the gap between the two only grows - this is the *specification-implementation
+gap*, the reason why no one trusts a doc older than six months.
 
-SDD supprime l'écart en supprimant la dualité : *« When specifications and implementation plans
-generate code, there is no gap — only transformation. »*
+SDD removes the gap by removing duality: *“When specifications and implementation plans
+generate code, there is no gap - only transformation. »*
 
-**Le test qui vérifie qu'on a compris** : dans un projet SDD, quand une règle métier change, où
-va-t-on éditer en premier ? Si la réponse est « dans le code, et je mettrai la doc à jour
-après », l'inversion n'a pas eu lieu — on fait du développement classique avec des fichiers
-Markdown en plus.
+**The test which verifies that we have understood**: in an SDD project, when a business rule changes, where
+will we edit first? If the answer is "in the code, and I will update the doc
+after", the inversion did not take place - we do classic development with files
+Markdown and more.
 
 ---
 
-## 2.2 — La frontière spec ≠ plan ≠ tasks
+## 2.2 - The spec ≠ plan ≠ tasks boundary
 
-C'est **la** compétence discriminante de ce palier. Les trois artefacts répondent à trois
-questions différentes, et les mélanger est l'échec le plus courant.
+This is **the** discriminating skill of this level. The three artifacts answer three
+different questions, and mixing them up is the most common failure.
 
-| Artefact | Question | Contient | Ne contient **jamais** |
+| Artifact | Question | Contient | Ne contient **jamais** |
 |---|---|---|---|
-| `spec.md` | **Quoi** et **pourquoi** | User stories, comportements observables, critères d'acceptation, cas limites | Un nom de framework, un schéma de table, une signature de méthode |
-| `plan.md` | **Comment** | Stack, architecture, modèle de données, contrats, **et la justification de chaque choix** | Des exigences fonctionnelles nouvelles |
-| `tasks.md` | **Dans quel ordre** | Unités de travail exécutables, ordonnées, avec leurs dépendances | Des décisions d'architecture non tranchées en amont |
+| `spec.md` | **What** and **why** | User stories, observable behaviors, acceptance criteria, edge cases | A framework name, a table schema, a method signature |
+| `plan.md` | **How** | Stack, architecture, data model, contracts, **and the justification for each choice** | New functional requirements |
+| `tasks.md` | **In what order** | Executable, ordered units of work with their dependencies | Architectural decisions not decided upstream |
 
-### La règle qui tient debout toute seule
+### The rule that stands alone
 
-> **Une spec doit rester vraie si on réécrit l'application dans un autre langage.**
+> **A spec must remain true if we rewrite the application in another language.**
 
-C'est le test le plus rapide et il ne trompe pas. « L'utilisateur reçoit un jeton qui
-l'authentifie sur les requêtes suivantes » survit à une réécriture en Go. « Le `AuthService`
-appelle `JwtEncoder.encode()` » n'y survit pas : c'est du plan qui a fui dans la spec.
+It's the quickest test and it doesn't mislead. “The user receives a token which
+authenticates it on subsequent requests » survives a rewrite in Go. « The `AuthService`
+calls `JwtEncoder.encode()`" doesn't survive: it's from the plan that leaked in the spec.
 
-Appliqué à Conduit, la nuance est instructive : le PRD dit que l'en-tête est
-`Authorization: Token <jwt>`. **Est-ce de la spec ou du plan ?** C'est de la **spec** — parce
-que c'est un contrat observable de l'extérieur, imposé par RealWorld, et qu'il reste vrai
-quelle que soit l'implémentation. En revanche « on signe le JWT avec la bibliothèque `jjwt` »
-est du plan. La frontière n'est pas « fonctionnel vs technique », elle est **observable de
-l'extérieur vs choix interne**. C'est plus fin, et c'est ce qui rend le sujet coachable.
+Applied to Conduit, the nuance is instructive: PRD says that the header is
+`Authorization: Token <jwt>`. **Is this spec or plan?** It's **spec** - because
+that it is a contract observable from the outside, imposed by RealWorld, and that it remains true
+regardless of the implementation. On the other hand “we sign the JWT with the `jjwt` library”
+is of the plan. The boundary is not “functional vs technical”, it is **observable from
+external vs. internal choice**. It's more refined, and that's what makes the subject coachable.
 
-### Les deux fuites à traquer
+### The two leaks to track down
 
-| Fuite | Symptôme | Coût |
+| Fuite | Symptom | Cost |
 |---|---|---|
-| **Le technique remonte dans la spec** | La spec nomme des classes, des tables, des libs | La spec devient invalidable par un non-développeur : le PO ne peut plus la relire, donc plus personne ne la relit |
-| **Le fonctionnel descend dans le plan** | Le plan introduit un comportement absent de la spec | Ce comportement n'a **aucun critère d'acceptation**. Il sera implémenté et jamais vérifié |
+| **The technique goes back into the spec** | The spec names classes, tables, libs | The spec becomes invalidable by a non-developer: the PO can no longer reread it, so no one rereads it anymore |
+| **The functional goes down in the plane** | The plan introduces behavior not present in the spec | This behavior has **no acceptance criteria**. It will be implemented and never verified |
 
-La seconde est la plus dangereuse et la moins visible. C'est précisément ce que
-`/speckit.analyze` cherche : la cohérence entre artefacts.
+The second is the most dangerous and the least visible. This is precisely what
+`/speckit.analyze` seeks: consistency between artifacts.
 
-**Exercice 2.2** (45 min) — Prendre la section 11 du [PRD](../prd/PRD-conduit.md) (les règles
-R-1 à R-10) et classer chaque règle en `spec` ou `plan`, avec une justification en une ligne.
-R-1 (le slug est généré depuis le titre en kebab-case) est le cas intéressant : argumenter les
-deux positions avant de trancher. Consigner dans [`journal.md`](journal.md).
+**Exercise 2.2** (45 min) - Take section 11 of [PRD](../prd/PRD-conduit.md) (the rules
+R-1 to R-10) and classify each rule as `spec` or `plan`, with a one-line justification.
+R-1 (the slug is generated from the title in kebab-case) is the interesting case: argue the
+two positions before slicing. Record in [`journal.md`](journal.md).
 
 ---
 
-## 2.3 — « C'est du waterfall déguisé » — la réfutation
+## 2.3 - “It’s waterfall in disguise” - the rebuttal
 
-L'objection viendra. Une réponse en trois temps, du plus faible au plus fort.
+The objection will come. A three-step response, from weakest to strongest.
 
-**Temps 1 — le cycle n'est pas linéaire.** GitHub le formule ainsi :
-*« This process is therefore a 0 → 1, (1', ..), 2, 3, N. »* Un premier jet (0→1), des variantes
-explorées en parallèle (1'), puis l'enrichissement itératif. La commande `/speckit.converge`
-existe exactement pour ça : elle confronte le code réel à la spec et **rouvre du travail**. Un
-waterfall n'a pas de commande qui rouvre la phase précédente.
+**Time 1 - the cycle is not linear.** GitHub formulates it like this:
+*“This process is therefore a 0 → 1, (1', ..), 2, 3, N.”* A first draft (0→1), variants
+explored in parallel (1'), then iterative enrichment. The `/speckit.converge` command
+exists exactly for that: it compares the real code to the spec and **reopens work**. A
+waterfall does not have a command that reopens the previous phase.
 
-**Temps 2 — le coût de l'écrit s'est effondré.** Le waterfall échouait pour une raison
-économique : réviser un document de 80 pages coûtait des semaines, donc on ne révisait pas,
-donc le document mentait. Quand la révision d'une spec coûte dix minutes et que la
-régénération du code en découle, la logique s'inverse. **SDD n'est pas le waterfall qui
-reviendrait ; c'est ce que le waterfall aurait été si l'écrit avait été bon marché.**
+**Time 2 - the cost of writing has collapsed.** The waterfall was failing for a reason
+economical: revising an 80-page document cost weeks, so we didn't revise,
+so the document lied. When reviewing a spec costs ten minutes and the
+regeneration of the code follows, the logic is reversed. **SDD is not the waterfall that
+would come back; this is what the waterfall would have been if writing had been cheap.**
 
-**Temps 3 — le plus solide, parce qu'il est vérifiable.** En waterfall, la spec et le code
-divergent parce que rien ne les relie mécaniquement. En SDD, la spec **génère** le code : la
-divergence se voit à la régénération suivante. La spec n'est pas un document de phase, c'est
-un artefact vivant du dépôt, versionné, relu en PR, qui casse quand il ment.
+**Time 3 - the most solid, because it is verifiable.** In waterfall, the spec and the code
+diverge because nothing mechanically connects them. In SDD, the spec **generates** the code: the
+divergence is seen at the next regeneration. The spec is not a phase document, it is
+a living artifact of the repository, versioned, reread in PR, which breaks when it lies.
 
-> **Honnêteté de coach — les limites à énoncer.** Un coach qui ne présente que les forces perd
-> sa crédibilité à la première difficulté rencontrée par l'équipe. Trois limites réelles :
+> **Honesty as a coach - the limits to be stated.** A coach who only presents the strengths loses
+> its credibility at the first difficulty encountered by the team. Three real limits:
 >
-> 1. **Sur un très gros existant, SDD ne rétro-documente pas.** La doc SpecKit le dit :
->    l'initialisation « ne réécrit pas l'application et n'infère pas de specs pour le
->    comportement existant ». Le premier chantier doit être **borné**, pas « documenter le
->    système ».
-> 2. **Le coût se déplace, il ne disparaît pas.** On passe du temps à écrire et clarifier ce
->    qu'on passait à déboguer et refaire. Le gain est réel mais il est *différé* — c'est
->    exactement le profil d'investissement qu'une équipe sous pression refuse.
-> 3. **Une spec floue produit du code faux plus vite qu'avant.** SDD amplifie la qualité de
->    l'intention, dans les deux sens. C'est ce que l'itération 3 du [palier 4](04-chantier-conduit.md)
->    va montrer sur les filtres et la pagination.
+> 1. **On a very large existing one, SDD does not back-document.** The SpecKit doc says this:
+> initialization "does not rewrite the application and does not infer specs for the
+> existing behavior”. The first project must be **limited**, not “document the
+> system”.
+> 2. **The cost shifts, it does not disappear.** We spend time writing and clarifying this
+> that we spent debugging and redoing. The gain is real but it is *delayed* - it is
+> exactly the investment profile that a team under pressure refuses.
+> 3. **A fuzzy spec produces false code faster than before.** SDD amplifies the quality of
+> intention, in both directions. This is what iteration 3 of [tier 4](04-chantier-conduit.md)
+> will show about filters and pagination.
 
 ---
 
-## 2.4 — Le mapping vers ce qui existe déjà
+## 2.4 - Mapping to what already exists
 
-Le pipeline `/dev` de `conduit-fullstack` est du SDD artisanal. Poser le mapping explicitement
-sert deux fois : ça accélère l'apprentissage, et ça donne **le meilleur support de coaching
-possible** — une équipe adopte plus volontiers une méthode qu'on lui présente comme la
-formalisation d'une pratique qu'elle a déjà à moitié, que comme une révolution.
+The `/dev` pipeline of `conduit-fullstack` is artisanal SDD. Ask the mapping explicitly
+used twice: it accelerates learning, and it makes the method easier to adopt because it presents
+Spec Kit as a formalization of practices the repository already contains, not as a revolution.
 
-| `conduit-fullstack` (`/dev`) | SpecKit | Écart notable |
+| `conduit-fullstack` (`/dev`) | SpecKit | Notable gap |
 |---|---|---|
-| `.claude/rules/` (21 fichiers scopés) | **Trois mécanismes, pas un** : constitution + instructions scopées + presets | Tes rules font deux métiers (gouverner une *décision* / gouverner l'*écriture d'un fichier*) que SpecKit sépare. Détail en [§3.6 du palier 3](03-speckit.md). |
-| `frame` (problème, contraintes, tier) | `/speckit.specify` | SpecKit n'a pas de notion de **tier** (S / F-lite / F-full). Tout passe par le cycle complet. |
-| `spec` (acceptance criteria) | `/speckit.specify` + `/speckit.clarify` | `/clarify` est **meilleur** : il pose des questions ciblées au lieu de laisser l'humain deviner ce qui manque. |
-| `analyze` (F-full) | `/speckit.plan` + `research.md` | Équivalent. |
-| `plan` (items cochables) | `/speckit.tasks` | Équivalent. |
-| `implement` | `/speckit.implement` | Équivalent. |
-| `review` + `validate` | `/speckit.analyze` + `/speckit.checklist` | `/analyze` vérifie la **cohérence entre artefacts**, ce que la revue maison ne fait pas. Un vrai apport. |
-| ADRs (`docs/adr/`) | Le rationale dans `plan.md` | L'ADR **numéroté et permanent** est supérieur pour la mémoire longue. À conserver en plus. |
-| **Gates utilisateur obligatoires** | *rien* | **L'écart le plus important. Voir ci-dessous.** |
+| `.claude/rules/` (21 scoped files) | **Three mechanisms, not one**: constitution + scoped instructions + presets | Your rules make two jobs (governing a *decision* / governing the *writing of a file*) that SpecKit separates. Detail in [§3.6 of level 3](03-speckit.md). |
+| `frame` (problem, constraints, tier) | `/speckit.specify` | SpecKit has no concept of **tier** (S / F-lite / F-full). Everything goes through the full cycle. |
+| `spec` (acceptance criteria) | `/speckit.specify` + `/speckit.clarify` | `/clarify` is **better**: it asks targeted questions instead of leaving the human guessing what's missing. |
+| `analyze` (F-full) | `/speckit.plan` + `research.md` | Equivalent. |
+| `plan` (items cochables) | `/speckit.tasks` | Equivalent. |
+| `implement` | `/speckit.implement` | Equivalent. |
+| `review` + `validate` | `/speckit.analyze` + `/speckit.checklist` | `/analyze` checks **consistency between artifacts**, which the in-house review does not do. A real contribution. |
+| ADRs (`docs/adr/`) | The rationale in `plan.md` | The ADR **numbered and permanent** is superior for long memory. To keep in addition. |
+| **Mandatory user gates** | *rien* | **Largest gap. See below.** |
 
-### Le trou à combler : les gates
+### The hole to fill: gates
 
-Ton pipeline maison impose une validation humaine après `frame`, `spec` et `plan`. SpecKit
-enchaîne les commandes sans forcer d'arrêt. Sur un chantier solo, ça passe. **En équipe, c'est
-le risque principal** : un développeur enchaîne `/specify → /plan → /tasks → /implement` en
-vingt minutes et produit 2 000 lignes que personne n'a cadrées, à partir d'une spec que
-personne n'a lue.
+Your in-house pipeline requires human validation after `frame`, `spec` and `plan`. SpecKit
+chain commands together without forcing a stop. On a solo project, it works. **As a team, it's
+the main risk**: a developer chains `/specify → /plan → /tasks → /implement` into
+twenty minutes and produced 2,000 lines that no one framed, from a spec that
+no one read it.
 
-C'est le trou que ton coaching doit combler explicitement. Deux parades, à éprouver au
-[palier 4](04-chantier-conduit.md) :
+This is the hole that the developer must explicitly fill. Two ways to handle it, to experience at
+[level 4](04-chantier-conduit.md):
 
-1. **Le gate social** : la spec est poussée en PR et relue *avant* `/speckit.plan`. Lent, mais
-   c'est le seul qui traite la cause.
-2. **Le gate outillé** : `/speckit.checklist` génère une checklist de qualité de spec, dont la
-   validation conditionne le passage à l'étape suivante. Plus rapide, mais l'agent reste juge
-   et partie.
+1. **The social gate**: the spec is pushed to PR and reread *before* `/speckit.plan`. Slow, but
+   it is the only one who treats the cause.
+2. **The tooled gate**: `/speckit.checklist` generates a spec quality checklist, including the
+   validation conditions the passage to the next step. Faster, but the agent remains the judge
+   and part.
 
-**Exercice 2.4** (30 min) — Compléter ce tableau avec deux colonnes : « ce que SpecKit fait
-mieux » et « ce que le dispositif maison fait mieux ». Cette liste est la matière première de
-ta légitimité de coach : elle prouve que tu as évalué l'outil au lieu de le réciter.
-
----
-
-## 2.5 — Le livrable du palier
-
-Une note de synthèse dans `journal.md`, qui répond à cinq questions **sans regarder ce
-fichier** :
-
-1. Quelle est l'inversion, en une phrase ?
-2. Quelle est la frontière spec / plan, et quel test la tranche ?
-3. Pourquoi ce n'est pas du waterfall — trois arguments ?
-4. Quelles sont les trois limites honnêtes de SDD ?
-5. Quel est le trou de SpecKit par rapport à un pipeline avec gates, et comment le combler ?
-
-Puis dire l'ensemble à voix haute, chronomètre en main. **Cinq minutes maximum.** Au-delà, la
-compréhension existe mais n'est pas condensée — et une compréhension non condensée ne se
-transmet pas : elle se récite.
+**Exercise 2.4** (30 min) - Complete this table with two columns: “what SpecKit does
+better” and “what the in-house device does better”. This list is the raw material of
+your legitimacy as a coach: it proves that you evaluated the tool instead of reciting it.
 
 ---
 
-## Critère de sortie — récapitulatif
+## 2.5 - The deliverable of the landing
 
-- [ ] Les règles R-1 à R-10 du PRD sont classées spec / plan, avec justification.
-- [ ] Le cas R-1 (slug) est argumenté des deux côtés avant d'être tranché.
-- [ ] Le tableau de mapping est complété avec les deux colonnes comparatives.
-- [ ] Les cinq réponses tiennent en 5 minutes à voix haute, sans notes.
+A summary note in `journal.md`, which answers five questions **without looking at this
+file**:
+
+1. What is the inversion, in a sentence?
+2. What is the spec/plan boundary, and what test is the slice?
+3. Why it’s not waterfall - three arguments?
+4. What are the three honest limits of SDD?
+5. What is the gap in SpecKit compared to a pipeline with gates, and how to fill it?
+
+Then say the whole thing out loud, stopwatch in hand. **Five minutes maximum.** Beyond that, the
+understanding exists but is not condensed - and an uncondensed understanding does not
+does not transmit: it is recited.
+
+---
+
+## Exit criteria - summary
+
+- [ ] Rules R-1 to R-10 of PRD are classified spec / plan, with justification.
+- [ ] Case R-1 (slug) is argued on both sides before being decided.
+- [ ] The mapping table is completed with the two comparative columns.
+- [ ] The five answers take 5 minutes out loud, without notes.
 
 → Palier suivant : [`03-speckit.md`](03-speckit.md)
 
@@ -209,6 +208,6 @@ transmet pas : elle se récite.
 
 ## Sources
 
-- [`spec-driven.md` — la philosophie SDD, dépôt github/spec-kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)
-- [Documentation Spec Kit](https://github.github.io/spec-kit/)
-- [Adopter Spec Kit sur un projet existant](https://github.github.io/spec-kit/guides/existing-projects.html)
+- [`spec-driven.md` - the SDD philosophy, github/spec-kit repository](https://github.com/github/spec-kit/blob/main/spec-driven.md)
+- [Spec Kit Documentation](https://github.github.io/spec-kit/)
+- [Adopt Spec Kit on an existing project](https://github.github.io/spec-kit/guides/existing-projects.html)
