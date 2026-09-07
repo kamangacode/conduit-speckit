@@ -2,12 +2,12 @@
 applyTo: "docs/**/*.md, specs/**/*.md, AGENTS.md, .github/**/*.md, .specify/**/*.md"
 ---
 
-# Documentation comme code
+# Documentation as code
 
-Toute documentation ajoutée doit avoir un titre clair, des liens relatifs valides et un périmètre explicite. Mettre à jour la documentation lorsqu'une convention, un workflow ou un contrat change.
+Any added documentation must have a clear title, valid relative links, and an explicit scope. Update documentation when an agreement, workflow or contract changes.
 
-Placer les contenus selon leur intention : `docs/sdd/` pour la méthode et les observations, `docs/prd/` pour le produit et ses contrats, `docs/adr/` pour les décisions structurantes, et `specs/` pour les features en cours.
+Place the contents according to their intention: `docs/sdd/` for the method and observations, `docs/prd/` for the product and its contracts, `docs/adr/` for the structuring decisions, and `specs/` for the current features.
 
-Éviter la duplication normative : une règle active doit avoir une source de vérité identifiable. Les explications longues restent dans la documentation ; les fichiers Copilot restent courts et impératifs.
+Avoid normative duplication: an active rule must have an identifiable source of truth. Long explanations remain in the documentation; Copilot files remain short and imperative.
 
-Ne jamais transformer une hypothèse en fait. Indiquer les éléments non vérifiés et conserver les exemples reproductibles.
+Never turn a hypothesis into fact. Indicate unverified elements and keep reproducible examples.

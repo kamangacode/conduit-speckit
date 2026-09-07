@@ -2,12 +2,12 @@
 applyTo: "docs/prd/**/*.md, docs/requirements/**/*.md, specs/**/*.md, **/*.spec.ts, **/*.test.ts, **/src/test/**/*.java"
 ---
 
-# Exigences et traçabilité
+# Requirements and traceability
 
-Une exigence possède un identifiant stable, un statut explicite et des critères d'acceptation observables. Les critères décrivent un contexte, une action et un résultat attendu ; remplacer les formulations vagues par un comportement vérifiable.
+A requirement has a stable identifier, an explicit status, and observable acceptance criteria. The criteria describe a context, an action and an expected result; replace vague wording with verifiable behavior.
 
-Une feature Spec Kit relie `spec.md`, `plan.md`, `tasks.md` et les preuves produites. Une tâche sans exigence, décision ou nécessité technique identifiable est du scope non tracé et doit être clarifiée avant implémentation.
+A Spec Kit feature links `spec.md`, `plan.md`, `tasks.md` and the produced proofs. A task without an identifiable requirement, decision or technical necessity is undefined scope and must be clarified before implementation.
 
-Une exigence marquée comme implémentée doit pointer vers les fichiers et preuves qui la réalisent. Un lien vers un fichier inexistant ou un test qui ne contrôle pas le comportement attendu ne constitue pas une preuve.
+A requirement marked as implemented must point to the files and proofs that realize it. A link to a nonexistent file or a test that does not control expected behavior does not constitute proof.
 
-Les exigences produit viennent de `docs/prd/`, la méthode vient de `docs/sdd/` et les décisions structurantes viennent des ADR. Ne pas dupliquer une exigence dans plusieurs sources sans lien explicite entre elles.
+The product requirements come from `docs/prd/`, the method comes from `docs/sdd/` and the structuring decisions come from the ADRs. Do not duplicate a requirement across multiple sources without an explicit link between them.

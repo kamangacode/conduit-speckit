@@ -2,12 +2,12 @@
 applyTo: "**/*"
 ---
 
-# Commits, revue et décisions
+# Commits, review and decisions
 
-Un changement doit être aussi simple et local que possible. Chercher la cause racine, éviter les contournements temporaires et ne pas modifier des fichiers sans lien avec l'intention.
+A change should be as simple and local as possible. Look for the root cause, avoid temporary workarounds, and don't modify files unrelated to the intent.
 
-Lorsqu'un commit est demandé, utiliser Conventional Commits et un sujet impératif qui explique le pourquoi lorsque celui-ci n'est pas évident. Ne jamais créer un commit de sa propre initiative.
+When a commit is requested, use Conventional Commits and an imperative subject that explains the why when it is not obvious. Never create a commit on your own initiative.
 
-Toute décision structurante concernant un outil, une architecture, un contrat ou un workflow doit être documentée dans un ADR avant l'implémentation si elle est connue à l'avance. Une décision apparue pendant le travail doit être ajoutée dès qu'elle est identifiée.
+Any structuring decision regarding a tool, architecture, contract or workflow must be documented in an ADR before implementation if it is known in advance. A decision that appears during work must be added as soon as it is identified.
 
-Une revue vérifie d'abord les régressions comportementales, les exigences non couvertes, les risques de sécurité, les liens cassés et les preuves manquantes. Formuler les commentaires avec `issue:`, `suggestion:`, `question:` ou `nit:` et distinguer un blocage d'une préférence.
+A review first checks for behavioral regressions, uncovered requirements, security risks, broken links, and missing evidence. Formulate comments with `issue:`, `suggestion:`, `question:` or `nit:` and distinguish a block from a preference.

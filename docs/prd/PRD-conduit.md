@@ -1,6 +1,6 @@
 ---
-title: "PRD - Conduit (RealWorld), domaine de référence"
-description: "Product Requirements Document complet de l'app Conduit (spec RealWorld) : vision, périmètre fonctionnel, modèle de données, spécification API exhaustive, auth JWT, gestion d'erreurs, règles métier, critères d'acceptation."
+title: "PRD - Conduit (RealWorld), reference domain"
+description: "Product Requirements Complete document of the Conduit app (spec RealWorld): vision, functional scope, data model, exhaustive API specification, JWT auth, error management, business rules, acceptance criteria."
 date: 2026-06-04
 status: REFERENCE
 source: "https://realworld-docs.netlify.app/ (spec RealWorld officielle)"
@@ -8,109 +8,109 @@ source: "https://realworld-docs.netlify.app/ (spec RealWorld officielle)"
 
 # PRD - Conduit (l'app RealWorld)
 
-> Domaine métier de référence : l'app **Conduit** (spec RealWorld), implémentée ici en full-stack TypeScript. Ce PRD est la source de vérité fonctionnelle du repo — les commentaires de code y renvoient par section (`PRD §7`, `§8`, etc.).
+> Reference business domain: the **Conduit** app (spec RealWorld), implemented here in full-stack TypeScript. This PRD is the functional source of truth for the repository - code comments refer to it by section (`PRD §7`, `§8`, etc.).
 >
-> Spécifications RealWorld en local (Markdown) : [`./specifications/`](./specifications/).
+> RealWorld specifications locally (Markdown): [`./specifications/`](./specifications/).
 
 ---
 
-## 1. Contexte et objectif
+## 1. Context and objective
 
-**Conduit** est l'application de référence du projet [RealWorld](https://realworld-docs.netlify.app/) : un clone de Medium (blogging social). Son intérêt pédagogique : le domaine métier est **figé et connu de tous les développeurs**, donc le lecteur d'un repo se concentre à 100% sur la technique d'architecture, jamais sur le métier.
+**Conduit** is the reference application of the [RealWorld](https://realworld-docs.netlify.app/) project: a clone of Medium (social blogging). Its educational interest: the business domain is **fixed and known to all developers**, so the reader of a repository concentrates 100% on the architectural technique, never on the business.
 
-Ce PRD sert à :
-- Geler le périmètre fonctionnel (aucune dérive de scope).
-- Servir de base aux REQ-as-code du repo (`docs/requirements/`).
-- Garantir que l'implémentation reste fidèle au contrat RealWorld officiel (conformité vérifiée par la suite Hurl).
+This PRD is used to:
+- Freeze the functional scope (no scope drift).
+- Serve as a basis for the repository's REQ-as-code (`docs/requirements/`).
+- Guarantee that the implementation remains faithful to the official RealWorld contract (compliance subsequently verified Hurl).
 
-**Principe directeur** : on ne réinvente pas Conduit. On reprend la spec RealWorld à l'identique. La valeur est dans le **comment** (l'architecture et le craft), pas dans le **quoi**.
+**Guiding principle**: we do not reinvent Conduit. We use the RealWorld spec identically. The value is in the **how** (architecture and craftsmanship), not in the **what**.
 
 ---
 
 ## 2. Vision produit
 
-Conduit est une plateforme de publication d'articles communautaire. Un utilisateur peut :
-- s'inscrire, se connecter, gérer son profil ;
-- publier, éditer, supprimer des articles en Markdown, taggés ;
-- lire un flux global ou un flux personnalisé (auteurs qu'il suit) ;
-- suivre/ne plus suivre d'autres auteurs ;
-- mettre en favori / retirer des favoris ;
-- commenter les articles et supprimer ses propres commentaires ;
-- filtrer les articles par tag.
+Conduit is a community article publishing platform. A user can:
+- register, log in, manage your profile;
+- publish, edit, delete articles in Markdown, tagged;
+- read a global feed or a personalized feed (authors it follows);
+- follow/unfollow other authors;
+- add to favorites / remove from favorites;
+- comment on articles and delete your own comments;
+- filter articles by tag.
 
 ---
 
 ## 3. Personas
 
-| Persona | Description | Capacités |
+| Persona | Description | Abilities |
 |---|---|---|
-| **Visiteur anonyme** | Non authentifié | Lire le flux global, lire un article, lire les profils, lire les commentaires, lister les tags |
-| **Membre authentifié** | Compte + JWT | Tout ce qui précède + publier/éditer/supprimer ses articles, suivre, favoriser, commenter, flux personnel, éditer son profil |
-| **Auteur** | Membre, propriétaire d'un article ou d'un commentaire | Éditer/supprimer **ses** articles, supprimer **ses** commentaires |
+| **Visiteur anonyme** | Unauthenticated | Read the overall feed, read an article, read profiles, read comments, list tags |
+| **Authenticated member** | Compte + JWT | All of the above + publish/edit/delete your articles, follow, favor, comment, personal feed, edit your profile |
+| **Auteur** | Member, owner of an article or comment | Edit/delete **their** articles, delete **their** comments |
 
-> Règle transverse : les champs `following` (profil) et `favorited` (article) sont calculés **relativement à l'utilisateur courant**. Pour un visiteur anonyme, ils valent toujours `false`.
+> Transversal rule: the fields `following` (profile) and `favorited` (article) are calculated **relative to the current user**. To an anonymous visitor, they are still worth `false`.
 
 ---
 
-## 4. Périmètre fonctionnel (MoSCoW)
+## 4. Functional scope (MoSCoW)
 
 ### Must
 
-| ID | Fonctionnalité |
+| ID | Functionality |
 |---|---|
-| F-AUTH-1 | Inscription (email, username, password) |
-| F-AUTH-2 | Connexion (email, password) → renvoie un JWT |
-| F-AUTH-3 | Récupérer l'utilisateur courant (via JWT) |
-| F-AUTH-4 | Mettre à jour l'utilisateur courant (email, username, password, bio, image) |
-| F-PROF-1 | Consulter un profil public |
-| F-PROF-2 | Suivre / ne plus suivre un utilisateur |
-| F-ART-1 | Lister les articles (filtres tag / author / favorited, pagination) |
-| F-ART-2 | Flux personnel (articles des auteurs suivis) |
-| F-ART-3 | Consulter un article par slug |
-| F-ART-4 | Créer un article (title, description, body, tagList) |
-| F-ART-5 | Éditer un article (auteur uniquement) |
-| F-ART-6 | Supprimer un article (auteur uniquement) |
-| F-CMT-1 | Ajouter un commentaire |
-| F-CMT-2 | Lister les commentaires d'un article |
-| F-CMT-3 | Supprimer un commentaire (auteur uniquement) |
-| F-FAV-1 | Favoriser / définavoriser un article |
-| F-TAG-1 | Lister les tags |
+| F-AUTH-1 | Registration (email, username, password) |
+| F-AUTH-2 | Connection (email, password) → returns a JWT |
+| F-AUTH-3 | Retrieve the current user (via JWT) |
+| F-AUTH-4 | Update current user (email, username, password, bio, image) |
+| F-PROF-1 | View a public profile |
+| F-PROF-2 | Follow/unfollow a user |
+| F-ART-1 | List articles (tag / author / favorited filters, pagination) |
+| F-ART-2 | Personal feed (articles from authors followed) |
+| F-ART-3 | View an article by slug |
+| F-ART-4 | Create an article (title, description, body, tagList) |
+| F-ART-5 | Edit an article (author only) |
+| F-ART-6 | Delete an article (author only) |
+| F-CMT-1 | Add a comment |
+| F-CMT-2 | List comments on an article |
+| F-CMT-3 | Delete a comment (author only) |
+| F-FAV-1 | Favor/unfavorite an article |
+| F-TAG-1 | List tags |
 
 ### Should
 
-| ID | Fonctionnalité |
+| ID | Functionality |
 |---|---|
-| F-UI-1 | Rendu Markdown du body côté client |
-| F-UI-2 | Header contextuel (authentifié vs anonyme) |
+| F-UI-1 | Client-side Markdown rendering of the body |
+| F-UI-2 | Contextual header (authenticated vs anonymous) |
 | F-UI-3 | Sidebar "Popular Tags" |
 
-### Could / Won't (hors périmètre)
+### Could / Won't (outside scope)
 
-- Pas de messagerie, pas de notifications, pas de recherche plein texte, pas d'upload d'image (l'image est une URL), pas de rôles/admin.
+- No messaging, no notifications, no full text search, no image upload (image is a URL), no roles/admin.
 
 ---
 
 ## 5. Parcours et routes frontend
 
-> Routing en hash (`/#/...`) dans la spec de référence. JWT stocké en `localStorage`.
+> Routing in hash (`/#/...`) in the reference spec. JWT stored as `localStorage`.
 
 | Route | Page | Auth |
 |---|---|---|
-| `/#/` | Home : liste des tags, articles (flux global / personnel / par tag), pagination | Optionnel |
-| `/#/login` | Connexion | Anonyme |
-| `/#/register` | Inscription | Anonyme |
-| `/#/settings` | Paramètres du compte + déconnexion | Requis |
-| `/#/editor` | Créer un article | Requis |
-| `/#/editor/:slug` | Éditer un article | Requis (auteur) |
-| `/#/article/:slug` | Article : body Markdown, commentaires, bouton supprimer (auteur) | Optionnel |
-| `/#/profile/:username` | Profil + articles de l'utilisateur | Optionnel |
-| `/#/profile/:username/favorites` | Articles favoris de l'utilisateur | Optionnel |
+| `/#/` | Home: list of tags, articles (global feed / personal / by tag), pagination | Optionnel |
+| `/#/login` | Connection | Anonyme |
+| `/#/register` | Registration | Anonyme |
+| `/#/settings` | Account settings + logout | Requis |
+| `/#/editor` | Create an article | Requis |
+| `/#/editor/:slug` | Edit an article | Requis (auteur) |
+| `/#/article/:slug` | Article: Markdown body, comments, delete button (author) | Optionnel |
+| `/#/profile/:username` | User profile + articles | Optionnel |
+| `/#/profile/:username/favorites` | User Favorite Posts | Optionnel |
 
-> Le BFF (repo #3) introduit en plus un client mobile : le PRD frontend reste la référence des besoins, le BFF adapte les réponses par client.
+> The BFF (repository #3) also introduces a mobile client: the PRD frontend remains the reference for needs, the BFF adapts the responses per client.
 
 ---
 
-## 6. Modèle de données
+## 6. Data Model
 
 ```
 User 1 ──< Article >── many Tag        (un article a une tagList)
@@ -119,69 +119,69 @@ User many ──< Follow >── many User      (relation de suivi)
 User many ──< Favorite >── many Article (relation de favori)
 ```
 
-### User (entité privée)
+### User (private entity)
 
 | Champ | Type | Notes |
 |---|---|---|
 | email | string | unique, requis |
 | username | string | unique, requis |
-| password | string | requis, **stocké hashé**, jamais renvoyé |
+| password | string | required, **stored hashed**, never returned |
 | bio | string | nullable |
-| image | string (URL) | nullable, avatar par défaut possible |
-| token | string (JWT) | renvoyé dans les réponses User uniquement |
+| image | string (URL) | nullable, default avatar possible |
+| token | string (JWT) | returned in User responses only |
 
 ### Profile (vue publique de User)
 
 | Champ | Type | Notes |
 |---|---|---|
-| username | string | |
+| username | string |                                |
 | bio | string | nullable |
-| image | string (URL) | |
-| following | bool | relatif à l'utilisateur courant |
+| image | string (URL) |                                |
+| following | bool | relative to the current user |
 
 ### Article
 
 | Champ | Type | Notes |
 |---|---|---|
-| slug | string | **généré depuis le title** (kebab-case), identifiant public |
+| slug | string | **generated from title** (kebab-case), public identifier |
 | title | string | requis |
 | description | string | requis |
-| body | string (Markdown) | requis ; **non renvoyé dans les listes** (cf. règle R-7) |
-| tagList | string[] | |
-| createdAt | datetime ISO 8601 | |
-| updatedAt | datetime ISO 8601 | |
-| favorited | bool | relatif à l'utilisateur courant |
-| favoritesCount | int | |
-| author | Profile | |
+| body | string (Markdown) | required ; **not returned in the lists** (see rule R-7) |
+| tagList | string[] |                                |
+| createdAt | datetime ISO 8601 |                                |
+| updatedAt | datetime ISO 8601 |                                |
+| favorited | bool | relative to the current user |
+| favoritesCount | int |                                |
+| author | Profile |                                |
 
-### Comment
+### How
 
 | Champ | Type | Notes |
 |---|---|---|
-| id | int | |
+| id | int |                                |
 | body | string | requis |
-| createdAt | datetime ISO 8601 | |
-| updatedAt | datetime ISO 8601 | |
-| author | Profile | |
+| createdAt | datetime ISO 8601 |                                |
+| updatedAt | datetime ISO 8601 |                                |
+| author | Profile |                                |
 
 ### Tag
 
-Chaîne simple. Pas d'entité riche.
+Simple chain. No rich entity.
 
 ---
 
-## 7. Spécification API (exhaustive)
+## 7. API specification (exhaustive)
 
-Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token.here`. Content-Type des réponses : `application/json; charset=utf-8`.
+Base URL: `/api`. Authentication header: `Authorization: Token jwt.token.here`. Content-Type of responses: `application/json; charset=utf-8`.
 
-### 7.1 Authentification et utilisateur
+### 7.1 Authentication and user
 
-| Action | Méthode | Path | Auth | Champs requis |
+| Action | Method | Path | Auth | Champs requis |
 |---|---|---|---|---|
-| Connexion | POST | `/api/users/login` | Non | email, password |
-| Inscription | POST | `/api/users` | Non | username, email, password |
-| Utilisateur courant | GET | `/api/user` | Oui | - |
-| Mise à jour | PUT | `/api/user` | Oui | (tous optionnels : email, username, password, image, bio) |
+| Connection | POST | `/api/users/login` | Non | email, password |
+| Registration | POST | `/api/users` | Non | username, email, password |
+| Current user | GET | `/api/user` | Oui | - |
+| Update | PUT | `/api/user` | Oui | (all optional: email, username, password, image, bio) |
 
 ```jsonc
 // POST /api/users/login
@@ -196,7 +196,7 @@ Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token
 
 ### 7.2 Profils
 
-| Action | Méthode | Path | Auth |
+| Action | Method | Path | Auth |
 |---|---|---|---|
 | Consulter | GET | `/api/profiles/:username` | Optionnel |
 | Suivre | POST | `/api/profiles/:username/follow` | Oui |
@@ -204,14 +204,14 @@ Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token
 
 ### 7.3 Articles
 
-| Action | Méthode | Path | Auth | Query / Body |
+| Action | Method | Path | Auth | Query / Body |
 |---|---|---|---|---|
 | Lister | GET | `/api/articles` | Optionnel | `tag`, `author`, `favorited`, `limit` (def. 20), `offset` (def. 0) |
 | Flux personnel | GET | `/api/articles/feed` | Oui | `limit`, `offset` |
 | Consulter | GET | `/api/articles/:slug` | Non | - |
-| Créer | POST | `/api/articles` | Oui | title, description, body (+ tagList) |
-| Éditer | PUT | `/api/articles/:slug` | Oui (auteur) | title, description, body (optionnels) |
-| Supprimer | DELETE | `/api/articles/:slug` | Oui (auteur) | - |
+| Create | POST | `/api/articles` | Oui | title, description, body (+ tagList) |
+| Edit | PUT | `/api/articles/:slug` | Oui (auteur) | title, description, body (optionnels) |
+| DELETE | DELETE | `/api/articles/:slug` | Oui (auteur) | - |
 
 ```jsonc
 // POST /api/articles
@@ -223,11 +223,11 @@ Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token
 
 ### 7.4 Commentaires
 
-| Action | Méthode | Path | Auth |
+| Action | Method | Path | Auth |
 |---|---|---|---|
-| Ajouter | POST | `/api/articles/:slug/comments` | Oui |
+| Add | POST | `/api/articles/:slug/comments` | Oui |
 | Lister | GET | `/api/articles/:slug/comments` | Optionnel |
-| Supprimer | DELETE | `/api/articles/:slug/comments/:id` | Oui (auteur) |
+| DELETE | DELETE | `/api/articles/:slug/comments/:id` | Oui (auteur) |
 
 ```jsonc
 // POST /api/articles/:slug/comments
@@ -236,17 +236,17 @@ Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token
 
 ### 7.5 Favoris et tags
 
-| Action | Méthode | Path | Auth |
+| Action | Method | Path | Auth |
 |---|---|---|---|
 | Favoriser | POST | `/api/articles/:slug/favorite` | Oui |
-| Définavoriser | DELETE | `/api/articles/:slug/favorite` | Oui |
-| Lister les tags | GET | `/api/tags` | Non |
+| Unfavorite | DELETE | `/api/articles/:slug/favorite` | Oui |
+| List tags | GET | `/api/tags` | Non |
 
 ---
 
-## 8. Formats de réponse (verbatim)
+## 8. Response formats (verbatim)
 
-### User (avec token)
+### User (with token)
 ```json
 {
   "user": {
@@ -366,140 +366,140 @@ Base URL : `/api`. En-tête d'authentification : `Authorization: Token jwt.token
 
 ---
 
-## 9. Authentification
+## 9. Authentication
 
-- Mécanisme : **JWT**.
-- En-tête des requêtes authentifiées : `Authorization: Token jwt.token.here` (préfixe `Token`, pas `Bearer`).
-- Le token n'est renvoyé que dans les réponses `User` (login, register, get/update user).
-- Côté frontend de référence : le token est stocké en `localStorage`.
-- Les endpoints "Auth Optionnel" adaptent leur réponse selon la présence/validité du token (calcul de `following` / `favorited`).
+- Mechanism: **JWT**.
+- Header of authenticated requests: `Authorization: Token jwt.token.here` (prefix `Token`, not `Bearer`).
+- The token is only returned in `User` (login, register, get/update user) responses.
+- Reference frontend side: the token is stored in `localStorage`.
+- “Optional Auth” endpoints adapt their response according to the presence/validity of the token (calculation of `following` / `favorited`).
 
 ---
 
-## 10. Gestion des erreurs
+## 10. Error handling
 
 | Code | Cas |
 |---|---|
-| 422 Unprocessable Entity | Échec de validation |
-| 401 Unauthorized | Authentification requise mais absente/invalide |
-| 403 Forbidden | Requête valide mais permission manquante (ex: éditer l'article d'un autre) |
+| 422 Unprocessable Entity | Validation failure |
+| 401 Unauthorized | Authentication required but missing/invalid |
+| 403 Forbidden | Valid request but missing permission (eg: edit someone else's article) |
 | 404 Not Found | Ressource introuvable |
 
-Format des erreurs de validation (verbatim) :
+Format of validation errors (verbatim):
 ```json
 {"errors":{"body":["can't be empty"]}}
 ```
-La clé `errors` mappe des noms de champs vers des tableaux de messages.
+The `errors` key maps field names to message tables.
 
 ---
 
-## 11. Règles métier
+## 11. Business rules
 
-| ID | Règle |
+| ID | Ruler |
 |---|---|
-| R-1 | Le `slug` d'un article est généré depuis le `title` (kebab-case) et sert d'identifiant public. |
-| R-2 | La liste des articles est triée par date de création décroissante (plus récents d'abord). |
-| R-3 | `GET /api/articles` accepte au plus un usage cohérent des filtres `tag`, `author`, `favorited`, combinés à `limit`/`offset`. |
-| R-4 | Le flux personnel (`/feed`) ne renvoie que les articles des auteurs suivis par l'utilisateur courant ; il exige l'authentification. |
-| R-5 | `following` et `favorited` sont calculés relativement à l'utilisateur courant (`false` si anonyme). |
-| R-6 | Seul l'auteur peut éditer/supprimer son article et supprimer son commentaire (sinon 403). |
-| R-7 | Depuis le 2024-08-16, les endpoints de **liste** d'articles ne renvoient plus le `body` (performance). Le `body` reste présent sur l'article unitaire. |
+| R-1 | The `slug` of an article is generated from the `title` (kebab-case) and serves as a public identifier. |
+| R-2 | The list of articles is sorted by descending creation date (newest first). |
+| R-3 | `GET /api/articles` accepts at most consistent use of the filters `tag`, `author`, `favorited`, combined with `limit`/`offset`. |
+| R-4 | The personal feed (`/feed`) only returns articles from authors followed by the current user; it requires authentication. |
+| R-5 | `following` and `favorited` are calculated relative to the current user (`false` if anonymous). |
+| R-6 | Only the author can edit/delete his article and delete his comment (otherwise 403). |
+| R-7 | As of 2024-08-16, item **list** endpoints no longer return `body` (performance). The `body` remains present on the single item. |
 | R-8 | `email` et `username` sont uniques. |
-| R-9 | Le `password` n'est jamais renvoyé ; il est stocké hashé. |
-| R-10 | Pagination : `limit` défaut 20, `offset` défaut 0. |
+| R-9 | The `password` is never returned; it is stored hashed. |
+| R-10 | Paging: `limit` default 20, `offset` default 0. |
 
 ---
 
 ## 12. Exigences non-fonctionnelles
 
-| Domaine | Exigence |
+| Domaine | Requirement |
 |---|---|
 | Format | JSON ; `Content-Type: application/json; charset=utf-8`. |
-| Sécurité | Mots de passe hashés ; JWT signé ; pas de fuite de champ sensible. |
-| Cohérence | Les 5 repos doivent passer le **même** jeu de tests fonctionnels (la spec RealWorld fournit une suite de conformité officielle, cf. section 15). |
-| Performance | Listes paginées ; pas de `body` dans les listes (R-7). |
-| Observabilité | Selon repo (notamment `conduit-microservices`, phase durcissement). |
+| Security | Hashed passwords; JWT signed; no sensitive field leakage. |
+| Consistency | All 5 repositorys must pass the **same** set of functional tests (spec RealWorld provides an official conformance suite, see section 15). |
+| Performance | Paginated lists; no `body` in the lists (R-7). |
+| Observability | Selon repository (notamment `conduit-microservices`, phase durcissement). |
 
-> Recommandation : utiliser la **suite de conformité RealWorld** (tests Hurl, cf. section 15) comme garde-fou commun. Un repo n'est "conforme Conduit" que s'il la passe. C'est ce qui rend les implémentations rigoureusement comparables.
-
----
-
-## 13. Critères d'acceptation (communs à tout repo Conduit)
-
-- [ ] Tous les endpoints de la section 7 répondent avec les formats de la section 8.
-- [ ] L'authentification JWT fonctionne (`Authorization: Token ...`).
-- [ ] Les erreurs respectent la section 10 (422 + format `errors`).
-- [ ] Les règles métier R-1 à R-10 sont respectées.
-- [ ] La suite de conformité RealWorld (tests Hurl) passe au vert (cf. section 15).
-- [ ] Les champs relatifs (`following`, `favorited`) sont corrects pour anonyme et authentifié.
+> Recommendation: use the **RealWorld conformance suite** (Hurl tests, see section 15) as a common safeguard. A repository is only "Conduit compliant" if it passes it. This is what makes the implementations rigorously comparable.
 
 ---
 
-## 14. Portée par repo (le même Conduit, 5 angles)
+## 13. Acceptance criteria (common to any Conduit repository)
 
-| Repo | Implémente | Particularité vs ce PRD |
+- [ ] All section 7 endpoints respond with section 8 formats.
+- [ ] JWT authentication works (`Authorization: Token ...`).
+- [ ] Errors comply with section 10 (422 + `errors` format).
+- [ ] Business rules R-1 to R-10 are respected.
+- [ ] The RealWorld compliance suite (Hurl tests) goes green (see section 15).
+- [ ] Relative fields (`following`, `favorited`) are correct for anonymous and authenticated.
+
+---
+
+## 14. Scope per repository (the same Conduit, 5 angles)
+
+| Repo | Implements | Special feature vs this PRD |
 |---|---|---|
-| `conduit-craft-ai` | Conduit complet, monolithe hexagonal | Référence d'implémentation. Scope v1 : auth + articles + commentaires |
-| `conduit-api-first` | Conduit complet | Le contrat OpenAPI **précède** l'implémentation ; les types sont générés |
-| `conduit-bff` | Conduit + 2 clients (web, mobile) | Ajoute une couche BFF par client ; les réponses sont adaptées par client |
-| `conduit-microservices` | Conduit découpé puis durci | Bounded contexts (articles, users, comments) + database-per-service, puis circuit breaker / retry / async (résilience) |
-| `conduit-fullstack` | Conduit en full-stack TypeScript | Monorepo api + web + shared ; modèle partagé, type safety bout-en-bout (contraste avec la spine Java) |
+| `conduit-craft-ai` | Conduit complet, monolithe hexagonal | Implementation reference. Scope v1: auth + articles + comments |
+| `conduit-api-first` | Conduit complet | The OpenAPI contract **precedes** the implementation; types are generated |
+| `conduit-bff` | Conduit + 2 clients (web, mobile) | Adds one BFF layer per client; the answers are adapted per client |
+| `conduit-microservices` | Conduit cut then hardened | Bounded contexts (articles, users, comments) + database-per-service, then circuit breaker / retry / async (resilience) |
+| `conduit-fullstack` | Conduit en full-stack TypeScript | Monorepository api + web + shared; shared model, end-to-end safety type (contrast with the Java spine) |
 
-> Le **quoi** (ce PRD) ne change jamais. Seul le **comment** change d'un repo à l'autre. C'est le pari RealWorld : domaine figé, architecture variable.
+> The **what** (this PRD) never changes. Only the **how** changes from one repository to another. This is the RealWorld bet: fixed domain, variable architecture.
 
 ---
 
-## 15. Suite de conformité (tests officiels RealWorld)
+## 15. Compliance suite (official tests RealWorld)
 
-> Important : la spec RealWorld **a évolué**. L'ancienne collection Postman/Newman est obsolète. La suite actuelle vit dans le dépôt `gothinkster/realworld`, dossier `specs/`.
+> Important: the RealWorld spec **has evolved**. The old Postman/Newman collection is obsolete. The current suite lives in repository `gothinkster/realworld`, folder `specs/`.
 
 ### 15.1 Tests API
 
-| Élément | Détail |
+| Element | Detail |
 |---|---|
-| Source de vérité | Tests **Hurl** (`specs/api/hurl/`), https://hurl.dev |
-| Collection alternative | **Bruno** (`specs/api/bruno/`), générée depuis Hurl, https://www.usebruno.com |
-| Contrat | `specs/api/openapi.yml` - **OpenAPI officiel** de Conduit (à réutiliser directement par le repo `conduit-api-first`) |
-| Synchro | Bruno régénéré via `make bruno-generate`, vérifié en CI via `make bruno-check` |
+| Source of truth | Tests **Hurl** (`specs/api/hurl/`), https://hurl.dev |
+| Collection alternative | **Bruno** (`specs/api/bruno/`), generated from Hurl, https://www.usebruno.com |
+| Contrat | `specs/api/openapi.yml` - **Official OpenAPI** from Conduit (to be reused directly by the `conduit-api-first` repository) |
+| Synchro | Bruno regenerated via `make bruno-generate`, verified in CI via `make bruno-check` |
 
 Commandes (verbatim) :
 ```bash
-# Tests Hurl (source de vérité)
+# Hurl tests (source of truth)
 HOST=http://localhost:3000/api ./run-api-tests-hurl.sh
 
-# Tests Bruno (généré, équivalent)
+# Bruno tests (generated, équivalent)
 HOST=http://localhost:3000/api ./run-api-tests-bruno.sh
 ```
 
 ### 15.2 Tests end-to-end (frontend)
 
-Spécifications Playwright dans `specs/e2e/` (TypeScript), incluant : `auth.spec.ts`, `articles.spec.ts`, `comments.spec.ts`, `social.spec.ts`, `settings.spec.ts`, `navigation.spec.ts`, `error-handling.spec.ts`, `null-fields.spec.ts`, `xss-security.spec.ts`, `url-navigation.spec.ts`, `health.spec.ts`. Un fichier `SELECTORS.md` documente les sélecteurs attendus côté UI.
+Playwright specifications in `specs/e2e/` (TypeScript), including: `auth.spec.ts`, `articles.spec.ts`, `comments.spec.ts`, `social.spec.ts`, `settings.spec.ts`, An `SELECTORS.md` file documents the expected selectors on the UI side.
 
-### 15.3 Usage recommandé par repo
+### 15.3 Recommended use by repository
 
-| Repo | Suite de conformité à viser |
+| Repo | Compliance suite to aim for |
 |---|---|
-| `conduit-craft-ai` | Tests Hurl (API) au vert ; ce sont les tests d'acceptation |
+| `conduit-craft-ai` | Hurl (API) tests green; these are the acceptance tests |
 | `conduit-api-first` | Partir de `specs/api/openapi.yml` comme contrat, puis Hurl au vert |
-| `conduit-bff` | Hurl sur le back ; e2e Playwright par client |
-| `conduit-microservices` | Hurl au vert malgré la découpe (la conformité ne change pas) + scénarios de panne maison (durcissement) |
-| `conduit-fullstack` | Hurl au vert sur l'API + e2e Playwright sur le front |
+| `conduit-bff` | Hurl on the back; e2e Playwright by customer |
+| `conduit-microservices` | Hurl green despite cutting (compliance does not change) + in-house failure scenarios (hardening) |
+| `conduit-fullstack` | Hurl green on the API + e2e Playwright on the front |
 
 ---
 
 ## 16. Sources
 
-> Les spécifications RealWorld ont été rapatriées en local (Markdown verbatim) dans [`./specifications/`](./specifications/). Travailler depuis ces fichiers plutôt que les URLs. Les liens ci-dessous sont la source amont d'origine.
+> The RealWorld specifications have been repatriated locally (Markdown verbatim) in [`./specifications/`](./specifications/). Work from these files rather than URLs. The links below are the original upstream source.
 
-- Spécifications locales : [`./specifications/`](./specifications/) (backend, frontend, mobile, tests)
-- Spec RealWorld officielle (amont) : https://realworld-docs.netlify.app/
-  - Introduction : https://realworld-docs.netlify.app/introduction/
-  - Endpoints : https://realworld-docs.netlify.app/specifications/backend/endpoints/
-  - Formats de réponse : https://realworld-docs.netlify.app/specifications/backend/api-response-format/
-  - Gestion d'erreurs : https://realworld-docs.netlify.app/specifications/backend/error-handling/
-  - Routing frontend : https://realworld-docs.netlify.app/specifications/frontend/routing/
-  - Fonctionnalités : https://realworld-docs.netlify.app/specifications/frontend/templates/
-- Dépôt officiel : https://github.com/gothinkster/realworld
-  - Suite de conformité API : https://github.com/gothinkster/realworld/tree/main/specs/api
-  - OpenAPI officiel : https://github.com/gothinkster/realworld/blob/main/specs/api/openapi.yml
-  - Tests e2e Playwright : https://github.com/gothinkster/realworld/tree/main/specs/e2e
+- Local specifications: [`./specifications/`](./specifications/) (backend, frontend, mobile, tests)
+- Official RealWorld spec (upstream): https://realworld-docs.netlify.app/
+  - Introconduition: https://realworld-docs.netlify.app/introconduition/
+  - Endpoints: https://realworld-docs.netlify.app/specifications/backend/endpoints/
+  - Response formats: https://realworld-docs.netlify.app/specifications/backend/api-response-format/
+  - Error handling: https://realworld-docs.netlify.app/specifications/backend/error-handling/
+  - Frontend routing: https://realworld-docs.netlify.app/specifications/frontend/routing/
+  - Features: https://realworld-docs.netlify.app/specifications/frontend/templates/
+- Official filing: https://github.com/gothinkster/realworld
+  - API compliance suite: https://github.com/gothinkster/realworld/tree/main/specs/api
+  - Official OpenAPI: https://github.com/gothinkster/realworld/blob/main/specs/api/openapi.yml
+  - e2e Playwright tests: https://github.com/gothinkster/realworld/tree/main/specs/e2e

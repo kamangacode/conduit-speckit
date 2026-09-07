@@ -2,10 +2,10 @@
 applyTo: "**/src/test/**, **/*.spec.ts, **/*.test.ts, **/*.sh, specs/**/checklist.md"
 ---
 
-# Tests et preuves
+# Tests and evidence
 
-Un test ou script doit prouver un comportement observable et pouvoir échouer si le comportement régresse. Éviter les assertions tautologiques, les tests qui ne contrôlent pas la sortie et les fixtures qui reproduisent exactement l'implémentation.
+A test or script must demonstrate observable behavior and be able to fail if the behavior regresses. Avoid tautological assertions, tests that do not control the output, and fixtures that exactly replicate the implementation.
 
-Distinguer conformité à un contrat externe et tests de régression internes. Ne pas modifier un oracle ou une fixture externe pour faire passer le résultat ; corriger l'implémentation ou documenter l'écart.
+Distinguish between compliance with an external contract and internal regression testing. Do not modify an oracle or an external fixture to pass the result; correct the implementation or document the deviation.
 
-Pour une exigence implementée, relier la preuve à l'artefact concerné. Les scripts shell doivent échouer explicitement en cas d'erreur et ne doivent pas exposer de secrets dans leur sortie.
+For an implemented requirement, link the evidence to the relevant artifact. Shell scripts should explicitly fail on errors and should not expose secrets in their output.

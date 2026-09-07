@@ -2,19 +2,19 @@
 applyTo: "**/domain/**/*.java, **/application/**/*.java, **/infrastructure/**/*.java, **/interfaces/**/*.java, **/controller/**/*.java"
 ---
 
-# Architecture hexagonale et clean architecture
+# Hexagonal architecture and clean architecture
 
-Cette instruction s'applique au terrain Java/Spring de Conduit lorsqu'il existe ; elle ne transforme pas les documents Spec Kit en application runtime.
+This instruction applies to Conduit's Java/Spring terrain when it exists; it does not transform Spec Kit documents into a runtime application.
 
-Les dépendances pointent vers l'intérieur : `domain` ne dépend d'aucun framework, `application` dépend des ports du domaine, `infrastructure` implémente les adaptateurs groupés par domaine (`article`, `user`) et `interfaces/rest` expose les contrôleurs REST groupés par domaine (`article`, `user`, `shared`). Le domaine ne connaît ni Spring, ni JPA, ni la base de données.
+Dependencies point inward: `domain` does not depend on any framework, `application` depends on domain ports, `infrastructure` implements domain-grouped adapters (`article`, `user`), and `interfaces/rest` exposes domain-grouped REST controllers (`article`, `user`, `shared`). The domain does not know Spring, JPA, or the database.
 
-Les ports sont définis du côté du domaine ou de l'application selon le contrat qu'ils servent. Les cas d'utilisation ne dépendent pas des contrôleurs. Les contrôleurs valident et mappent l'entrée, délèguent, puis mappent la sortie ; ils ne contiennent pas de logique métier.
+Ports are defined on the domain or application side depending on the contract they serve. Use cases do not depend on controllers. Controllers validate and map input, delegate, then map output; they do not contain business logic.
 
-La persistence du terrain Java utilise Spring Data JPA/Hibernate uniquement dans `infrastructure` :
-un port applicatif est implémenté par un adapter transactionnel qui délègue à un `JpaRepository`.
-Les classes `@Entity`, les repositories Spring et les mappers `Entity <-> domain` restent hors de
-`domain/` et `application/`. Flyway est la source de vérité du schéma et Hibernate est configuré en
-validation (`ddl-auto=validate`) hors environnement de test. Chaque adapter JPA dispose d'un test
-`@DataJpaTest` ; les use cases continuent d'être testés avec des doubles du port.
+Java terrain persistence uses Spring Data JPA/Hibernate only in `infrastructure`:
+an application port is implemented by a transactional adapter which delegates to a `JpaRepository`.
+`@Entity` classes, Spring repositories and `Entity <-> domain` mappers remain out of
+`domain/` and `application/`. Flyway is the schema source of truth and Hibernate is configured in
+validation (`ddl-auto=validate`) outside the test environment. Each JPA adapter has a test
+`@DataJpaTest` ; the use cases continue to be tested with duplicates of the port.
 
-Les entités, value objects et agrégats protègent leurs invariants. Les écritures entre bounded contexts passent par des contrats ou événements explicites, pas par des imports directs qui créent un couplage caché.
+Entities, value objects and aggregates protect their invariants. Writes between bounded contexts go through explicit contracts or events, not through direct imports which create hidden coupling.

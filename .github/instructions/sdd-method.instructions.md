@@ -2,17 +2,17 @@
 applyTo: ".specify/**, .github/skills/**, docs/sdd/**, specs/**"
 ---
 
-# Méthode SDD et Spec Kit
+# SDD Method and Spec Kit
 
-Traiter la spécification comme la source de l'intention et le code comme sa réalisation vérifiable. Préserver la séquence constitution -> specify -> clarify si nécessaire -> plan -> tests -> tasks -> implement -> converge.
+Treat the specification as the source of the intent and the code as its verifiable realization. Preserve the sequence constitution -> specify -> clarify if necessary -> plan -> tests -> tasks -> implement -> converge.
 
-Les artefacts d'une feature vivent sous `specs/NNN-slug/` : `spec.md`, `plan.md`, `test-cases.yaml`, `traceability.md`, `tasks.md` et, si nécessaire, `research.md`, `data-model.md`, `contracts/` et `checklist.md`. Une tâche doit être rattachée à une exigence ou à une décision explicite.
+A feature's artifacts live under `specs/NNN-slug/`: `spec.md`, `plan.md`, `test-cases.yaml`, `traceability.md`, `tasks.md` and, if necessary, `research.md`, `data-model.md`, `contracts/` and `checklist.md`. A task must be linked to an explicit requirement or decision.
 
-Utiliser les commandes Copilot avec le séparateur configuré dans `.specify/integration.json`, actuellement `/speckit-...`. Ne pas inventer une variante en point ou contourner les skills installés.
+Use Copilot commands with the separator configured in `.specify/integration.json`, currently `/speckit-...`. Do not invent a point variant or bypass installed skills.
 
-`/speckit-tests` transforme chaque scénario d'acceptation en un cas `AC-*`, puis en scénario
-Cucumber tagué `AC-*` et `FR-*`; toute ambiguïté est signalée sans être inventée. Cucumber prouve
-les scénarios métier internes. Hurl reste la preuve de contrat RealWorld externe, exécutée après
-Cucumber; Bruno est vérifié ensuite comme dérivé de Hurl.
+`/speckit-tests` transforms each acceptance scenario into a case `AC-*`, then into a scenario
+Cucumber tagged `AC-*` and `FR-*`; any ambiguity is pointed out without being invented. Cucumber proves
+internal business scenarios. Hurl remains the external RealWorld contract proof, executed after
+Cucumber; Bruno is then verified as derived from Hurl.
 
-Les observations sur le comportement de Copilot ou Spec Kit doivent être consignées dans `docs/sdd/journal.md`. Une documentation pédagogique ne remplace pas une preuve d'exécution.
+Observations on Copilot or Spec Kit behavior should be logged in `docs/sdd/journal.md`. Educational documentation is not a substitute for proof of execution.

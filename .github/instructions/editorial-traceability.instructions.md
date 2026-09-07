@@ -2,12 +2,12 @@
 applyTo: "docs/**/*.md, .github/**/*.md, .specify/**/*.md, specs/**/*.md"
 ---
 
-# Traçabilité éditoriale
+# Editorial traceability
 
-Une pratique présentée comme reproductible doit exister dans un fichier réel : skill, instruction, template, script, workflow ou artefact. La prose ne remplace pas l'outil qu'elle décrit.
+A practice presented as reproducible must exist in a real file: skill, instruction, template, script, workflow or artifact. Prose does not replace the tool it describes.
 
-Les documents pédagogiques doivent pointer vers les fichiers qui portent effectivement la convention. Ne pas déplacer ou renommer un fichier référencé sans mettre à jour ses liens, et vérifier que les chemins restent valides.
+Educational documents must point to files that actually carry the convention. Do not move or rename a referenced file without updating its links, and verify that the paths remain valid.
 
-Les commentaires d'un fichier exposé publiquement expliquent la raison d'une convention lorsqu'elle n'est pas évidente. Les exemples doivent rester exécutables, crédibles et exempts de secrets.
+Comments on a publicly exposed file explain the reason for a convention when it is not obvious. Examples must remain executable, credible and free of secrets.
 
-Le dépôt peut expliquer le contexte éditorial de la démarche, mais ne contient pas de prix, d'appel à l'achat, de séquence commerciale ou d'autre CTA de vente.
+The filing may explain the editorial context of the approach, but does not contain price, call to purchase, commercial sequence or other sales CTA.

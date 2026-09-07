@@ -2,10 +2,10 @@
 applyTo: "**/domain/**/*.java, **/application/**/*.java"
 ---
 
-# Terrain pédagogique Java/Spring : domaine et application
+# Java/Spring educational field: domain and application
 
-Cette instruction s'applique uniquement au terrain Java/Spring décrit dans `docs/sdd/04-chantier-conduit.md` ; elle ne crée pas une architecture Java active dans le dépôt documentaire.
+This statement only applies to the Java/Spring terrain described in `docs/sdd/04-chantier-conduit.md`; it does not create an active Java architecture in the document repository.
 
-Les dépendances doivent pointer vers l'intérieur. Le domaine reste indépendant de Spring, de JPA, de la base de données et des adaptateurs techniques. Les cas d'utilisation dépendent de ports et ne dépendent pas des contrôleurs.
+Outbuildings should point inward. The domain remains independent of Spring, JPA, database and technical adapters. Use cases are port dependent and not controller dependent.
 
-Ne placer ni `@Entity`, ni `@Service`, ni `@Autowired` dans `domain/`. Les invariants métier vivent dans les agrégats et value objects ; les adaptateurs implémentent les ports depuis l'infrastructure.
+Do not place `@Entity`, `@Service`, or `@Autowired` in `domain/`. Business invariants live in aggregates and value objects; adapters implement ports from the infrastructure.

@@ -1,11 +1,11 @@
-# Instructions inter-outils
+# Cross-tool instructions
 
-Ce dépôt est un laboratoire SDD et Spec Kit pour Conduit. Les règles générales sont dans [.github/copilot-instructions.md](.github/copilot-instructions.md) ; les contraintes de contexte sont dans [.github/instructions/](.github/instructions/).
+This repository is an SDD and Spec Kit lab for Conduit. The general rules are in [.github/copilot-instructions.md](.github/copilot-instructions.md); context constraints are in [.github/instructions/](.github/instructions/).
 
-Avant toute implémentation :
+Before any implementation:
 
-1. Identifier la feature et ses exigences.
-2. Utiliser le cycle Spec Kit `/speckit-specify` -> `/speckit-clarify` -> `/speckit-plan` -> `/speckit-tests` -> `/speckit-tasks` -> `/speckit-implement` -> `/speckit-converge`.
-3. Vérifier les preuves et les artefacts produits avant de déclarer le travail terminé.
+1. Identify the feature and its requirements.
+2. Use the Spec Kit cycle `/speckit-specify` -> `/speckit-clarify` -> `/speckit-plan` -> `/speckit-tests` -> `/speckit-tasks` -> `/speckit-implement` -> `/speckit-converge`.
+3. Verify evidence and artifacts produced before declaring work complete.
 
-Les fichiers Java/Spring, frontend RealWorld et tests ciblés décrits dans les instructions sont des contextes pédagogiques conditionnels. Ils ne décrivent pas un runtime actif du dépôt tant qu'aucun artefact correspondant n'existe.
+The Java/Spring files, RealWorld frontend, and targeted tests described in the instructions are conditional learning contexts. They do not describe an active runtime of the repository until a corresponding artifact exists.

@@ -1,61 +1,61 @@
 # Conduit Spec Kit
 
-Conduit Spec Kit est un laboratoire de développement piloté par les spécifications
-(SDD, *Specification-Driven Development*) autour du contrat API
-[RealWorld](https://github.com/gothinkster/realworld). Le runtime pédagogique est
-une API Java 25, Spring Boot, Spring Data JPA/Hibernate et PostgreSQL.
+Conduit Spec Kit is a spec-driven development lab
+(SDD, *Specification-Driven Development*) around the API contract
+[RealWorld](https://github.com/gothinkster/realworld). The educational runtime is
+a Java 25 API, Spring Boot, Spring Data JPA/Hibernate and PostgreSQL.
 
-Le dépôt montre comment relier une intention produit, des décisions d'architecture,
-des tâches exécutables, du code et des preuves de validation.
+The repository shows how to connect product intent, architectural decisions,
+executable tasks, code and validation proofs.
 
-## Prérequis
+## Prerequisites
 
-- Java 25 LTS. Vérifier avec `java -version`.
-- Maven Wrapper inclus. Vérifier avec `./mvnw --version`.
-- Docker Desktop avec Docker Compose v2. Vérifier avec `docker compose version`.
-- [Hurl](https://hurl.dev/) pour la conformité HTTP.
-- [Bruno](https://www.usebruno.com/) ou Bun si les tests Bruno sont utilisés.
+- Java 25 LTS. Check with `java -version`.
+- Maven Wrapper included. Check with `./mvnw --version`.
+- Docker Desktop with Docker Compose v2. Check with `docker compose version`.
+- [Hurl](https://hurl.dev/) for HTTP compliance.
+- [Bruno](https://www.usebruno.com/) or Bun if Bruno tests are used.
 
-Le projet utilise le Maven Wrapper afin de rendre les commandes reproductibles.
+The project uses the Maven Wrapper to make commands reproducible.
 
-## Démarrer PostgreSQL
+## Start PostgreSQL
 
-Le fichier [`docker-compose.yml`](docker-compose.yml) démarre PostgreSQL 16 avec :
+The [`docker-compose.yml`](docker-compose.yml) file starts PostgreSQL 16 with:
 
-- la base `conduit-speckit` ;
-- l'utilisateur `conduit` ;
-- le port local `5432` par défaut ;
-- le volume nommé `conduit-speckit-postgres-data` ;
-- un healthcheck `pg_isready`.
+- the base `conduit-speckit`;
+- user `conduit`;
+- the local port `5432` by default;
+- the volume named `conduit-speckit-postgres-data`;
+- a `pg_isready` healthcheck.
 
-Le mot de passe n'est pas stocké dans Git. Préparer un environnement local à partir
-du modèle :
+The password is not stored in Git. Prepare a local environment from
+of the model:
 
 ```bash
 cp .env.example .env
 ```
 
-Remplacer les valeurs placeholder de `.env`, puis démarrer la base :
+Replace the placeholder values ​​of `.env`, then start the database:
 
 ```bash
 docker compose up -d postgres
 docker compose ps
 ```
 
-Voir les logs ou arrêter le service :
+View logs or stop the service:
 
 ```bash
 docker compose logs -f postgres
 docker compose down
 ```
 
-`docker compose down` conserve le volume. Pour supprimer aussi les données locales,
-utiliser explicitement `docker compose down -v`.
+`docker compose down` keeps the volume. To also delete local data,
+explicitly use `docker compose down -v`.
 
-## Démarrer l'API
+## Start API
 
-Les variables `DATABASE_*` et `JWT_SECRET` sont lues par Spring Boot. Docker Compose
-lit automatiquement `.env`, mais Maven ne l'injecte pas dans le processus Java :
+The `DATABASE_*` and `JWT_SECRET` variables are read by Spring Boot. Docker Compose
+automatically reads `.env`, but Maven does not inject it into the Java process:
 
 ```bash
 set -a
@@ -64,26 +64,26 @@ set +a
 ./mvnw spring-boot:run
 ```
 
-L'API est alors disponible sur `http://localhost:8080`. La migration Flyway crée le
-schéma PostgreSQL au démarrage et Hibernate vérifie ensuite le schéma avec
+The API is then available on `http://localhost:8080`. Flyway migration creates the
+PostgreSQL schema at startup and Hibernate then checks the schema with
 `ddl-auto=validate`.
 
-Pour utiliser une autre base ou un autre port, définir `DATABASE_URL`,
-`DATABASE_USERNAME`, `DATABASE_PASSWORD` et éventuellement `POSTGRES_PORT` dans
-l'environnement. Ne jamais committer un secret réel.
+To use another base or another port, define `DATABASE_URL`,
+`DATABASE_USERNAME`, `DATABASE_PASSWORD` and optionally `POSTGRES_PORT` in
+the environment. Never commit a real secret.
 
-## Tester le code
+## Test the code
 
-Les tests automatisés utilisent H2 et ne nécessitent pas de PostgreSQL :
+Automated tests use H2 and do not require PostgreSQL:
 
 ```bash
 ./mvnw clean test
 ```
 
-Cette suite couvre notamment les cas d'utilisation d'authentification, les
-contrôleurs HTTP, la sécurité des tokens et l'adaptateur de persistance JPA.
+This suite notably covers authentication use cases,
+HTTP controllers, token security and the JPA persistence adapter.
 
-Pour un démarrage reproductible avec PostgreSQL :
+For a reproducible start with PostgreSQL:
 
 ```bash
 set -a
@@ -93,61 +93,61 @@ docker compose up -d postgres
 ./mvnw spring-boot:run
 ```
 
-Dans un autre terminal, vérifier que le service est prêt avec `docker compose ps`.
+In another terminal, check that the service is ready with `docker compose ps`.
 
-## Tester la conformité RealWorld
+## Test RealWorld Compliance
 
-Les scénarios de référence sont dans [`conformance/hurl/`](conformance/hurl/).
-Hurl est la source de vérité des tests HTTP. La collection Bruno est générée à
-partir de ces scénarios et sert aux exécutions interactives ou alternatives.
+The reference scenarios are in [`conformance/hurl/`](conformance/hurl/).
+Hurl is the source of truth for HTTP testing. The Bruno collection is generated at
+from these scenarios and is used for interactive or alternative executions.
 
-L'API démarrée par défaut sur le port `8080` doit être ciblée explicitement :
+The API started by default on port `8080` must be targeted explicitly:
 
 ```bash
 cd conformance
 HOST=http://localhost:8080 ./run-api-tests-hurl.sh
 ```
 
-Pour Bruno :
+For Bruno:
 
 ```bash
 HOST=http://localhost:8080 ./run-api-tests-bruno.sh
 ```
 
-Les scripts peuvent aussi recevoir des dossiers ou fichiers ciblés. Par exemple :
+Scripts can also receive targeted folders or files. For example :
 
 ```bash
 HOST=http://localhost:8080 ./run-api-tests-hurl.sh hurl/auth.hurl
 ```
 
-La documentation détaillée de la collection se trouve dans
-[`conformance/README.md`](conformance/README.md). Les scénarios couvrent les
-articles, l'authentification, les commentaires, les favoris, le feed, la
-pagination, les profils, les tags et les erreurs d'autorisation/validation.
+Detailed documentation of the collection can be found in
+[`conformance/README.md`](conformance/README.md). The scenarios cover the
+articles, authentication, comments, favorites, feed,
+pagination, profiles, tags and authorization/validation errors.
 
-Pour la feature articles, les gates reproductibles utilisent les contrats
-article-scoped `articles.hurl`, `pagination.hurl`, `tags.hurl` et
-`articles-errors-scoped.hurl`, puis les collections Bruno correspondantes.
-Les scénarios feed, favoris et commentaires appartiennent aux itérations suivantes.
+For feature articles, reproducible gates use contracts
+article-scoped `articles.hurl`, `pagination.hurl`, `tags.hurl` and
+`articles-errors-scoped.hurl`, then the corresponding Bruno collections.
+The feed, favorites and comments scenarios belong to the following iterations.
 
-## Contrats importants
+## Important contracts
 
-- L'authentification utilise `Authorization: Token <jwt>`, jamais `Bearer`.
-- Les erreurs de validation utilisent HTTP `422` et la forme
+- Authentication uses `Authorization: Token <jwt>`, never `Bearer`.
+- Validation errors use HTTP `422` and the form
   `{"errors":{"champ":["message"]}}`.
-- Les listes d'articles ne renvoient pas le champ `body`.
-- Pour un visiteur anonyme, `following` et `favorited` valent `false`.
-- Les mots de passe et les hash de mots de passe ne sont jamais exposés dans les
-  réponses HTTP.
-- `JWT_SECRET`, `DATABASE_PASSWORD` et les autres secrets doivent rester dans
-  l'environnement local ou dans le gestionnaire de secrets du déploiement.
+- Article lists do not return the `body` field.
+- For an anonymous visitor, `following` and `favorited` are equal to `false`.
+- Passwords and password hashes are never exposed in
+  HTTP responses.
+- `JWT_SECRET`, `DATABASE_PASSWORD` and other secrets must remain in
+  the local environment or in the deployment secrets manager.
 
-Ces invariants sont détaillés dans le [PRD](docs/prd/PRD-conduit.md) et les
-contrats de la feature dans [`specs/001-user-authentication/contracts/`](specs/001-user-authentication/contracts/).
+These invariants are detailed in the [PRD](docs/prd/PRD-conduit.md) and the
+feature contracts in [`specs/001-user-authentication/contracts/`](specs/001-user-authentication/contracts/).
 
-## Principes Spec Kit et SDD
+## Spec Kit and SDD principles
 
-Le dépôt suit la séquence suivante :
+The filing follows the following sequence:
 
 ```text
 constitution -> specify -> clarify -> plan -> tests -> tasks -> implement -> converge
@@ -155,87 +155,87 @@ constitution -> specify -> clarify -> plan -> tests -> tasks -> implement -> con
 
 ### 1. Constitution
 
-La constitution définit les principes durables du projet : architecture hexagonale,
-contrats RealWorld, sécurité, testabilité, traçabilité et conventions de travail.
-Elle sert de garde-fou pour les spécifications et les implémentations futures.
+The constitution defines the sustainable principles of the project: hexagonal architecture,
+RealWorld contracts, security, testability, traceability and labor agreements.
+It serves as a safeguard for future specifications and implementations.
 
 ### 2. Specify
 
-La commande `/speckit-specify` transforme une demande métier en spécification
-observable : personas, scénarios, exigences fonctionnelles et critères de succès.
-La spécification décrit le comportement attendu, pas la solution technique.
+The `/speckit-specify` command transforms a business request into a specification
+observable: personas, scenarios, functional requirements and success criteria.
+The specification describes the expected behavior, not the technical solution.
 
 ### 3. Clarify
 
-La commande `/speckit-clarify` pose des questions ciblées lorsque la demande est
-ambiguë. Les réponses sont encodées dans la spécification afin qu'un lecteur sans
-historique puisse comprendre les choix retenus.
+The `/speckit-clarify` command asks targeted questions when the request is
+ambiguous. The answers are encoded in the specification so that a reader without
+history can understand the choices made.
 
-### 4. Plan
+### 4. Outline
 
-La commande `/speckit-plan` traduit la spécification en conception technique :
-architecture, modèle de données, contrats, interfaces, dépendances et stratégie
-de test. Les décisions structurantes sont documentées dans les ADR appropriés.
+The `/speckit-plan` command translates the specification into technical design:
+architecture, data model, contracts, interfaces, dependencies and strategy
+test. Structuring decisions are documented in the appropriate ADRs.
 
-### 5. Tests
+### 5. Testing
 
-La commande `/speckit-tests` dérive chaque scénario d'acceptation en cas `AC-*`, en scénario
-Cucumber tagué avec `AC-*` et `FR-*`, et initialise la matrice de traçabilité. Elle signale les
-ambiguïtés sans inventer de comportement. Cucumber prouve les scénarios métier internes; Hurl
-reste l'oracle de contrat externe indépendant.
+The `/speckit-tests` command derives each acceptance scenario in case `AC-*`, in scenario
+Cucumber tagged with `AC-*` and `FR-*`, and initializes the traceability matrix. She points out the
+ambiguities without inventing behavior. Cucumber proves internal business scenarios; Howl
+remains the independent external contract oracle.
 
 ### 6. Tasks
 
-La commande `/speckit-tasks` produit des tâches ordonnées et traçables. Chaque tâche
-se rattache à une exigence, une décision ou une preuve attendue. Les tâches restent
-dans `specs/<feature>/tasks.md` et leur état représente l'avancement réel.
+The `/speckit-tasks` command produces ordered, traceable tasks. Every task
+relates to a requirement, decision or expected proof. The tasks remain
+in `specs/<feature>/tasks.md` and their state represents the actual progress.
 
 ### 7. Implement
 
-La commande `/speckit-implement` exécute les tâches en respectant le plan. Le code
-est organisé en couches hexagonales : `domain`, `application`, `infrastructure` et
-`interfaces/rest` pour les adaptateurs HTTP entrants. Le domaine et les cas
-d'utilisation restent indépendants de Spring ; JPA et les repositories Spring
-restent dans l'infrastructure.
+The `/speckit-implement` command executes the tasks according to the plan. The code
+is organized in hexagonal layers: `domain`, `application`, `infrastructure` and
+`interfaces/rest` for inbound HTTP adapters. The domain and the cases
+of use remain independent of Spring; JPA and Spring repositories
+remain in the infrastructure.
 
-Les adapters sont regroupés par domaine : `infrastructure/article/` et
-`infrastructure/user/` pour la persistence et les services techniques, et
-`interfaces/rest/article/`, `interfaces/rest/user/` et `interfaces/rest/shared/`
-pour les adaptateurs HTTP.
+The adapters are grouped by domain: `infrastructure/article/` and
+`infrastructure/user/` for persistence and technical services, and
+`interfaces/rest/article/`, `interfaces/rest/user/` and `interfaces/rest/shared/`
+for HTTP adapters.
 
-Lefthook orchestre les contrôles locaux : Spotless, Checkstyle et Gitleaks en
-pre-commit, puis `./mvnw verify -P integration` en pre-push.
+Lefthook orchestrates local checks: Spotless, Checkstyle and Gitleaks in
+pre-commit, then `./mvnw verify -P integration` in pre-push.
 
 ### 8. Converge
 
-La commande `/speckit-converge` compare les artefacts avec le code et les preuves
-réellement disponibles. Elle ajoute les tâches manquantes au lieu de déclarer la
-feature terminée sur la seule base d'une implémentation partielle.
+The `/speckit-converge` command compares artifacts with code and evidence
+actually available. It adds the missing tasks instead of declaring the
+feature completed based solely on partial implementation.
 
-## Artefacts et sources de vérité
+## Artifacts and sources of truth
 
-Pour la feature d'authentification courante :
+For the current authentication feature:
 
-- [`spec.md`](specs/001-user-authentication/spec.md) : intention et exigences ;
-- [`plan.md`](specs/001-user-authentication/plan.md) : conception technique ;
-- [`test-cases.yaml`](specs/001-user-authentication/test-cases.yaml) : cas d'acceptation dérivés ;
-- [`traceability.md`](specs/001-user-authentication/traceability.md) : matrice de preuves ;
-- [`tasks.md`](specs/001-user-authentication/tasks.md) : tâches et état ;
-- [`data-model.md`](specs/001-user-authentication/data-model.md) : modèle de données ;
-- [`contracts/`](specs/001-user-authentication/contracts/) : contrats API ;
-- [`quickstart.md`](specs/001-user-authentication/quickstart.md) : parcours de démarrage ;
-- [`conformance/`](conformance/) : preuves de conformité HTTP ;
-- [`.github/instructions/`](.github/instructions/) : règles applicables au code et aux documents ;
-- [`.github/skills/`](.github/skills/) : comportement des commandes Spec Kit.
+- [`spec.md`](specs/001-user-authentication/spec.md): intent and requirements;
+- [`plan.md`](specs/001-user-authentication/plan.md): technical design;
+- [`test-cases.yaml`](specs/001-user-authentication/test-cases.yaml): derived acceptance cases;
+- [`traceability.md`](specs/001-user-authentication/traceability.md): evidence matrix;
+- [`tasks.md`](specs/001-user-authentication/tasks.md): tasks and status;
+- [`data-model.md`](specs/001-user-authentication/data-model.md): data model;
+- [`contracts/`](specs/001-user-authentication/contracts/): API contracts;
+- [`quickstart.md`](specs/001-user-authentication/quickstart.md): startup path;
+- [`conformance/`](conformance/): HTTP conformance proofs;
+- [`.github/instructions/`](.github/instructions/): rules applicable to code and documents;
+- [`.github/skills/`](.github/skills/): behavior of Spec Kit commands.
 
-Les conventions actives doivent rester dans les instructions versionnées, les ADR et
-les artefacts de feature. La documentation explique le parcours, mais ne remplace
-pas ces sources de vérité.
+Active conventions must remain in versioned instructions, ADRs and
+feature artifacts. The documentation explains the path, but does not replace
+not these sources of truth.
 
-## Commandes Spec Kit
+## Spec Kit Controls
 
-Dans GitHub Copilot, les commandes utilisent le séparateur `-` configuré dans
-[`.specify/integration.json`](.specify/integration.json) :
+In GitHub Copilot, commands use the `-` separator configured in
+[`.specify/integration.json`](.specify/integration.json):
 
 ```text
 /speckit-constitution
@@ -248,41 +248,41 @@ Dans GitHub Copilot, les commandes utilisent le séparateur `-` configuré dans
 /speckit-converge
 ```
 
-Pour une nouvelle feature, suivre la séquence constitution, specification,
-clarification, plan, tests, tâches, implémentation, puis convergence. Avant de conclure,
-exécuter Cucumber, PostgreSQL/Testcontainers lorsque Docker est disponible, Hurl, puis la
-synchronisation Bruno, et mettre à jour la matrice de traçabilité.
+For a new feature, follow the sequence constitution, specification,
+clarification, plan, testing, tasks, implementation, then convergence. Before concluding,
+run Cucumber, PostgreSQL/Testcontainers when Docker is available, Hurl, then
+Bruno synchronization, and update the traceability matrix.
 
-## Architecture d'exécution
+## Execution architecture
 
-- **Domaine** : règles métier et objets indépendants de Spring.
-- **Application** : cas d'utilisation et ports sortants.
-- **Infrastructure** : Spring Data JPA, Hibernate, Flyway, PostgreSQL et adaptateurs.
-- **HTTP** : contrôleurs, mapping des réponses, gestion d'erreurs et filtre JWT.
-- **Tests** : H2 pour la boucle rapide, PostgreSQL Compose et Hurl/Bruno pour la
-  validation d'exécution et de contrat.
+- **Domain**: business rules and objects independent of Spring.
+- **Application**: Use cases and outbound ports.
+- **Infrastructure**: Spring Data JPA, Hibernate, Flyway, PostgreSQL and adapters.
+- **HTTP**: controllers, response mapping, error handling and JWT filter.
+- **Tests**: H2 for the fast loop, PostgreSQL Compose and Hurl/Bruno for the
+  validation of execution and contract.
 
-Les migrations Flyway sont la source de vérité du schéma PostgreSQL. Les entités JPA
-ne doivent pas devenir un mécanisme concurrent de création ou de modification du
-schéma.
+Flyway migrations are the source of truth for PostgreSQL schema. JPA entities
+must not become a competing mechanism for creating or modifying the
+plan.
 
-## Dépannage rapide
+## Quick troubleshooting
 
-- **Le compose refuse de démarrer** : vérifier que `POSTGRES_PASSWORD` est défini
-  et que le port choisi n'est pas déjà occupé. Utiliser `POSTGRES_PORT=5433` si
-  nécessaire, puis adapter `DATABASE_URL`.
-- **Spring ne trouve pas la base** : vérifier que `.env` a été chargé dans le shell
-  avec `set -a; source .env; set +a` et que `docker compose ps` indique un service
-  sain.
-- **Le test Hurl ne trouve pas l'API** : vérifier que l'API tourne sur `8080` et
-  utiliser `HOST=http://localhost:8080`. Les scénarios ajoutent eux-mêmes le
-  préfixe `/api`.
-- **Un changement de contrat casse un scénario** : modifier d'abord la
-  spécification et le scénario Hurl concernés, puis adapter l'implémentation et la
-  collection Bruno générée.
+- **Compound refuses to start**: check that `POSTGRES_PASSWORD` is defined
+  and that the chosen port is not already occupied. Use `POSTGRES_PORT=5433` if
+  necessary, then adapt `DATABASE_URL`.
+- **Spring cannot find the database**: check that `.env` has been loaded in the shell
+  with `set -a; source .env; set +a` and `docker compose ps` indicates a service
+  healthy.
+- **The Hurl test does not find the API**: check that the API is running on `8080` and
+  use `HOST=http://localhost:8080`. The scenarios themselves add the
+  prefix `/api`.
+- **A change of contract breaks a scenario**: first modify the
+  Hurl specification and scenario concerned, then adapt the implementation and
+  Bruno collection generated.
 
-## Statut du projet
+## Project Status
 
-Le dépôt est un terrain pédagogique SDD/Spec Kit. Les artefacts de spécification et
-les tests existants indiquent le périmètre implémenté ; les tâches encore ouvertes
-restent la référence pour mesurer ce qui manque avant de déclarer la feature complète.
+The depot is an SDD/Spec Kit educational field. Specification artifacts and
+the existing tests indicate the scope implemented; tasks still open
+remain the reference for measuring what is missing before declaring the feature complete.

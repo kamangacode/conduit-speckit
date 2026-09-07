@@ -1,43 +1,43 @@
-# Spécifications RealWorld / Conduit (local)
+# Specifications RealWorld / Conduit (local)
 
-> Copie Markdown verbatim des spécifications officielles RealWorld, rapatriées depuis le dépôt [`gothinkster/realworld`](https://github.com/gothinkster/realworld) (`docs/src/content/docs/`).
-> Source amont : https://realworld-docs.netlify.app/
-> Date de récupération : 2026-06-04.
+> Verbatim Markdown copy of the official RealWorld specifications, retrieved from the [`gothinkster/realworld`](https://github.com/gothinkster/realworld) (`docs/src/content/docs/`) repository.
+> Upstream source: https://realworld-docs.netlify.app/
+> Recovery date: 2026-06-04.
 >
-> Le PRD synthétisé et adapté à nos 5 repos est dans [`../PRD-conduit.md`](../PRD-conduit.md). Ces fichiers-ci sont la **spec brute de référence**.
+> The PRD synthesized and adapted to our 5 rests is in [`../PRD-conduit.md`](../PRD-conduit.md). These files are the **reference raw spec**.
 
 ## Index
 
-### Vue d'ensemble
-- [`introduction.md`](introduction.md) - présentation de RealWorld / Conduit
-- [`implementation-creation/introduction.md`](implementation-creation/introduction.md)
-- [`implementation-creation/expectations.md`](implementation-creation/expectations.md) - ce qu'une implémentation doit respecter
-- [`implementation-creation/features.md`](implementation-creation/features.md) - liste des fonctionnalités
+### Overview
+- [`introconduition.md`](introconduition.md) - presentation of RealWorld / Conduit
+- [`implementation-creation/introconduition.md`](implementation-creation/introconduition.md)
+- [`implementation-creation/expectations.md`](implementation-creation/expectations.md) - what an implementation must respect
+- [`implementation-creation/features.md`](implementation-creation/features.md) - feature list
 
 ### Backend
-- [`backend/introduction.md`](backend/introduction.md)
-- [`backend/openapi.yml`](backend/openapi.yml) - **contrat OpenAPI 3.1.0 officiel** (RealWorld Conduit API v2.0.0), source machine-readable de l'API
-- [`backend/endpoints.md`](backend/endpoints.md) - **tous les endpoints API** (version lisible)
-- [`backend/api-response-format.md`](backend/api-response-format.md) - **formats JSON de réponse**
-- [`backend/error-handling.md`](backend/error-handling.md) - codes et format d'erreur
+- [`backend/introconduition.md`](backend/introconduition.md)
+- [`backend/openapi.yml`](backend/openapi.yml) - **official OpenAPI 3.1.0 contract** (RealWorld Conduit API v2.0.0), machine-readable source of the API
+- [`backend/endpoints.md`](backend/endpoints.md) - **all API endpoints** (readable version)
+- [`backend/api-response-format.md`](backend/api-response-format.md) - **response JSON formats**
+- [`backend/error-handling.md`](backend/error-handling.md) - error codes and format
 - [`backend/cors.md`](backend/cors.md)
-- [`backend/tests.md`](backend/tests.md) - comment tester un backend
-- [`backend/hurl.md`](backend/hurl.md) - suite Hurl (source de vérité des tests API)
-- [`backend/bruno.md`](backend/bruno.md) - collection Bruno (générée)
-- [`backend/postman.md`](backend/postman.md) - (héritage Postman)
+- [`backend/tests.md`](backend/tests.md) - how to test a backend
+- [`backend/hurl.md`](backend/hurl.md) - suite Hurl (API testing source of truth)
+- [`backend/bruno.md`](backend/bruno.md) - collection Bruno (generated)
+- [`backend/postman.md`](backend/postman.md) - (Postman legacy)
 
 ### Frontend
-- [`frontend/api.md`](frontend/api.md) - comment consommer l'API
-- [`frontend/routing.md`](frontend/routing.md) - routes des pages
-- [`frontend/templates.md`](frontend/templates.md) - gabarits HTML / fonctionnalités UI (le plus gros fichier)
+- [`frontend/api.md`](frontend/api.md) - how to consume the API
+- [`frontend/routing.md`](frontend/routing.md) - page routes
+- [`frontend/templates.md`](frontend/templates.md) - HTML templates / UI features (largest file)
 - [`frontend/styles.md`](frontend/styles.md)
 - [`frontend/tests.md`](frontend/tests.md)
 
 ### Mobile
-- [`mobile-specs/introduction.md`](mobile-specs/introduction.md)
+- [`mobile-specs/introconduition.md`](mobile-specs/introconduition.md)
 
 ## Notes
 
-- Les liens internes dans ces fichiers (du type `/specifications/backend/...`) sont **absolus relatifs au site amont** et ne résolvent pas en local. Pour naviguer en local, utiliser cet index.
-- Le contrat OpenAPI officiel est récupéré en local dans [`backend/openapi.yml`](backend/openapi.yml) (provient de `specs/api/openapi.yml` du dépôt amont, pas de `docs/`).
-- Pour rafraîchir : re-télécharger depuis `gothinkster/realworld` (`docs/src/content/docs/`).
+- Internal links in these files (of type `/specifications/backend/...`) are **absolutely relative to the upstream site** and do not resolve locally. To navigate locally, use this index.
+- The official OpenAPI contract is retrieved locally in [`backend/openapi.yml`](backend/openapi.yml) (comes from `specs/api/openapi.yml` from the upstream repository, not from `docs/`).
+- To refresh: re-download from `gothinkster/realworld` (`docs/src/content/docs/`).

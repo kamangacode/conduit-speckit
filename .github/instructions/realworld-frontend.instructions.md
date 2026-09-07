@@ -2,10 +2,10 @@
 applyTo: "**/*.tsx, **/*.css, docs/prd/specifications/frontend/**"
 ---
 
-# Terrain pédagogique frontend RealWorld
+# RealWorld frontend educational terrain
 
-Cette instruction est conditionnelle au futur terrain frontend Conduit ; elle ne suppose pas qu'une application web existe dans ce dépôt.
+This instruction is conditional on the future Conduit frontend terrain; it does not assume that a web application exists in this repository.
 
-Lorsque des composants frontend sont créés, conserver le markup, les classes et les invariants attendus par la spec RealWorld. Ne pas introduire un design system maison ou renommer les classes contractuelles sans raison documentée.
+When frontend components are created, keep the markup, classes and invariants expected by the RealWorld spec. Do not introduce an in-house design system or rename contract classes without documented reason.
 
-Le frontend ne parle jamais directement à la base : les données passent par l'API. Les états dépendant de l'utilisateur doivent respecter le contrat, notamment `following`, `favorited` et l'en-tête `Authorization: Token <jwt>`.
+The frontend never speaks directly to the database: the data goes through the API. User-dependent states must follow the contract, including `following`, `favorited`, and the `Authorization: Token <jwt>` header.

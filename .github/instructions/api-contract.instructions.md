@@ -2,10 +2,10 @@
 applyTo: "**/interfaces/**/*.java, **/controller/**/*.java, specs/**/contracts/**, docs/prd/specifications/backend/**"
 ---
 
-# Contrats API Conduit
+# API Conduit contracts
 
-Cette instruction s'applique aux contrats et au terrain d'implémentation Conduit. Respecter la spec RealWorld et les contrats documentés dans `docs/prd/specifications/backend/`.
+This instruction applies to contracts and the Conduit implementation target. Respect the RealWorld spec and contracts documented in `docs/prd/specifications/backend/`.
 
-L'authentification porte le JWT avec `Authorization: Token <jwt>`, jamais `Bearer`. Les erreurs de validation utilisent `422` et la forme `{"errors":{"champ":["message"]}}`. Les listes d'articles ne renvoient pas le champ `body` lorsque le contrat l'exclut. Pour un visiteur anonyme, `following` et `favorited` valent `false`.
+Authentication carries the JWT with `Authorization: Token <jwt>`, never `Bearer`. Validation errors use `422` and the form `{"errors":{"champ":["message"]}}`. Article lists do not return the `body` field when the contract excludes it. For an anonymous visitor, `following` and `favorited` are equivalent to `false`.
 
-Un contrôleur valide et mappe l'entrée puis délègue au cas d'utilisation ; il ne porte pas la logique métier. Toute divergence avec le contrat doit être documentée et testée.
+A controller validates and maps the input then delegates to the use case; it does not carry business logic. Any discrepancies with the contract must be documented and tested.
